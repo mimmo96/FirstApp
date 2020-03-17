@@ -99,18 +99,18 @@
 
     <TextView
         android:id="@+id/textView1"
-        android:layout_width="410dp"
-        android:layout_height="31dp"
+        android:layout_width="307dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="1dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="18dp"
-        app:autoSizeTextType="uniform"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="59dp"
+        android:layout_marginBottom="28dp"
         android:text="ultimo aggiornamento:"
         android:textSize="14sp"
+        app:autoSizeTextType="uniform"
         tools:layout_editor_absoluteX="3dp"
         tools:layout_editor_absoluteY="469dp" />
 
@@ -252,10 +252,10 @@
         android:id="@+id/imageView2"
         android:layout_width="52dp"
         android:layout_height="54dp"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="39dp"
-        android:layout_marginBottom="195dp"
+        android:layout_marginEnd="295dp"
+        android:layout_marginBottom="187dp"
         app:srcCompat="@drawable/peso" />
 
     <ImageView

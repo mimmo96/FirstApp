@@ -38,8 +38,8 @@ public class ChannelActivity  extends AppCompatActivity {
     private static View viewlayout;
     private static View defaultStar = null;
     private static int pos=0;
-    private static String DEFAULT_ID = "816869";
-    private static String DEFAULT_READ_KEY = "KLEZNXOV7EPHHEUT";
+    private static String DEFAULT_ID =null;
+    private static String DEFAULT_READ_KEY = null;
 
     public static void setPosition(int position) {
         pos=position;
@@ -100,8 +100,8 @@ public class ChannelActivity  extends AppCompatActivity {
                                                 if (testData(DEFAULT_ID, DEFAULT_READ_KEY)) {
                                                     Toast.makeText(BasicContext, "operazione eseguita correttamente!", Toast.LENGTH_SHORT).show();
                                                     //segnalo al thread principale i nuovi id,key
-                                                    MyTimerTask.setDefaultSetting(DEFAULT_ID, DEFAULT_READ_KEY);
-
+                                                    if(pos==-1) pos=0;
+                                                    MainActivity.setDefaultSetting(DEFAULT_ID,DEFAULT_READ_KEY,pos);
                                                 }
                                                 else  Toast.makeText(BasicContext, "operazione ERRATA!", Toast.LENGTH_SHORT).show();
                                                 //segnalo eventuali modifiche
@@ -167,8 +167,18 @@ public class ChannelActivity  extends AppCompatActivity {
         builder.setPositiveButton("si", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-              //controllo che ci sono altri canali
-                if(channel.size()<2)   Toast.makeText(BasicContext,"UNICO CANALE RIMASTO,IMPOSSIBILE CANCELLARE!",Toast.LENGTH_SHORT).show();
+              //se non ci sono più canali cancello tutto
+                if(channel.size()<2){
+                    Toast.makeText(BasicContext,"CANCELLO TUTTO",Toast.LENGTH_SHORT).show();
+                    //cancello i database
+                    db.SavedDao().deleteAll();
+                    //cancello lista channel
+                    channel.clear();
+                    //cancello il database dei canali
+                    db.ChannelDao().deleteAll();
+                    //invio agli altri che adesso è tutto null!
+                    MainActivity.setDefaultSetting(null, null,-1);
+                }
                 else {
                     db.ChannelDao().delete(channel.get(position));
                     channel.remove(position);
@@ -179,7 +189,6 @@ public class ChannelActivity  extends AppCompatActivity {
                     else pos=position-1;
 
                     Channel nuovo=channel.get(pos);
-                    MyTimerTask.setDefaultSetting(nuovo.getId(), nuovo.getRead_key());
                     MainActivity.setDefaultSetting(nuovo.getId(), nuovo.getRead_key(), position-1);
                     Toast.makeText(BasicContext, "canale " + position + " cancellato!", Toast.LENGTH_SHORT).show();
                 }
@@ -206,7 +215,7 @@ public class ChannelActivity  extends AppCompatActivity {
         DEFAULT_READ_KEY = chan.getRead_key();
         chan.setPosition(1);
         db.ChannelDao().findByName(chan.getId(),chan.getRead_key()).setPosition(1);
-
+        if(pos==-1) pos=0;
         //cancello il channel precedente come default se è diverso dal precedente
         Channel prec=channel.get(pos);
         if(chan.getId()!=prec.getId()) {
@@ -234,7 +243,6 @@ public class ChannelActivity  extends AppCompatActivity {
 
         }
         //invio i nuovi dati di default
-        MyTimerTask.setDefaultSetting(DEFAULT_ID, DEFAULT_READ_KEY);
         MainActivity.setDefaultSetting(DEFAULT_ID, DEFAULT_READ_KEY,pos);
         stampa();
 
@@ -297,7 +305,7 @@ public class ChannelActivity  extends AppCompatActivity {
                     //prendo uid dell'ultimo elemento inserito
                     if (channel.size() - 1 >= 0)
                         id = channel.get(channel.size() - 1).getUid();
-                    else id = 0;
+                    else  id = 0;
                     //cambiare getUid con READ_KEY
                     add.setUid(id + 1);
                     db.ChannelDao().insert(add);

@@ -6,6 +6,7 @@ import androidx.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -19,19 +20,22 @@ import com.example.firstapp.Channel.savedValues;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView textTemp;
-    TextView textUmidity;
-    TextView textPh;
-    TextView textConducibilita;
-    TextView textIrradianza;
-    TextView textPeso;
-    TextView textStato;
-    TextView testo1;
+    public static TextView textTemp;
+    public static TextView textUmidity;
+    public static TextView textPh;
+    public static TextView textConducibilita;
+    public static  TextView textIrradianza;
+    public static  TextView textPeso;
+    public static TextView textStato;
+    public static TextView testo1;
     private static  List<savedValues> channeldefault;
-    private static String channelID="816869";
-    private static String READ_KEY="KLEZNXOV7EPHHEUT";
+    private static String channelID=null;
+    private static String READ_KEY=null;
+    private static  String url;
     private static  AppDatabase database;
-    Context cont;
+    private static  TimerTask timerTask;
+    private static Timer timer;
+    private static Context cont;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +54,21 @@ public class MainActivity extends AppCompatActivity {
         textStato=findViewById(R.id.textViewON);
 
         testo1=findViewById(R.id.textView1);
-
-        String url="https://api.thingspeak.com/channels/"+channelID+ "/feeds.json?api_key=" + READ_KEY + "&results=1";
         cont=getApplicationContext();
 
-        TimerTask timerTask=new MyTimerTask(url,textTemp,textUmidity,textPh,textConducibilita,textIrradianza,textPeso,textStato,testo1,cont);
-        Timer timer=new Timer(true);
-        timer.scheduleAtFixedRate(timerTask,0,3000);
+        //controllo se ho almeno un chnnel inserito
+        if(url==null){
+            textTemp.setText("- -");
+            textUmidity.setText("- -");
+            textPh.setText("- -");
+            textConducibilita.setText("- -");
+            textIrradianza.setText("- -");
+            textPeso.setText("- -");
+            testo1.setText("INSERISCI UN NUOVO CHANNEL");
+        }
+        else {
+            startTimer(cont);
+        }
     }
 
     private void BackupValues(Bundle savedInstanceState) {
@@ -70,12 +82,22 @@ public class MainActivity extends AppCompatActivity {
                     //build mi serve per costruire il tutto
                     .build();
                 channeldefault = database.SavedDao().getAll();
-
-            if(channeldefault.size()>0){
+                //controllo se ho almeno un elemento inserito
+            if(channeldefault.size()>0) {
+                //se avevo un elmento inserito imposto quest'ultimo come default
                 channelID=channeldefault.get(0).getId();
                 READ_KEY=channeldefault.get(0).getKey();
+                url="https://api.thingspeak.com/channels/"+channelID+ "/feeds.json?api_key=" + READ_KEY + "&results=1";
                 ChannelActivity.setPosition(channeldefault.get(0).getPosition());
             }
+            //se non ho nessun elemento inserito setto a null i valori dei channel
+            else{
+                channelID=null;
+                READ_KEY=null;
+                url=null;
+                ChannelActivity.setPosition(-1);
+            }
+
 
         }
     }
@@ -148,21 +170,62 @@ public class MainActivity extends AppCompatActivity {
 
     public static void setDefaultSetting(String id, String key, int pos) {
         System.out.println("SET DEFAULT SETTING");
-        //aggiungo alla lista channeldefault il nuovo
-           if(channeldefault.size()!=0)channeldefault.clear();
-           channeldefault.add(new savedValues(id,key,pos));
-           database.SavedDao().deleteAll();
-           database.SavedDao().insert(new savedValues(id,key,pos));
-            List<savedValues> x=database.SavedDao().getAll();
+        if(pos==-1){
+            channelID=null;
+            READ_KEY=null;
+            url=null;
+            ChannelActivity.setPosition(-1);
 
-            for(int i=0;i<x.size();i++){
-                    System.out.println(i+": " + x.get(i).getPosition());
+            if (channeldefault.size() != 0) channeldefault.clear();
+            channeldefault.add(new savedValues(id, key, pos));
+            database.SavedDao().deleteAll();
+
+            textTemp.setText("- -");
+            textUmidity.setText("- -");
+            textPh.setText("- -");
+            textConducibilita.setText("- -");
+            textIrradianza.setText("- -");
+            textPeso.setText("- -");
+
+            textStato.setText("OFFLINE");
+            textStato.setTextColor(Color.RED);
+            testo1.setText("INSERISCI UN NUOVO CHANNEL");
+            timer.cancel();
+            timerTask.cancel();
+        }
+        else {
+            //aggiungo alla lista channel default il nuovo
+            if (channeldefault.size() != 0) channeldefault.clear();
+            channeldefault.add(new savedValues(id, key, pos));
+            database.SavedDao().deleteAll();
+            database.SavedDao().insert(new savedValues(id, key, pos));
+            List<savedValues> x = database.SavedDao().getAll();
+
+            for (int i = 0; i < x.size(); i++) {
+                System.out.println(i + ": " + x.get(i).getPosition());
             }
-        System.out.println("FINE");
+            System.out.println("FINE");
 
-        channelID=id;
-        READ_KEY=key;
+            channelID = id;
+            READ_KEY = key;
+            url="https://api.thingspeak.com/channels/"+channelID+ "/feeds.json?api_key=" + READ_KEY + "&results=1";
+            restartTimer(cont);
+        }
 
+    }
+    public static void restartTimer(Context cont){
+
+        if(timer!=null) timer.cancel();
+        if(timerTask!=null) timerTask.cancel();
+        timerTask = new MyTimerTask(url, textTemp, textUmidity, textPh, textConducibilita, textIrradianza, textPeso, textStato, testo1, cont);
+        timer = new Timer();
+        timer.scheduleAtFixedRate(timerTask, 0, 3000);
+    }
+
+    public static void startTimer(Context cont){
+        timerTask = new MyTimerTask(url, textTemp, textUmidity, textPh, textConducibilita, textIrradianza, textPeso, textStato, testo1, cont);
+        timer = new Timer();
+        timer.scheduleAtFixedRate(timerTask, 0, 3000);
     }
 
 

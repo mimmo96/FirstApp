@@ -4,7 +4,6 @@ package com.example.firstapp;
 import android.content.Context;
 import android.graphics.Color;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -14,9 +13,6 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -32,10 +28,10 @@ public class MyTimerTask extends TimerTask {
     TextView textPeso;
     TextView text1;
     TextView stato;
-    static String url;
+    String url;
     Context context;
-    private static String channelID="816869";
-    private static String READ_KEY="KLEZNXOV7EPHHEUT";
+    private static String channelID=null;
+    private static String READ_KEY=null;
 
 
     public MyTimerTask(String url, TextView textTemp1,TextView textUmidity1, TextView textPh1, TextView textConducibilita1,
@@ -54,92 +50,67 @@ public class MyTimerTask extends TimerTask {
 
     @Override
     public void run() {
-
-        getJsonResponse(url);
+       getJsonResponse(url);
     }
 
     //metodo per reperire le risposte json
      private void getJsonResponse (String url){
-         final List<String> createdtime = new ArrayList<>();
+        //se non ho nessun url inserita setto i valori a 0
+
+            final List<String> createdtime = new ArrayList<>();
 
 
-         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                 new Response.Listener<JSONObject>() {
-                     @Override
-                     public void onResponse(JSONObject response) {
-                         try {
-                             //recupero l'array feeds
-                             JSONArray jsonArray = response.getJSONArray("feeds");
+            final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                //recupero l'array feeds
+                                JSONArray jsonArray = response.getJSONArray("feeds");
 
-                             //scorro tutto l'array e stampo a schermo il valore di field1
-                             for (int i = 0; i < jsonArray.length(); i++) {
-                                 //recupero il primo oggetto dell'array
-                                 final JSONObject value = jsonArray.getJSONObject(i);
+                                //scorro tutto l'array e stampo a schermo il valore di field1
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    //recupero il primo oggetto dell'array
+                                    final JSONObject value = jsonArray.getJSONObject(i);
 
-                                 /*
-                                 if(value.equals("field1")) {
-                                     //salvo in temp il valore contenuto in field1 di tipo double
-                                     if (!value.getString("field1").equals("") && !value.getString("field1").equals("null"))
-                                         Double.parseDouble(value.getString("field1"));
-                                 }
-                                 if(value.equals("field2")) {
-                                     if (!value.getString("field2").equals("") && !value.getString("field2").equals("null"))
-                                         Double.parseDouble(value.getString("field2"));
-                                 }
-                                 if(value.equals("field3")) {
-                                     if (!value.getString("field3").equals("") && !value.getString("field3").equals("null"))
-                                         Double.parseDouble(value.getString("field3"));
-                                 }
-                                 if(value.equals("field4")) {
-                                     if (!value.getString("field4").equals("") && !value.getString("field4").equals("null"))
-                                         Double.parseDouble(value.getString("field4"));
-                                 }
-                                 if(!value.getString("field5").equals("") && !value.getString("field5").equals("null"))
-                                     Double.parseDouble(value.getString("field5"));
 
-                                 if(!value.getString("field6").equals("") && !value.getString("field6").equals("null"))
-                                     Double.parseDouble(value.getString("field6"));
+                                    String temperature = value.getString("field1");
+                                    String umidity = value.getString("field2");
+                                    String ph = value.getString("field3");
+                                    String conducibilita = value.getString("field4");
+                                    String irradianza = value.getString("field5");
+                                    String peso = value.getString("field6");
 
-                                  */
+                                    textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(temperature)) * 100.0) / 100.0));
+                                    textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0));
+                                    textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(ph)) * 100.0) / 100.0));
+                                    textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(conducibilita)) * 100.0) / 100.0));
+                                    textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0));
+                                    textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(peso)) * 100.0) / 100.0).concat(" g"));
 
-                                 String temperature = value.getString("field1");
-                                 String umidity = value.getString("field2");
-                                 String ph = value.getString("field3");
-                                 String conducibilita = value.getString("field4");
-                                 String irradianza = value.getString("field5");
-                                 String peso = value.getString("field6");
 
-                                 textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(temperature))*100.0)/100.0));
-                                 textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(umidity))*100.0)/100.0));
-                                 textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(ph))*100.0)/100.0));
-                                 textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(conducibilita))*100.0)/100.0));
-                                 textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(irradianza))*100.0)/100.0));
-                                 textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(peso))*100.0)/100.0));
+                                    String cretime = value.getString("created_at");
+                                    createdtime.add(cretime);
+                                    distanza(cretime);
+                                }
+                                stato.setText("ONLINE");
+                                stato.setTextColor(Color.GREEN);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                stato.setText("OFFLINE");
+                                stato.setTextColor(Color.RED);
+                            }
 
-                                 String cretime = value.getString("created_at");
-                                 createdtime.add(cretime);
-                                 distanza(cretime);
-                             }
-                             stato.setText("ONLINE");
-                             stato.setTextColor(Color.GREEN);
-                         } catch (JSONException e) {
-                             Toast.makeText(context,"Errore",Toast.LENGTH_SHORT);
-                             e.printStackTrace();
-                             stato.setText("OFFLINE");
-                             stato.setTextColor(Color.RED);
-                         }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    stato.setText("OFFLINE");
+                    stato.setTextColor(Color.RED);
+                }
+            });
+            Volley.newRequestQueue(context).add(jsonObjectRequest);
 
-                     }
-                 }, new Response.ErrorListener() {
-             @Override
-             public void onErrorResponse(VolleyError error) {
-                 Toast x= Toast.makeText(context,"Errore download",Toast.LENGTH_SHORT);
-                 x.show();
-                 stato.setText("OFFLINE");
-                 stato.setTextColor(Color.RED);
-             }
-         });
-         Volley.newRequestQueue(context).add(jsonObjectRequest);
     }
 
     private void distanza(String data) {
@@ -178,15 +149,6 @@ public class MyTimerTask extends TimerTask {
         text1.setText("Ultimo aggiornamento: " + giorni1 + " giorni " + ore1 + " ore " + minuti1 + " minuti " + secondi1+ " secondi ");
 
     }
-
-    public static void setDefaultSetting(String id, String key){
-        channelID=id;
-        READ_KEY=key;
-
-        url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=1";
-
-    }
-
 
     }
 
