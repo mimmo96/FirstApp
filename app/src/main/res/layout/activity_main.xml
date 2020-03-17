@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    tools:layout_editor_absoluteY="81dp"
+    android:background="@drawable/sfondo">
+
+
+    <TextView
+        android:id="@+id/textPh"
+        android:layout_width="45dp"
+        android:layout_height="22dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="74dp"
+        android:layout_marginTop="202dp"
+        android:layout_marginEnd="265dp"
+        android:text="00.00"
+        android:textSize="18sp"
+        app:autoSizeTextType="uniform"
+        tools:layout_editor_absoluteX="68dp"
+        tools:layout_editor_absoluteY="204dp" />
+
+    <TextView
+        android:id="@+id/textUmidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="203dp"
+        android:layout_marginEnd="77dp"
+        android:text="00.00"
+        android:textSize="18sp"
+        app:autoSizeTextType="uniform"
+        tools:layout_editor_absoluteX="266dp"
+        tools:layout_editor_absoluteY="141dp" />
+
+    <TextView
+        android:id="@+id/textConducibility"
+        android:layout_width="50dp"
+        android:layout_height="26dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="224dp"
+        android:layout_marginTop="279dp"
+        android:layout_marginEnd="110dp"
+        android:text="00.00"
+        android:textSize="18sp"
+        app:autoSizeTextType="uniform"
+        tools:layout_editor_absoluteX="261dp"
+        tools:layout_editor_absoluteY="213dp" />
+
+    <TextView
+        android:id="@+id/textTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="130dp"
+        android:layout_marginEnd="239dp"
+        android:text="00.00"
+        android:textSize="18sp"
+        app:autoSizeTextType="uniform"
+        tools:layout_editor_absoluteX="68dp"
+        tools:layout_editor_absoluteY="140dp" />
+
+    <ImageView
+        android:id="@+id/imageTemperature"
+        android:layout_width="52dp"
+        android:layout_height="54dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="46dp"
+        android:layout_marginTop="110dp"
+        android:contentDescription="temperature"
+        app:srcCompat="@drawable/temp"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="120dp" />
+
+    <ImageView
+        android:id="@+id/imagePianta"
+        android:layout_width="125dp"
+        android:layout_height="108dp"
+        android:layout_below="@+id/textViewON"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="131dp"
+        android:layout_marginTop="77dp"
+        app:srcCompat="@drawable/pianta"
+        tools:layout_editor_absoluteX="86dp"
+        tools:layout_editor_absoluteY="288dp" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="410dp"
+        android:layout_height="31dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="1dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="18dp"
+        app:autoSizeTextType="uniform"
+        android:text="ultimo aggiornamento:"
+        android:textSize="14sp"
+        tools:layout_editor_absoluteX="3dp"
+        tools:layout_editor_absoluteY="469dp" />
+
+    <ImageView
+        android:id="@+id/imagePh"
+        android:layout_width="52dp"
+        android:layout_height="54dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="180dp"
+        app:srcCompat="@drawable/ph"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="194dp" />
+
+    <ImageView
+        android:id="@+id/imageIrradiance"
+        android:layout_width="52dp"
+        android:layout_height="54dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="111dp"
+        android:layout_marginEnd="60dp"
+        android:background="@drawable/irradiance"
+        tools:layout_editor_absoluteX="237dp"
+        tools:layout_editor_absoluteY="176dp" />
+
+    <TextView
+        android:id="@+id/textIrradiance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="129dp"
+        android:layout_marginEnd="113dp"
+        android:text="00.00"
+        android:textSize="18sp"
+        app:autoSizeTextType="uniform"
+        tools:layout_editor_absoluteX="261dp"
+        tools:layout_editor_absoluteY="196dp" />
+
+    <ImageView
+        android:id="@+id/imageConducibility"
+        android:layout_width="52dp"
+        android:layout_height="54dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="275dp"
+        android:layout_marginTop="262dp"
+        app:srcCompat="@drawable/cond"
+        tools:layout_editor_absoluteX="235dp"
+        tools:layout_editor_absoluteY="194dp" />
+
+    <ImageView
+        android:id="@+id/imageUminidy"
+        android:layout_width="52dp"
+        android:layout_height="54dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="315dp"
+        android:layout_marginTop="183dp"
+        android:layout_marginEnd="34dp"
+        app:layout_constraintEnd_toStartOf="@+id/textUmidity"
+        app:layout_constraintStart_toEndOf="@+id/textTemp"
+        app:srcCompat="@drawable/umidity"
+        tools:layout_editor_absoluteY="120dp" />
+
+    <TextView
+        android:id="@+id/textPeso"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="281dp"
+        android:layout_marginEnd="231dp"
+        android:text="00.00 g"
+        android:textSize="18sp"
+        app:autoSizeTextType="uniform"
+        tools:layout_editor_absoluteX="52dp"
+        tools:layout_editor_absoluteY="185dp" />
+
+    <ImageButton
+        android:id="@+id/imageView"
+        android:layout_width="52dp"
+        android:layout_height="54dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="312dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="27dp"
+        android:background="@drawable/ic_graphic"
+        android:onClick="doAdd"
+        android:scaleType="fitXY" />
+
+    <ImageButton
+        android:id="@+id/imageButton8"
+        android:layout_width="52dp"
+        android:layout_height="54dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="21dp"
+        android:background="@drawable/ic_setting"
+        android:onClick="settingChannel"
+        android:scaleType="fitXY" />
+
+    <TextView
+        android:id="@+id/textViewStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="17dp"
+        android:text="STATUS"
+        app:autoSizeTextType="uniform"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/textViewON"
+        android:layout_width="126dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="144dp"
+        app:autoSizeTextType="uniform"
+        android:layout_marginTop="45dp"
+        android:text="OFFLINE"
+        android:textColor="#E4F50404"
+        android:textSize="30sp" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="52dp"
+        android:layout_height="54dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="39dp"
+        android:layout_marginBottom="195dp"
+        app:srcCompat="@drawable/peso" />
+
+    <ImageView
+        android:id="@+id/setvalue"
+        android:layout_width="50dp"
+        android:layout_height="38dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="50dp"
+        app:srcCompat="@drawable/attenzione" />
+
+</RelativeLayout>
