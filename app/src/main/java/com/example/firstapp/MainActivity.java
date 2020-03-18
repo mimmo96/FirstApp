@@ -10,10 +10,14 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import com.example.firstapp.Channel.Channel;
 import com.example.firstapp.Channel.ChannelActivity;
 import com.example.firstapp.Channel.savedValues;
 
@@ -24,16 +28,16 @@ public class MainActivity extends AppCompatActivity {
     public static TextView textUmidity;
     public static TextView textPh;
     public static TextView textConducibilita;
-    public static  TextView textIrradianza;
-    public static  TextView textPeso;
+    public static TextView textIrradianza;
+    public static TextView textPeso;
     public static TextView textStato;
     public static TextView testo1;
-    private static  List<savedValues> channeldefault;
-    private static String channelID=null;
-    private static String READ_KEY=null;
-    private static  String url;
-    private static  AppDatabase database;
-    private static  TimerTask timerTask;
+    private static List<savedValues> channeldefault;
+    private static String channelID = null;
+    private static String READ_KEY = null;
+    private static String url;
+    private static AppDatabase database;
+    private static TimerTask timerTask;
     private static Timer timer;
     private static Context cont;
 
@@ -45,19 +49,19 @@ public class MainActivity extends AppCompatActivity {
         //ripristino valori salvati precedentemente se ci sono
         BackupValues(savedInstanceState);
 
-        textTemp=findViewById(R.id.textTemp);
-        textUmidity=findViewById(R.id.textUmidity);
-        textPh=findViewById(R.id.textPh);
-        textConducibilita=findViewById(R.id.textConducibility);
-        textIrradianza=findViewById(R.id.textIrradiance);
-        textPeso=findViewById(R.id.textPeso);
-        textStato=findViewById(R.id.textViewON);
+        textTemp = findViewById(R.id.textTemp);
+        textUmidity = findViewById(R.id.textUmidity);
+        textPh = findViewById(R.id.textPh);
+        textConducibilita = findViewById(R.id.textConducibility);
+        textIrradianza = findViewById(R.id.textIrradiance);
+        textPeso = findViewById(R.id.textPeso);
+        textStato = findViewById(R.id.textViewON);
 
-        testo1=findViewById(R.id.textView1);
-        cont=getApplicationContext();
+        testo1 = findViewById(R.id.textView1);
+        cont = getApplicationContext();
 
         //controllo se ho almeno un chnnel inserito
-        if(url==null){
+        if (url == null) {
             textTemp.setText("- -");
             textUmidity.setText("- -");
             textPh.setText("- -");
@@ -65,8 +69,7 @@ public class MainActivity extends AppCompatActivity {
             textIrradianza.setText("- -");
             textPeso.setText("- -");
             testo1.setText("INSERISCI UN NUOVO CHANNEL");
-        }
-        else {
+        } else {
             startTimer(cont);
         }
     }
@@ -74,27 +77,27 @@ public class MainActivity extends AppCompatActivity {
     private void BackupValues(Bundle savedInstanceState) {
         //creo il database
 
-        if(savedInstanceState==null) {
+        if (savedInstanceState == null) {
             database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "prodiction")
                     //consente l'aggiunta di richieste nel thred principale
                     .allowMainThreadQueries()
                     .fallbackToDestructiveMigration()
                     //build mi serve per costruire il tutto
                     .build();
-                channeldefault = database.SavedDao().getAll();
-                //controllo se ho almeno un elemento inserito
-            if(channeldefault.size()>0) {
+            channeldefault = database.SavedDao().getAll();
+            //controllo se ho almeno un elemento inserito
+            if (channeldefault.size() > 0) {
                 //se avevo un elmento inserito imposto quest'ultimo come default
-                channelID=channeldefault.get(0).getId();
-                READ_KEY=channeldefault.get(0).getKey();
-                url="https://api.thingspeak.com/channels/"+channelID+ "/feeds.json?api_key=" + READ_KEY + "&results=1";
+                channelID = channeldefault.get(0).getId();
+                READ_KEY = channeldefault.get(0).getKey();
+                url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=1";
                 ChannelActivity.setPosition(channeldefault.get(0).getPosition());
             }
             //se non ho nessun elemento inserito setto a null i valori dei channel
-            else{
-                channelID=null;
-                READ_KEY=null;
-                url=null;
+            else {
+                channelID = null;
+                READ_KEY = null;
+                url = null;
                 ChannelActivity.setPosition(-1);
             }
 
@@ -106,18 +109,26 @@ public class MainActivity extends AppCompatActivity {
     public void doAdd(View v) {
         final boolean[] checkedItems;
         final String[] listItems;
+
+        //lista che mi setta la posizione degli elementi selezionati
         final ArrayList<Integer> mUserItems = new ArrayList<>();
         final ArrayList<String> list = new ArrayList<String>();
+
+        //lista che mi salva il nome di tutti gli elementi selezionati
         final ArrayList<String> name = new ArrayList<String>();
 
-        list.add("temperature");
-        list.add("umidità");
-        list.add("ph");
-        list.add("conducibilità elettrica");
-        list.add("irradianza");
-        list.add("peso");
+        Channel inUse=database.ChannelDao().findByName(channelID,READ_KEY);
+        System.out.println("ho premuto:" + inUse.getFiled1());
+        if (inUse.getFiled1() != null) list.add(inUse.getFiled1());
+        if (inUse.getFiled2() != null) list.add(inUse.getFiled2());
+        if (inUse.getFiled3() != null) list.add(inUse.getFiled3());
+        if (inUse.getFiled4() != null) list.add(inUse.getFiled4());
+        if (inUse.getFiled5() != null) list.add(inUse.getFiled5());
+        if (inUse.getFiled6() != null) list.add(inUse.getFiled6());
+        if (inUse.getFiled7() != null) list.add(inUse.getFiled7());
+        if (inUse.getFiled8() != null) list.add(inUse.getFiled8());
 
-        listItems= list.toArray(new String[list.size()]);
+        listItems = list.toArray(new String[list.size()]);
         checkedItems = new boolean[list.size()];
 
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
@@ -131,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                     name.add(list.get(position));
                 } else {
                     mUserItems.remove((Integer.valueOf(position)));
+                    name.remove(list.get(position));
                 }
             }
         });
@@ -140,9 +152,13 @@ public class MainActivity extends AppCompatActivity {
         mBuilder.setPositiveButton("VISUALIZZA", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
-                Intent intent = com.example.firstapp.Graphic.MainActivity.getActivityintent(MainActivity.this);
-                com.example.firstapp.Graphic.MainActivity.setGrapView(name,channelID,READ_KEY);
-                startActivity(intent);
+                if(list.size()==0) Toast.makeText(cont,"INSERISCI UN CHANNEL!",Toast.LENGTH_SHORT).show();
+                else if(name.size()==0) Toast.makeText(cont,"NESSUN GRAFICO SELEZIONATO!",Toast.LENGTH_SHORT).show();
+                else {
+                    Intent intent = com.example.firstapp.Graphic.MainActivity.getActivityintent(MainActivity.this);
+                    com.example.firstapp.Graphic.MainActivity.setGrapView(name, mUserItems, channelID, READ_KEY);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -163,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
         mDialog.show();
     }
 
+    //azione che devo eseguirequando premo il puksante impostazioni
     public void settingChannel(View v) {
         Intent intent = ChannelActivity.getActivityintent(MainActivity.this);
         startActivity(intent);
@@ -170,14 +187,14 @@ public class MainActivity extends AppCompatActivity {
 
     public static void setDefaultSetting(String id, String key, int pos) {
         System.out.println("SET DEFAULT SETTING");
-        if(pos==-1){
-            channelID=null;
-            READ_KEY=null;
-            url=null;
+        if (pos == -1) {
+            channelID = null;
+            READ_KEY = null;
+            url = null;
             ChannelActivity.setPosition(-1);
 
             if (channeldefault.size() != 0) channeldefault.clear();
-            channeldefault.add(new savedValues(id, key, pos));
+            //channeldefault.add(new savedValues(id, key, pos));
             database.SavedDao().deleteAll();
 
             textTemp.setText("- -");
@@ -192,8 +209,7 @@ public class MainActivity extends AppCompatActivity {
             testo1.setText("INSERISCI UN NUOVO CHANNEL");
             timer.cancel();
             timerTask.cancel();
-        }
-        else {
+        } else {
             //aggiungo alla lista channel default il nuovo
             if (channeldefault.size() != 0) channeldefault.clear();
             channeldefault.add(new savedValues(id, key, pos));
@@ -208,26 +224,43 @@ public class MainActivity extends AppCompatActivity {
 
             channelID = id;
             READ_KEY = key;
-            url="https://api.thingspeak.com/channels/"+channelID+ "/feeds.json?api_key=" + READ_KEY + "&results=1";
+            url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=1";
             restartTimer(cont);
         }
 
     }
-    public static void restartTimer(Context cont){
 
-        if(timer!=null) timer.cancel();
-        if(timerTask!=null) timerTask.cancel();
-        timerTask = new MyTimerTask(url, textTemp, textUmidity, textPh, textConducibilita, textIrradianza, textPeso, textStato, testo1, cont);
+    public static void restartTimer(Context cont) {
+
+        if (timer != null) timer.cancel();
+        if (timerTask != null) timerTask.cancel();
+        timerTask = new MyTimerTask(channelID, READ_KEY, url, textTemp, textUmidity, textPh, textConducibilita, textIrradianza, textPeso, textStato, testo1, cont, database);
         timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 0, 3000);
     }
 
-    public static void startTimer(Context cont){
-        timerTask = new MyTimerTask(url, textTemp, textUmidity, textPh, textConducibilita, textIrradianza, textPeso, textStato, testo1, cont);
+    public static void startTimer(Context cont) {
+        timerTask = new MyTimerTask(channelID, READ_KEY, url, textTemp, textUmidity, textPh, textConducibilita, textIrradianza, textPeso, textStato, testo1, cont, database);
         timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 0, 3000);
     }
 
+    public static void stampa() {
+
+        List<Channel> arrayList = database.ChannelDao().getAll();
+        System.out.println("stampo il database cannel");
+        for(int i=0;i<arrayList.size();i++) System.out.println(arrayList.get(i).getId() +" --" + arrayList.get(i).getFiled1() +" --" + arrayList.get(i).getRead_key() );
+
+        System.out.println("FINE");
+
+        List <savedValues> arrayList1 = database.SavedDao().getAll();
+        System.out.println("stampo il database cannel");
+        for(int i=0;i<arrayList1.size();i++) System.out.println(arrayList1.get(i).getId() +" --" + arrayList1.get(i).getPosition() +" --" + arrayList1.get(i).getKey() );
+
+        System.out.println("FINE");
 
 
+
+    }
 }
+

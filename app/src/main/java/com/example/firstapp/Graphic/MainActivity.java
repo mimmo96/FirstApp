@@ -38,20 +38,25 @@ public class MainActivity extends AppCompatActivity {
     private static String READ_KEY="KLEZNXOV7EPHHEUT";
     private static String url="https://api.thingspeak.com/channels/"+channelID+ "/feeds.json?api_key=" + READ_KEY;
     private RecyclerView recyclerView;
-    private static ArrayList<String> graphView;
-    private List<Double> temp=new ArrayList<>();
-    private List<Double> umid=new ArrayList<>();
-    private List<Double> ph=new ArrayList<>();
-    private List<Double> cond=new ArrayList<>();
-    private List<Double> irra=new ArrayList<>();
-    private List<Double> po=new ArrayList<>();
+    private static ArrayList<String> fieldslist;
+    private static ArrayList<Integer> position;
+    private List<Double> fields1=new ArrayList<>();
+    private List<Double> fields2=new ArrayList<>();
+    private List<Double> fields3=new ArrayList<>();
+    private List<Double> fields4=new ArrayList<>();
+    private List<Double> fields5=new ArrayList<>();
+    private List<Double> fields6=new ArrayList<>();
+    private List<Double> fields7=new ArrayList<>();
+    private List<Double> fields8=new ArrayList<>();
     private Context context=this;
 
     final List<String> created=new ArrayList<>();
     private List<ModelData> Insertdata=new ArrayList<>();
 
-    public static void setGrapView(ArrayList<String> gra,String id,String key){
-        graphView=gra;
+    public static void setGrapView(ArrayList<String> gra,ArrayList<Integer> pos,String id,String key){
+        //lista contenente i nomi di tutti i fields da stampare
+        fieldslist=gra;
+        position=pos;
         url="https://api.thingspeak.com/channels/"+id+ "/feeds.json?api_key=" + key+"&results=8000";
         channelID=id;
         READ_KEY=key;
@@ -63,10 +68,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.graphic_activity_main);
 
         recyclerView = findViewById(R.id.recyclerview);
-
         getJsonResponse(url);
-
-
     }
 
     private void getJsonResponse(String url) {
@@ -90,34 +92,45 @@ public class MainActivity extends AppCompatActivity {
 
                                 //salvo i valori contenuti nei field1 di tipo double
                                 if(!value.getString("field1").equals("") && !value.getString("field1").equals("null"))
-                                    temp.add(Double.parseDouble(value.getString("field1")));
+                                    fields1.add(Double.parseDouble(value.getString("field1")));
 
                                 if(!value.getString("field2").equals("") && !value.getString("field2").equals("null"))
-                                     umid.add(Double.parseDouble(value.getString("field2")));
+                                     fields2.add(Double.parseDouble(value.getString("field2")));
 
                                 if(!value.getString("field3").equals("") && !value.getString("field3").equals("null"))
-                                    ph.add(Double.parseDouble(value.getString("field3")));
+                                    fields3.add(Double.parseDouble(value.getString("field3")));
 
                                 if(!value.getString("field4").equals("") && !value.getString("field4").equals("null"))
-                                    cond.add(Double.parseDouble(value.getString("field4")));
+                                    fields4.add(Double.parseDouble(value.getString("field4")));
 
                                 if(!value.getString("field5").equals("") && !value.getString("field5").equals("null"))
-                                    irra.add(Double.parseDouble(value.getString("field5")));
+                                    fields5.add(Double.parseDouble(value.getString("field5")));
 
                                 if(!value.getString("field6").equals("") && !value.getString("field6").equals("null"))
-                                    po.add(Double.parseDouble(value.getString("field6")));
+                                    fields6.add(Double.parseDouble(value.getString("field6")));
+
+                                if(!value.getString("field7").equals("") && !value.getString("field7").equals("null"))
+                                    fields7.add(Double.parseDouble(value.getString("field7")));
+
+                                if(!value.getString("field8").equals("") && !value.getString("field8").equals("null"))
+                                    fields8.add(Double.parseDouble(value.getString("field8")));
 
                                 created.add(value.getString("created_at"));
 
                             }
 
-                            for (int i = 0; i < graphView.size(); i++) {
-                                if(graphView.get(i).equals("temperature"))  makegraph("temperature",temp);
-                                if(graphView.get(i).equals("ph"))  makegraph("ph",ph);
-                                if(graphView.get(i).equals("umidità"))  makegraph("umidità",umid);
-                                if(graphView.get(i).equals("conducibilità elettrica"))  makegraph("conducibilità elettrica",cond);
-                                if(graphView.get(i).equals("irradianza"))  makegraph("irradianza",irra);
-                                if(graphView.get(i).equals("peso"))  makegraph("peso",po);
+                            stampa();
+
+                            for (int i = 0; i < fieldslist.size(); i++) {
+                                String posfil="fields".concat(""+position.get(i));
+                                if(posfil.equals("fields0")) makegraph(fieldslist.get(i),fields1);
+                                if(posfil.equals("fields1")) makegraph(fieldslist.get(i),fields2);
+                                if(posfil.equals("fields2")) makegraph(fieldslist.get(i),fields3);
+                                if(posfil.equals("fields3")) makegraph(fieldslist.get(i),fields4);
+                                if(posfil.equals("fields4")) makegraph(fieldslist.get(i),fields5);
+                                if(posfil.equals("fields5")) makegraph(fieldslist.get(i),fields6);
+                                if(posfil.equals("fields6")) makegraph(fieldslist.get(i),fields7);
+                                if(posfil.equals("fields7")) makegraph(fieldslist.get(i),fields8);
                             }
 
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
@@ -178,5 +191,15 @@ public class MainActivity extends AppCompatActivity {
         public static Intent getActivityintent(Context context){
         Intent intent=new Intent(context, MainActivity.class);
         return intent;
+    }
+
+    public static void stampa() {
+        for (int i = 0; i < fieldslist.size(); i++) {
+            System.out.println(i + ": " + fieldslist.get(i));
+        }
+
+        for (int i = 0; i < position.size(); i++) {
+            System.out.println(i + ": " + position.get(i));
+        }
     }
 }

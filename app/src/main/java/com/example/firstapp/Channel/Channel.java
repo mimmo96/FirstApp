@@ -17,12 +17,19 @@ public class Channel {
 
     @ColumnInfo(name = "position_key")
     private int position=0;
-    private String filed1;
-    private String filed2;
-    private String filed3;
-    private String filed4;
-    private String fild5;
-    private String field6;
+    private String filed1=null;
+    private String filed2=null;
+    private String filed3=null;
+    private String filed4=null;
+    private String filed5=null;
+    private String filed6=null;
+    private String filed7=null;
+    private String filed8=null;
+
+    public Channel(String id, String read_key) {
+        this.id = id;
+        this.read_key=read_key;
+    }
 
     public String getFiled1() {
         return filed1;
@@ -56,25 +63,36 @@ public class Channel {
         this.filed4 = filed4;
     }
 
-    public String getFild5() {
-        return fild5;
+    public String getFiled5() {
+        return filed5;
     }
 
-    public void setFild5(String fild5) {
-        this.fild5 = fild5;
+    public void setFiled5(String fild5) {
+        this.filed5 = fild5;
     }
 
-    public String getField6() {
-        return field6;
+    public String getFiled6() {
+        return filed6;
     }
 
-    public void setField6(String field6) {
-        this.field6 = field6;
+    public void setFiled6(String filed6) {
+        this.filed6 = filed6;
     }
 
-    public Channel(String id, String read_key) {
-        this.id = id;
-        this.read_key=read_key;
+    public String getFiled7() {
+        return filed7;
+    }
+
+    public void setFiled7(String filed7) {
+        this.filed7 = filed7;
+    }
+
+    public String getFiled8() {
+        return filed8;
+    }
+
+    public void setFiled8(String filed8) {
+        this.filed8 = filed8;
     }
 
     public int getUid() {

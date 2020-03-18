@@ -13,7 +13,6 @@ public interface ChannelDao {
     @Query("SELECT * FROM channel")
     List<Channel> getAll();
 
-
     @Query("SELECT * FROM channel WHERE id_key LIKE :first AND "
             + "read_key LIKE :last LIMIT 1")
     Channel findByName(String first, String last);

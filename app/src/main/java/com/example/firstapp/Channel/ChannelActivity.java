@@ -95,9 +95,11 @@ public class ChannelActivity  extends AppCompatActivity {
                                             public void onClick(DialogInterface dialog, int which) {
                                                 //controllo se i parametri inseriti sono corretti
                                                 DEFAULT_ID = taskEditText.getText().toString();
-                                                DEFAULT_READ_KEY = taskEditText2.toString();
+                                                DEFAULT_READ_KEY = taskEditText2.getText().toString();
                                                 //controllo se i dati inseriti corrispondono ad un channel
                                                 if (testData(DEFAULT_ID, DEFAULT_READ_KEY)) {
+                                                    //comunico il database aggiornato al thread
+                                                    MyTimerTask.updateDatabase(db);
                                                     Toast.makeText(BasicContext, "operazione eseguita correttamente!", Toast.LENGTH_SHORT).show();
                                                     //segnalo al thread principale i nuovi id,key
                                                     if(pos==-1) pos=0;
