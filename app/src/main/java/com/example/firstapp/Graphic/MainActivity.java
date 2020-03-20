@@ -48,9 +48,16 @@ public class MainActivity extends AppCompatActivity {
     private List<Double> fields6=new ArrayList<>();
     private List<Double> fields7=new ArrayList<>();
     private List<Double> fields8=new ArrayList<>();
+    private List<String> date_fields1=new ArrayList<>();
+    private List<String> date_fields2=new ArrayList<>();
+    private List<String> date_fields3=new ArrayList<>();
+    private List<String> date_fields4=new ArrayList<>();
+    private List<String> date_fields5=new ArrayList<>();
+    private List<String> date_fields6=new ArrayList<>();
+    private List<String> date_fields7=new ArrayList<>();
+    private List<String> date_fields8=new ArrayList<>();
     private Context context=this;
 
-    final List<String> created=new ArrayList<>();
     private List<ModelData> Insertdata=new ArrayList<>();
 
     public static void setGrapView(ArrayList<String> gra,ArrayList<Integer> pos,String id,String key){
@@ -91,46 +98,63 @@ public class MainActivity extends AppCompatActivity {
                                 final JSONObject value = jsonArray.getJSONObject(i);
 
                                 //salvo i valori contenuti nei field1 di tipo double
-                                if(!value.getString("field1").equals("") && !value.getString("field1").equals("null"))
+                                if (!value.getString("field1").equals("") && !value.getString("field1").equals("null")) {
                                     fields1.add(Double.parseDouble(value.getString("field1")));
+                                    date_fields1.add(value.getString("created_at"));
+                                }
 
-                                if(!value.getString("field2").equals("") && !value.getString("field2").equals("null"))
-                                     fields2.add(Double.parseDouble(value.getString("field2")));
+                                if (!value.getString("field2").equals("") && !value.getString("field2").equals("null")) {
+                                    fields2.add(Double.parseDouble(value.getString("field2")));
+                                    date_fields2.add(value.getString("created_at"));
+                                }
 
-                                if(!value.getString("field3").equals("") && !value.getString("field3").equals("null"))
+                                if (!value.getString("field3").equals("") && !value.getString("field3").equals("null")){
                                     fields3.add(Double.parseDouble(value.getString("field3")));
+                                    date_fields3.add(value.getString("created_at"));
+                                }
 
-                                if(!value.getString("field4").equals("") && !value.getString("field4").equals("null"))
+                                if(!value.getString("field4").equals("") && !value.getString("field4").equals("null")) {
                                     fields4.add(Double.parseDouble(value.getString("field4")));
+                                    date_fields4.add(value.getString("created_at"));
+                                }
 
-                                if(!value.getString("field5").equals("") && !value.getString("field5").equals("null"))
+                                if(!value.getString("field5").equals("") && !value.getString("field5").equals("null")){
                                     fields5.add(Double.parseDouble(value.getString("field5")));
+                                    date_fields5.add(value.getString("created_at"));
+                                }
 
-                                if(!value.getString("field6").equals("") && !value.getString("field6").equals("null"))
+                                if(!value.getString("field6").equals("") && !value.getString("field6").equals("null")){
                                     fields6.add(Double.parseDouble(value.getString("field6")));
+                                    date_fields6.add(value.getString("created_at"));
+                                }
 
-                                if(!value.getString("field7").equals("") && !value.getString("field7").equals("null"))
+                                if(!value.getString("field7").equals("") && !value.getString("field7").equals("null")){
                                     fields7.add(Double.parseDouble(value.getString("field7")));
+                                    date_fields7.add(value.getString("created_at"));
+                                }
 
-                                if(!value.getString("field8").equals("") && !value.getString("field8").equals("null"))
+                                if(!value.getString("field8").equals("") && !value.getString("field8").equals("null")){
                                     fields8.add(Double.parseDouble(value.getString("field8")));
-
-                                created.add(value.getString("created_at"));
+                                    date_fields8.add(value.getString("created_at"));
+                                }
 
                             }
 
-                            stampa();
+                            //stampa();
 
-                            for (int i = 0; i < fieldslist.size(); i++) {
-                                String posfil="fields".concat(""+position.get(i));
-                                if(posfil.equals("fields0")) makegraph(fieldslist.get(i),fields1);
-                                if(posfil.equals("fields1")) makegraph(fieldslist.get(i),fields2);
-                                if(posfil.equals("fields2")) makegraph(fieldslist.get(i),fields3);
-                                if(posfil.equals("fields3")) makegraph(fieldslist.get(i),fields4);
-                                if(posfil.equals("fields4")) makegraph(fieldslist.get(i),fields5);
-                                if(posfil.equals("fields5")) makegraph(fieldslist.get(i),fields6);
-                                if(posfil.equals("fields6")) makegraph(fieldslist.get(i),fields7);
-                                if(posfil.equals("fields7")) makegraph(fieldslist.get(i),fields8);
+                            for (int i = 0; i < position.size(); i++) {
+                                int pos=position.get(i);
+                                String posfil="fields".concat(""+pos);
+
+                                if(posfil.equals("fields0"))makegraph(fieldslist.get(i),fields1,date_fields1);
+                                if(posfil.equals("fields1"))makegraph(fieldslist.get(i),fields2,date_fields2);
+                                if(posfil.equals("fields2"))makegraph(fieldslist.get(i),fields3,date_fields3);
+                                if(posfil.equals("fields3"))makegraph(fieldslist.get(i),fields4,date_fields4);
+                                if(posfil.equals("fields4"))makegraph(fieldslist.get(i),fields5,date_fields5);
+                                if(posfil.equals("fields5"))makegraph(fieldslist.get(i),fields6,date_fields6);
+                                if(posfil.equals("fields6"))makegraph(fieldslist.get(i),fields7,date_fields7);
+                                if(posfil.equals("fields7"))makegraph(fieldslist.get(i),fields8,date_fields8);
+
                             }
 
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
@@ -155,13 +179,13 @@ public class MainActivity extends AppCompatActivity {
         Volley.newRequestQueue(getApplicationContext()).add(jsonObjectRequest);
     }
 
-    private void makegraph(String name, List<Double> list) {
+    private void makegraph(String name, List<Double> list,List<String> created) {
 
-        DataPoint[] data = new DataPoint[list.size()];
+        DataPoint[] data = new DataPoint[created.size()];
 
         Calendar date_value = Calendar.getInstance();
 
-        for (int i = 0; i < list.size(); i++) {
+        for (int i = 0; i < created.size(); i++) {
             String data_creazione = created.get(i);
 
             int giorno = Integer.valueOf(data_creazione.substring(8, 10));

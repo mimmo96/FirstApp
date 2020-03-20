@@ -51,9 +51,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         ModelData user = data.get(position);
         holder.text.setText(user.getName());
         holder.series=user.getSeries();
+        final LineGraphSeries<DataPoint> series=holder.series;
         final GraphView graph= holder.graph;
-        holder.series.setDrawDataPoints(true);
-        holder.series.setDataPointsRadius(5);
+        series.setDrawDataPoints(true);
+        series.setDataPointsRadius(5);
         final SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy HH:mm");
         graph.addSeries(holder.series);
 
@@ -69,7 +70,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 }
         });
 
-        holder.series.setOnDataPointTapListener(new OnDataPointTapListener() {
+        series.setOnDataPointTapListener(new OnDataPointTapListener() {
             @Override
             public void onTap(Series series, DataPointInterface dataPoint) {
                 Date dat=new Date((long) dataPoint.getX());
@@ -95,13 +96,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             }
         });
 
-        //azione da fare quando tocco sul cardview
-        holder.touch_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-             //   Toast.makeText(context, /*message*/"Position: " + position, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     //restituire la dimensione della lista
