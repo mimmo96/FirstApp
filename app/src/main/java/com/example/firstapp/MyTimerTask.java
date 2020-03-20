@@ -89,18 +89,18 @@ public class MyTimerTask extends TimerTask {
                                 }
 
 
-                              //  stampa();
+                              // stampa();
                                 //recupero il canale e lo cancello, dopo aver settato i valori lo reinserisco
                                 Channel v=database.ChannelDao().findByName(channelID,READ_KEY);
                                 database.ChannelDao().delete(v);
-                                if(fields.get(0)!=null) v.setFiled1(fields.get(0));
-                                if(fields.get(1)!=null) v.setFiled2(fields.get(1));
-                                if(fields.get(2)!=null) v.setFiled3(fields.get(2));
-                                if(fields.get(3)!=null) v.setFiled4(fields.get(3));
-                                if(fields.get(4)!=null) v.setFiled5(fields.get(4));
-                                if(fields.get(5)!=null) v.setFiled6(fields.get(5));
-                                if(fields.get(6)!=null) v.setFiled7(fields.get(6));
-                                if(fields.get(7)!=null) v.setFiled8(fields.get(7));
+                                if (fields.get(0) != null) v.setFiled1(fields.get(0));
+                                if (fields.get(1) != null) v.setFiled2(fields.get(1));
+                                if (fields.get(2) != null) v.setFiled3(fields.get(2));
+                                if (fields.get(3) != null) v.setFiled4(fields.get(3));
+                                if (fields.get(4) != null) v.setFiled5(fields.get(4));
+                                if (fields.get(5) != null) v.setFiled6(fields.get(5));
+                                if (fields.get(6) != null) v.setFiled7(fields.get(6));
+                                if (fields.get(7) != null) v.setFiled8(fields.get(7));
                                 database.ChannelDao().insert(v);
 
                                 //scorro tutto l'array e stampo a schermo il valore di field1
@@ -201,7 +201,7 @@ public class MyTimerTask extends TimerTask {
         System.out.println("FINE");
 
         List <savedValues> arrayList1 = database.SavedDao().getAll();
-        System.out.println("stampo il database cannel");
+        System.out.println("stampo il database saved");
         for(int i=0;i<arrayList1.size();i++) System.out.println(arrayList1.get(i).getId() +" --" + arrayList1.get(i).getPosition() +" --" + arrayList1.get(i).getKey() );
 
         System.out.println("FINE");

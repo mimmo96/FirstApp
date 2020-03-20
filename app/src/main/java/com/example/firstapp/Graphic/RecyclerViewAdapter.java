@@ -2,6 +2,8 @@ package com.example.firstapp.Graphic;
 
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +16,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.firstapp.R;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.OnDataPointTapListener;
+import com.jjoe64.graphview.series.Series;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -45,9 +51,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         ModelData user = data.get(position);
         holder.text.setText(user.getName());
         holder.series=user.getSeries();
-        GraphView graph= holder.graph;
+        final GraphView graph= holder.graph;
+        holder.series.setDrawDataPoints(true);
+        holder.series.setDataPointsRadius(5);
         final SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy HH:mm");
         graph.addSeries(holder.series);
+
+
         //setto la data come valore da mostrare
         graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
                 @Override
@@ -55,17 +65,36 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                    if(isValueX){
                        return sdf.format(new Date((long) value));
                    }
-                    return super.formatLabel(value,isValueX);
+                    else return super.formatLabel(value,isValueX);
                 }
         });
-        graph.getGridLabelRenderer().setNumHorizontalLabels(2);
-        graph.getGridLabelRenderer().setHorizontalLabelsVisible(true);
-        graph.getGridLabelRenderer().setHumanRounding(false);
-        graph.getViewport().setScalable(true);
-        graph.getViewport().setXAxisBoundsManual(true);
-        graph.getViewport().setYAxisBoundsManual(true);
 
-        graph.getViewport().setScrollableY(false);
+        holder.series.setOnDataPointTapListener(new OnDataPointTapListener() {
+            @Override
+            public void onTap(Series series, DataPointInterface dataPoint) {
+                Date dat=new Date((long) dataPoint.getX());
+                Toast.makeText(context,"x: " + sdf.format(dat) +"\ny: "+dataPoint.getY(),Toast.LENGTH_SHORT).show();
+            }
+        });
+        graph.getViewport().setScalable(true);
+        graph.getViewport().setScrollable(true);
+        graph.getViewport().setScrollableY(true);
+        Date xas=new Date((long) graph.getViewport().getMinX(true));
+        Date yas=new Date((long) graph.getViewport().getMaxX(true));
+        holder.start.setText(sdf.format(xas));
+        holder.end.setText(sdf.format(yas));
+        graph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
+        graph.getViewport().setOnXAxisBoundsChangedListener(new Viewport.OnXAxisBoundsChangedListener() {
+            @Override
+            public void onXAxisBoundsChanged(double minX, double maxX, Reason reason) {
+                graph.getGridLabelRenderer().invalidate(false,false);
+                Date xas=new Date((long) minX);
+                Date yas=new Date((long) maxX);
+                holder.start.setText(sdf.format(xas));
+                holder.end.setText(sdf.format(yas));
+            }
+        });
+
         //azione da fare quando tocco sul cardview
         holder.touch_layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,12 +117,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         private LineGraphSeries<DataPoint> series;
         private GraphView graph;
         private RelativeLayout touch_layout;
+        private TextView start;
+        private TextView end;
 
         public ViewHolder(View itemView) {
             super(itemView);
             text = itemView.findViewById(R.id.titleText);
             graph = itemView.findViewById(R.id.graph);
             touch_layout = itemView.findViewById(R.id.touch_layout);
+            start=itemView.findViewById(R.id.textViewstart);
+            end=itemView.findViewById(R.id.textViewend);
         }
     }
 }
