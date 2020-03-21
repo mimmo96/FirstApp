@@ -252,8 +252,12 @@
         android:id="@+id/imageView2"
         android:layout_width="52dp"
         android:layout_height="54dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginStart="37dp"
+        android:layout_marginTop="270dp"
         android:layout_marginEnd="295dp"
         android:layout_marginBottom="187dp"
         app:srcCompat="@drawable/peso" />
@@ -266,6 +270,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="0dp"
         android:layout_marginBottom="50dp"
+        android:onClick="notifiche"
         app:srcCompat="@drawable/attenzione" />
 
 </RelativeLayout>

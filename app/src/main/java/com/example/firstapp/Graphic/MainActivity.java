@@ -145,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
                             for (int i = 0; i < position.size(); i++) {
                                 int pos=position.get(i);
                                 String posfil="fields".concat(""+pos);
-
                                 if(posfil.equals("fields0"))makegraph(fieldslist.get(i),fields1,date_fields1);
                                 if(posfil.equals("fields1"))makegraph(fieldslist.get(i),fields2,date_fields2);
                                 if(posfil.equals("fields2"))makegraph(fieldslist.get(i),fields3,date_fields3);
@@ -154,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
                                 if(posfil.equals("fields5"))makegraph(fieldslist.get(i),fields6,date_fields6);
                                 if(posfil.equals("fields6"))makegraph(fieldslist.get(i),fields7,date_fields7);
                                 if(posfil.equals("fields7"))makegraph(fieldslist.get(i),fields8,date_fields8);
-
                             }
 
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);

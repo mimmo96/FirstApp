@@ -11,12 +11,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import com.example.firstapp.Channel.Channel;
 import com.example.firstapp.Channel.ChannelActivity;
 import com.example.firstapp.Channel.savedValues;
@@ -56,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
         textIrradianza = findViewById(R.id.textIrradiance);
         textPeso = findViewById(R.id.textPeso);
         textStato = findViewById(R.id.textViewON);
-
         testo1 = findViewById(R.id.textView1);
         cont = getApplicationContext();
 
@@ -100,8 +97,6 @@ public class MainActivity extends AppCompatActivity {
                 url = null;
                 ChannelActivity.setPosition(-1);
             }
-
-
         }
     }
 
@@ -183,6 +178,11 @@ public class MainActivity extends AppCompatActivity {
     public void settingChannel(View v) {
         Intent intent = ChannelActivity.getActivityintent(MainActivity.this);
         startActivity(intent);
+    }
+
+    //azione che devo eseguirequando premo il puksante attenzione
+    public void notifiche(View v) {
+        Toast.makeText(cont,"da implementare", Toast.LENGTH_SHORT).show();
     }
 
     public static void setDefaultSetting(String id, String key, int pos) {
