@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import com.example.firstapp.Alert.AlertActivity;
 import com.example.firstapp.Channel.Channel;
 import com.example.firstapp.Channel.ChannelActivity;
 import com.example.firstapp.Channel.savedValues;
@@ -112,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         //lista che mi salva il nome di tutti gli elementi selezionati
         final ArrayList<String> name = new ArrayList<String>();
 
-        Channel inUse=database.ChannelDao().findByName(channelID,READ_KEY);
+        Channel inUse = database.ChannelDao().findByName(channelID, READ_KEY);
         System.out.println("ho premuto:" + inUse.getFiled1());
         if (inUse.getFiled1() != null) list.add(inUse.getFiled1());
         if (inUse.getFiled2() != null) list.add(inUse.getFiled2());
@@ -147,8 +149,10 @@ public class MainActivity extends AppCompatActivity {
         mBuilder.setPositiveButton("VISUALIZZA", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
-                if(list.size()==0) Toast.makeText(cont,"INSERISCI UN CHANNEL!",Toast.LENGTH_SHORT).show();
-                else if(name.size()==0) Toast.makeText(cont,"NESSUN GRAFICO SELEZIONATO!",Toast.LENGTH_SHORT).show();
+                if (list.size() == 0)
+                    Toast.makeText(cont, "INSERISCI UN CHANNEL!", Toast.LENGTH_SHORT).show();
+                else if (name.size() == 0)
+                    Toast.makeText(cont, "NESSUN GRAFICO SELEZIONATO!", Toast.LENGTH_SHORT).show();
                 else {
                     Intent intent = com.example.firstapp.Graphic.MainActivity.getActivityintent(MainActivity.this);
                     com.example.firstapp.Graphic.MainActivity.setGrapView(name, mUserItems, channelID, READ_KEY);
@@ -182,7 +186,8 @@ public class MainActivity extends AppCompatActivity {
 
     //azione che devo eseguirequando premo il puksante attenzione
     public void notifiche(View v) {
-        Toast.makeText(cont,"da implementare", Toast.LENGTH_SHORT).show();
+        Intent intent = AlertActivity.getActivityintent(MainActivity.this);
+        startActivity(intent);
     }
 
     public static void setDefaultSetting(String id, String key, int pos) {
@@ -249,18 +254,20 @@ public class MainActivity extends AppCompatActivity {
 
         List<Channel> arrayList = database.ChannelDao().getAll();
         System.out.println("stampo il database cannel");
-        for(int i=0;i<arrayList.size();i++) System.out.println(arrayList.get(i).getId() +" --" + arrayList.get(i).getFiled1() +" --" + arrayList.get(i).getRead_key() );
+        for (int i = 0; i < arrayList.size(); i++)
+            System.out.println(arrayList.get(i).getId() + " --" + arrayList.get(i).getFiled1() + " --" + arrayList.get(i).getRead_key());
 
         System.out.println("FINE");
 
-        List <savedValues> arrayList1 = database.SavedDao().getAll();
+        List<savedValues> arrayList1 = database.SavedDao().getAll();
         System.out.println("stampo il database cannel");
-        for(int i=0;i<arrayList1.size();i++) System.out.println(arrayList1.get(i).getId() +" --" + arrayList1.get(i).getPosition() +" --" + arrayList1.get(i).getKey() );
+        for (int i = 0; i < arrayList1.size(); i++)
+            System.out.println(arrayList1.get(i).getId() + " --" + arrayList1.get(i).getPosition() + " --" + arrayList1.get(i).getKey());
 
         System.out.println("FINE");
-
 
 
     }
+
 }
 
