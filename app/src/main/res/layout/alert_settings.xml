@@ -7,56 +7,174 @@
     android:gravity="center"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context="Alert.MainActivity">
+    tools:context=".Alert.AlertActivity">
+
+    <TextView
+        android:id="@+id/textViewirra"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="24dp"
+        android:text="00.00"
+        app:layout_constraintEnd_toStartOf="@+id/imageConducibility"
+        app:layout_constraintTop_toTopOf="@+id/imageIrradiance" />
+
+    <TextView
+        android:id="@+id/textViewPes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="48dp"
+        android:text="00.00"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageViewPeso" />
+
+    <TextView
+        android:id="@+id/textViewcond"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:text="00.00"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewPeso"
+        app:layout_constraintTop_toTopOf="@+id/imageConducibility" />
+
+    <TextView
+        android:id="@+id/textViewPh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="48dp"
+        android:text="00.00"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imagePh" />
+
+    <TextView
+        android:id="@+id/textViewUmid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="36dp"
+        android:text="00.00"
+        app:layout_constraintBottom_toTopOf="@+id/textViewcond"
+        app:layout_constraintEnd_toStartOf="@+id/imagePh" />
+
+    <ImageView
+        android:id="@+id/imagePh"
+        android:layout_width="35dp"
+        android:layout_height="33dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/textViewPh"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ph" />
+
+    <ImageView
+        android:id="@+id/imageTemperature"
+        android:layout_width="37dp"
+        android:layout_height="37dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="24dp"
+        android:contentDescription="temperature"
+        app:layout_constraintEnd_toStartOf="@+id/textViewtemp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/temp" />
+
+    <ImageView
+        android:id="@+id/imageIrradiance"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/irradiance"
+        app:layout_constraintEnd_toStartOf="@+id/textViewirra"
+        app:layout_constraintTop_toBottomOf="@+id/imageTemperature" />
+
+    <ImageView
+        android:id="@+id/imageConducibility"
+        android:layout_width="33dp"
+        android:layout_height="32dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/textViewcond"
+        app:layout_constraintTop_toBottomOf="@+id/imageUminidy"
+        app:srcCompat="@drawable/cond" />
+
+    <ImageView
+        android:id="@+id/imageUminidy"
+        android:layout_width="32dp"
+        android:layout_height="31dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toStartOf="@+id/textViewUmid"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/umidity" />
+
+    <ImageView
+        android:id="@+id/imageViewPeso"
+        android:layout_width="33dp"
+        android:layout_height="29dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="12dp"
+        app:layout_constraintEnd_toStartOf="@+id/textViewPes"
+        app:layout_constraintTop_toBottomOf="@+id/imagePh"
+        app:srcCompat="@drawable/peso" />
 
     <EditText
         android:id="@+id/condmax"
         android:layout_width="68dp"
         android:layout_height="35dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="12dp"
         android:ems="10"
+        android:hint="0"
         android:inputType="number"
-        android:text="0"
         android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/irramax"
         app:layout_constraintStart_toEndOf="@+id/textView6"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.92" />
+        app:layout_constraintTop_toBottomOf="@+id/phmax" />
 
     <EditText
         android:id="@+id/irramax"
         android:layout_width="70dp"
         android:layout_height="35dp"
-        android:layout_marginStart="44dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="60dp"
         android:ems="10"
+        android:hint="0"
         android:inputType="number"
-        android:text="0"
         android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/pesomax"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.288"
-        app:layout_constraintStart_toEndOf="@+id/textView7" />
+        app:layout_constraintStart_toEndOf="@+id/textView7"
+        app:layout_constraintTop_toBottomOf="@+id/condmax" />
 
     <EditText
         android:id="@+id/pesomax"
         android:layout_width="73dp"
         android:layout_height="37dp"
-        android:layout_marginStart="68dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginStart="88dp"
         android:ems="10"
+        android:hint="0"
         android:inputType="number"
-        android:text="0"
         android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/button3"
-        app:layout_constraintStart_toEndOf="@+id/textView8" />
+        app:layout_constraintStart_toEndOf="@+id/textView8"
+        app:layout_constraintTop_toBottomOf="@+id/irramax" />
 
     <TextView
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:layout_marginEnd="56dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="60dp"
         android:text="Irradianza"
         app:layout_constraintEnd_toStartOf="@+id/pesomax"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -65,7 +183,7 @@
         android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="8dp"
         android:text="Peso"
         app:layout_constraintStart_toEndOf="@+id/button"
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
@@ -89,7 +207,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginBottom="24dp"
         android:onClick="stopService"
-        android:text="reset"
+        android:text="STOP"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -98,44 +216,44 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="52dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="16dp"
         android:text="Min"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/imageIrradiance" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="196dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="56dp"
         android:text="Max"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewPes" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="112dp"
+        android:layout_marginTop="56dp"
         android:text="Temperature"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintHorizontal_bias="0.511"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/imageConducibility" />
 
     <TextView
         android:id="@+id/textView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="20dp"
         android:text="Humidità"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.478"
+        app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
@@ -143,8 +261,8 @@
         android:id="@+id/textView5"
         android:layout_width="34dp"
         android:layout_height="18dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="76dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="60dp"
         android:text="ph"
         app:layout_constraintEnd_toStartOf="@+id/condmax"
         app:layout_constraintTop_toBottomOf="@+id/textView9" />
@@ -153,7 +271,7 @@
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="20dp"
         android:text="Conducibilità elettrica"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -163,11 +281,11 @@
         android:id="@+id/Tempmin"
         android:layout_width="67dp"
         android:layout_height="35dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="44dp"
         android:ems="10"
-        android:inputType="number"
-        android:text="0"
+        android:hint="0"
+        android:inputType="numberSigned|number|numberDecimal"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/textView3"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -176,11 +294,11 @@
         android:id="@+id/umidmin"
         android:layout_width="65dp"
         android:layout_height="36dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="48dp"
         android:ems="10"
-        android:inputType="number"
-        android:text="0"
+        android:hint="0"
+        android:inputType="numberSigned|number|numberDecimal"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/textView9"
         app:layout_constraintTop_toBottomOf="@+id/Tempmin" />
@@ -189,11 +307,10 @@
         android:id="@+id/phmin"
         android:layout_width="65dp"
         android:layout_height="35dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="52dp"
+        android:layout_marginEnd="76dp"
         android:ems="10"
-        android:inputType="number"
-        android:text="0"
+        android:hint="0"
+        android:inputType="numberSigned|number|numberDecimal"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/textView5"
         app:layout_constraintTop_toBottomOf="@+id/umidmin" />
@@ -202,24 +319,22 @@
         android:id="@+id/condmin"
         android:layout_width="65dp"
         android:layout_height="35dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="12dp"
         android:ems="10"
-        android:inputType="number"
-        android:text="0"
+        android:hint="0"
+        android:inputType="numberSigned|number|numberDecimal"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/textView6"
         app:layout_constraintTop_toBottomOf="@+id/phmin" />
 
     <EditText
         android:id="@+id/irramin"
-        android:layout_width="63dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="20dp"
+        android:layout_width="67dp"
+        android:layout_height="38dp"
         android:layout_marginEnd="40dp"
         android:ems="10"
-        android:inputType="number"
-        android:text="0"
+        android:hint="0"
+        android:inputType="numberSigned|number|numberDecimal"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/textView7"
         app:layout_constraintTop_toBottomOf="@+id/condmin" />
@@ -228,11 +343,10 @@
         android:id="@+id/pesomin"
         android:layout_width="69dp"
         android:layout_height="35dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="52dp"
+        android:layout_marginEnd="40dp"
         android:ems="10"
-        android:inputType="number"
-        android:text="0"
+        android:hint="0"
+        android:inputType="numberSigned|number|numberDecimal"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/textView8"
         app:layout_constraintTop_toBottomOf="@+id/irramin" />
@@ -242,10 +356,10 @@
         android:layout_width="71dp"
         android:layout_height="36dp"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:ems="10"
-        android:inputType="number"
-        android:text="0"
+        android:hint="0"
+        android:inputType="numberSigned|number|numberDecimal"
         android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@+id/textView3"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
@@ -255,25 +369,34 @@
         android:layout_width="73dp"
         android:layout_height="35dp"
         android:layout_marginStart="56dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="4dp"
         android:ems="10"
-        android:inputType="number"
-        android:text="0"
+        android:hint="0"
+        android:inputType="numberSigned|number|numberDecimal"
         android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/phmax"
-        app:layout_constraintStart_toEndOf="@+id/textView9" />
+        app:layout_constraintStart_toEndOf="@+id/textView9"
+        app:layout_constraintTop_toBottomOf="@+id/tempmax" />
 
     <EditText
         android:id="@+id/phmax"
         android:layout_width="70dp"
         android:layout_height="35dp"
-        android:layout_marginStart="76dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginStart="60dp"
         android:ems="10"
-        android:inputType="number"
-        android:text="0"
+        android:hint="0"
+        android:inputType="numberSigned|number|numberDecimal"
         android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/condmax"
-        app:layout_constraintStart_toEndOf="@+id/textView5" />
+        app:layout_constraintStart_toEndOf="@+id/textView5"
+        app:layout_constraintTop_toBottomOf="@+id/umidmax" />
+
+    <TextView
+        android:id="@+id/textViewtemp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="28dp"
+        android:text="00.00"
+        app:layout_constraintBottom_toTopOf="@+id/textViewirra"
+        app:layout_constraintEnd_toStartOf="@+id/imageUminidy" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

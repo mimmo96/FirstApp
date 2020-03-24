@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -35,8 +37,15 @@ public class AlertActivity extends AppCompatActivity {
     private EditText irraMax;
     private EditText pesMin;
     private EditText pesMax;
+    private TextView temp;
+    private TextView umid;
+    private TextView ph;
+    private TextView cond;
+    private TextView irra;
+    private TextView peso;
     private static MyTimerTask timerTask;
     private static Timer timer;
+    private static Boolean go=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +66,17 @@ public class AlertActivity extends AppCompatActivity {
         irraMax=findViewById(R.id.irramax);
         pesMin=findViewById(R.id.pesomin);
         pesMax=findViewById(R.id.pesomax);
+        temp=findViewById(R.id.textViewtemp);
+        umid=findViewById(R.id.textViewUmid);
+        ph=findViewById(R.id.textViewPh);
+        cond=findViewById(R.id.textViewcond);
+        irra=findViewById(R.id.textViewirra);
+        peso=findViewById(R.id.textViewPes);
+        Intent serviceIntent = new Intent(this, ExampleService.class);
+        ExampleService.setvalue(tempMin, tempMax, umidMin, umidMax, condMin, condMax,
+                phMin, phMax, irraMin, irraMax, pesMin, pesMax,temp,umid,ph,cond,irra,peso);
+        go = true;
+        ContextCompat.startForegroundService(this, serviceIntent);
     }
 
     public static Intent getActivityintent(Context context){
@@ -65,20 +85,25 @@ public class AlertActivity extends AppCompatActivity {
     }
 
     public void startService(View v) {
+        //se già non è stata avviata l'avvio ora
+        if(go) {
+            Intent serviceIntent = new Intent(this, ExampleService.class);
+            ExampleService.stoptimer();
+            stopService(serviceIntent);
+        }
 
         Intent serviceIntent = new Intent(this, ExampleService.class);
-        ExampleService.setvalue(tempMin,tempMax, umidMin, umidMax, condMin, condMax,
-                                phMin, phMax, irraMin, irraMax, pesMin , pesMax);
-
+        ExampleService.setvalue(tempMin, tempMax, umidMin, umidMax, condMin, condMax,
+                phMin, phMax, irraMin, irraMax, pesMin, pesMax,temp,umid,ph,cond,irra,peso);
+        go = true;
         ContextCompat.startForegroundService(this, serviceIntent);
     }
 
     //fatta quando richiamo il pulsante di stop
     public void stopService(View v) {
         Intent serviceIntent = new Intent(this, ExampleService.class);
+        ExampleService.stoptimer();
         stopService(serviceIntent);
-        timer.cancel();
-        timerTask.cancel();
     }
 
     public static void printnotify(String text,int i){

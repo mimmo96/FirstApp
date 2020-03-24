@@ -1,6 +1,7 @@
 package com.example.firstapp.Alert;
 
 
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -30,11 +31,19 @@ public class MyTimerTask extends TimerTask {
     private  Double irraMax;
     private  Double pesMin;
     private  Double pesMax;
+    private TextView temp;
+    private TextView umid;
+    private TextView ph;
+    private TextView cond;
+    private TextView irra;
+    private TextView peso;
+
     String url;
 
 
     public MyTimerTask(String url,Double tempMin,Double tempMax, Double umidMin, Double umidMax, Double condMin, Double condMax,
-                       Double phMin,Double phMax,Double irraMin,Double irraMax,Double pesMin ,Double pesMax) {
+                       Double phMin,Double phMax,Double irraMin,Double irraMax,Double pesMin ,Double pesMax,TextView temp,
+                       TextView umid, TextView ph, TextView cond, TextView irra, TextView peso) {
         this.tempMin=tempMin;
         this.tempMax=tempMax;
         this.umidMin=umidMin;
@@ -48,6 +57,12 @@ public class MyTimerTask extends TimerTask {
         this.pesMin=pesMin;
         this.pesMax=pesMax;
         this.url=url;
+        this.temp=temp;
+        this.umid=umid;
+        this.irra=irra;
+        this.peso=peso;
+        this.ph=ph;
+        this.cond=cond;
     }
 
     @Override
@@ -86,25 +101,61 @@ public class MyTimerTask extends TimerTask {
                                     //recupero il primo oggetto dell'array
                                     final JSONObject value = jsonArray.getJSONObject(i);
 
-                                    Double temperature = Double.parseDouble(value.getString("field1"));
-                                    Double umidity = Double.parseDouble(value.getString("field2"));
-                                    Double ph = Double.parseDouble(value.getString("field3"));
-                                    Double conducibilita = Double.parseDouble(value.getString("field4"));
-                                    Double irradianza = Double.parseDouble(value.getString("field5"));
-                                    Double peso = Double.parseDouble(value.getString("field6"));
+                                    String temperature = value.getString("field1");
+                                    String umidity = value.getString("field2");
+                                    String ph1 = value.getString("field3");
+                                    String conducibilita = value.getString("field4");
+                                    String irradianza = value.getString("field5");
+                                    String peso1 = value.getString("field6");
+                                    Double t=0.0;
+                                    Double u=0.0;
+                                    Double p=0.0;
+                                    Double c=0.0;
+                                    Double ir=0.0;
+                                    Double pe=0.0;
+                                    if(fields.get(0).equals("Temperature")){
+                                        t=Math.round(Double.parseDouble(String.format(temperature)) * 100.0) / 100.0;
+                                        temp.setText(String.valueOf(t));
+                                    }
+                                    else temp.setText("- -");
+                                    if(fields.get(1).equals("Humidity")){
+                                        u=Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0;
+                                        umid.setText(String.valueOf(u));
+                                    }
+                                    else umid.setText("- -");
+                                    if(fields.get(2).equals("pH_value")){
+                                        p=Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0;
+                                        ph.setText(String.valueOf(p));
+                                    }
+                                    else ph.setText("- -");
+                                    if(fields.get(3).equals("electric_conductivity")){
+                                        c=Math.round(Double.parseDouble(String.format(conducibilita)) * 100.0) / 100.0;
+                                        cond.setText(String.valueOf(c));
+                                    }
+                                    else cond.setText("- -");
+                                    if(fields.get(4).equals("Irradiance")){
+                                        ir=Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0;
+                                        irra.setText(String.valueOf(ir));
+                                    }
+                                    else irra.setText("- -");
+                                    if(fields.get(5).equals("P0")){
+                                        pe=Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0;
+                                        peso.setText(String.valueOf(pe).concat(" g"));
+                                    }
+                                    else peso.setText("- -");
 
-                                    if(temperature<tempMin) AlertActivity.printnotify("temperatura bassa!",1);
-                                    if(temperature>tempMax) AlertActivity.printnotify("temperatura alta!",2);
-                                    if(umidity<umidMin) AlertActivity.printnotify("umidità bassa!",3);
-                                    if(umidity>umidMax) AlertActivity.printnotify("umidità alta!",4);
-                                    if(conducibilita<condMin) AlertActivity.printnotify("conducibilità bassa!",5);
-                                    if(conducibilita>condMax) AlertActivity.printnotify("conducibilità alta!",6);
-                                    if(ph<phMin) AlertActivity.printnotify("ph basso!",7);
-                                    if(ph>phMax) AlertActivity.printnotify("ph alto!",8);
-                                    if(irradianza<irraMin) AlertActivity.printnotify("irradianza bassa!",9);
-                                    if(irradianza>irraMax) AlertActivity.printnotify("irradianza alta!",10);
-                                    if(peso<pesMin) AlertActivity.printnotify("peso basso!",11);
-                                    if(peso>pesMax) AlertActivity.printnotify("peso alto!",12);
+                                    if(t<tempMin && tempMin!=0.0) AlertActivity.printnotify("temperatura bassa!",1);
+                                    if(t>tempMax && tempMax!=0.0) AlertActivity.printnotify("temperatura alta!",2);
+                                    if(u<umidMin && umidMin!=0.0) AlertActivity.printnotify("umidità bassa!",3);
+                                    if(u>umidMax && umidMax!=0.0) AlertActivity.printnotify("umidità alta!",4);
+                                    if(c<condMin && condMin!=0.0) AlertActivity.printnotify("conducibilità bassa!",5);
+                                    if(c>condMax && condMax!=0.0) AlertActivity.printnotify("conducibilità alta!",6);
+                                    if(p<phMin && phMin!=0.0) AlertActivity.printnotify("ph basso!",7);
+                                    if(p>phMax && phMax!=0.0) AlertActivity.printnotify("ph alto!",8);
+                                    if(ir<irraMin && irraMin!=0.0) AlertActivity.printnotify("irradianza bassa!",9);
+                                    if(ir>irraMax && irraMax!=0.0) AlertActivity.printnotify("irradianza alta!",10);
+                                    if(pe<pesMin && pesMin!=0.0) AlertActivity.printnotify("peso basso!",11);
+                                    if(pe>pesMax && pesMax!=0.0) AlertActivity.printnotify("peso alto!",12);
 
                                 }
 
