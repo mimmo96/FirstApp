@@ -11,6 +11,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.firstapp.Channel.Channel;
+import com.example.firstapp.Channel.SavedDao;
 import com.example.firstapp.Channel.savedValues;
 
 import org.json.JSONArray;
@@ -88,19 +89,27 @@ public class MyTimerTask extends TimerTask {
 
                                 }
 
-
-                              // stampa();
+                                //stampa();
                                 //recupero il canale e lo cancello, dopo aver settato i valori lo reinserisco
                                 Channel v=database.ChannelDao().findByName(channelID,READ_KEY);
-                                database.ChannelDao().delete(v);
-                                if (fields.get(0) != null) v.setFiled1(fields.get(0));
-                                if (fields.get(1) != null) v.setFiled2(fields.get(1));
-                                if (fields.get(2) != null) v.setFiled3(fields.get(2));
-                                if (fields.get(3) != null) v.setFiled4(fields.get(3));
-                                if (fields.get(4) != null) v.setFiled5(fields.get(4));
-                                if (fields.get(5) != null) v.setFiled6(fields.get(5));
-                                if (fields.get(6) != null) v.setFiled7(fields.get(6));
-                                if (fields.get(7) != null) v.setFiled8(fields.get(7));
+                                if(v!=null) database.ChannelDao().delete(v);
+
+                                if (0<fields.size() && fields.get(0) != null) v.setFiled1(fields.get(0));
+                                else v.setFiled1(null);
+                                if (1<fields.size() && fields.get(1) != null) v.setFiled2(fields.get(1));
+                                else v.setFiled2(null);
+                                if (2<fields.size() && fields.get(2) != null) v.setFiled3(fields.get(2));
+                                else v.setFiled3(null);
+                                if (3<fields.size() && fields.get(3) != null) v.setFiled4(fields.get(3));
+                                else v.setFiled4(null);
+                                if (4<fields.size() && fields.get(4) != null) v.setFiled5(fields.get(4));
+                                else v.setFiled5(null);
+                                if (5<fields.size() && fields.get(5) != null) v.setFiled6(fields.get(5));
+                                else v.setFiled6(null);
+                                if (6<fields.size() && fields.get(6) != null) v.setFiled7(fields.get(6));
+                                else v.setFiled7(null);
+                                if (7<fields.size() && fields.get(7) != null) v.setFiled8(fields.get(7));
+                                else v.setFiled8(null);
                                 database.ChannelDao().insert(v);
 
                                 //scorro tutto l'array e stampo a schermo il valore di field1
@@ -196,7 +205,10 @@ public class MyTimerTask extends TimerTask {
 
         List<Channel> arrayList = database.ChannelDao().getAll();
         System.out.println("stampo il database cannel");
-        for(int i=0;i<arrayList.size();i++) System.out.println(arrayList.get(i).getId() +" --" + arrayList.get(i).getFiled1() +" --" + arrayList.get(i).getRead_key() );
+        for(int i=0;i<arrayList.size();i++) System.out.println(arrayList.get(i).getId() +" --" + arrayList.get(i).getFiled1() +" --" + arrayList.get(i).getFiled2()
+                +" --" + arrayList.get(i).getFiled3() +" --" + arrayList.get(i).getFiled4() +" --" + arrayList.get(i).getFiled5()
+                +" --" + arrayList.get(i).getFiled6()+" --" + arrayList.get(i).getFiled7()
+                +" --" + arrayList.get(i).getFiled8() +"--" + arrayList.get(i).getRead_key() );
 
         System.out.println("FINE");
 

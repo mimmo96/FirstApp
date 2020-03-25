@@ -98,45 +98,55 @@ public class MainActivity extends AppCompatActivity {
                                 final JSONObject value = jsonArray.getJSONObject(i);
 
                                 //salvo i valori contenuti nei field1 di tipo double
-                                if (!value.getString("field1").equals("") && !value.getString("field1").equals("null")) {
-                                    fields1.add(Double.parseDouble(value.getString("field1")));
-                                    date_fields1.add(value.getString("created_at"));
-                                }
+                                try {
+                                    if (!value.getString("field1").equals("") && !value.getString("field1").equals("null")) {
+                                        fields1.add(Double.parseDouble(value.getString("field1")));
+                                        date_fields1.add(value.getString("created_at"));
+                                    }
+                                }catch (Exception e){ }
+                                try {
+                                    if (!value.getString("field2").equals("") && !value.getString("field2").equals("null")) {
+                                        fields2.add(Double.parseDouble(value.getString("field2")));
+                                        date_fields2.add(value.getString("created_at"));
+                                    }
+                                }catch (Exception e){ }
+                                try {
+                                    if (!value.getString("field3").equals("") && !value.getString("field3").equals("null")) {
+                                        fields3.add(Double.parseDouble(value.getString("field3")));
+                                        date_fields3.add(value.getString("created_at"));
+                                    }
+                                }catch (Exception e){ }
+                                try {
+                                    if (!value.getString("field4").equals("") && !value.getString("field4").equals("null")) {
+                                        fields4.add(Double.parseDouble(value.getString("field4")));
+                                        date_fields4.add(value.getString("created_at"));
+                                    }
+                                }catch (Exception e){ }
+                                try{
+                                    if(!value.getString("field5").equals("") && !value.getString("field5").equals("null")){
+                                        fields5.add(Double.parseDouble(value.getString("field5")));
+                                        date_fields5.add(value.getString("created_at"));
+                                    }
+                                }catch (Exception e){ }
+                                try {
+                                    if (!value.getString("field6").equals("") && !value.getString("field6").equals("null")) {
+                                        fields6.add(Double.parseDouble(value.getString("field6")));
+                                        date_fields6.add(value.getString("created_at"));
+                                    }
+                                }catch (Exception e){ }
+                                try{
+                                    if(!value.getString("field7").equals("") && !value.getString("field7").equals("null")){
+                                        fields7.add(Double.parseDouble(value.getString("field7")));
+                                        date_fields7.add(value.getString("created_at"));
+                                    }
+                                }catch (Exception e){ }
 
-                                if (!value.getString("field2").equals("") && !value.getString("field2").equals("null")) {
-                                    fields2.add(Double.parseDouble(value.getString("field2")));
-                                    date_fields2.add(value.getString("created_at"));
+                                try{
+                                      if(!value.getString("field8").equals("") && !value.getString("field8").equals("null")){
+                                         fields8.add(Double.parseDouble(value.getString("field8")));
+                                          date_fields8.add(value.getString("created_at"));
                                 }
-
-                                if (!value.getString("field3").equals("") && !value.getString("field3").equals("null")){
-                                    fields3.add(Double.parseDouble(value.getString("field3")));
-                                    date_fields3.add(value.getString("created_at"));
-                                }
-
-                                if(!value.getString("field4").equals("") && !value.getString("field4").equals("null")) {
-                                    fields4.add(Double.parseDouble(value.getString("field4")));
-                                    date_fields4.add(value.getString("created_at"));
-                                }
-
-                                if(!value.getString("field5").equals("") && !value.getString("field5").equals("null")){
-                                    fields5.add(Double.parseDouble(value.getString("field5")));
-                                    date_fields5.add(value.getString("created_at"));
-                                }
-
-                                if(!value.getString("field6").equals("") && !value.getString("field6").equals("null")){
-                                    fields6.add(Double.parseDouble(value.getString("field6")));
-                                    date_fields6.add(value.getString("created_at"));
-                                }
-
-                                if(!value.getString("field7").equals("") && !value.getString("field7").equals("null")){
-                                    fields7.add(Double.parseDouble(value.getString("field7")));
-                                    date_fields7.add(value.getString("created_at"));
-                                }
-
-                                if(!value.getString("field8").equals("") && !value.getString("field8").equals("null")){
-                                    fields8.add(Double.parseDouble(value.getString("field8")));
-                                    date_fields8.add(value.getString("created_at"));
-                                }
+                                  }catch (Exception e){ }
 
                             }
 

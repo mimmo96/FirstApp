@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         final ArrayList<String> name = new ArrayList<String>();
 
         Channel inUse = database.ChannelDao().findByName(channelID, READ_KEY);
+
         System.out.println("ho premuto:" + inUse.getFiled1());
         if (inUse.getFiled1() != null) list.add(inUse.getFiled1());
         if (inUse.getFiled2() != null) list.add(inUse.getFiled2());
@@ -162,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //azione da svolgere quando premo sul pulsante cancella tutto
-        mBuilder.setNeutralButton("Cancella tutto", new DialogInterface.OnClickListener() {
+        mBuilder.setNeutralButton("ANNULLA", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
                 //elimino tutte le selezioni
