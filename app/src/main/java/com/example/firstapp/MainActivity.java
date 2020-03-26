@@ -21,6 +21,15 @@ import com.example.firstapp.Channel.Channel;
 import com.example.firstapp.Channel.ChannelActivity;
 import com.example.firstapp.Channel.savedValues;
 
+/*
+ * Progetto: svilluppo App Android per Tirocinio interno
+ *
+ * Dipartimento di Informatica Università di Pisa
+ *
+ * Autore:Domenico Profumo matricola 533695
+ * Si dichiara che il programma è in ogni sua parte, opera originale dell'autore
+ *
+ */
 
 public class MainActivity extends AppCompatActivity {
 
@@ -71,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             startTimer(cont);
         }
+
+        stampa();
     }
 
     private void BackupValues(Bundle savedInstanceState) {
@@ -167,60 +178,64 @@ public class MainActivity extends AppCompatActivity {
         listItems = list.toArray(new String[list.size()]);
         checkedItems = new boolean[list.size()];
 
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-        mBuilder.setTitle("Seleziona i tipi di grafici");
-        final ArrayList<Integer> selectedPos=new ArrayList<>();
-        final ArrayList<Channel> selChan=new ArrayList<>();
-        mBuilder.setMultiChoiceItems(listItems, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int position, boolean isChecked) {
-                //salvo la selezione
-                if (isChecked) {
-                   // mUserItems.add(position);
-                    name.add(list.get(position).substring(0,list.get(position).indexOf("(")));
-                    selectedPos.add(posField.get(position));
-                    selChan.add(selectedChannel.get(position));
-                } else {
-                   // mUserItems.remove((Integer.valueOf(position)));
-                    name.remove(list.get(position).substring(0,list.get(position).indexOf("(")));
-                    selectedPos.remove(posField.get(position));
-                    selChan.remove(selectedChannel.get(position));
+        if (list.size() == 0)
+            Toast.makeText(cont, "INSERISCI UN CHANNEL!", Toast.LENGTH_SHORT).show();
+        else {
+            AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+            mBuilder.setTitle("Seleziona i tipi di grafici");
+            final ArrayList<Integer> selectedPos=new ArrayList<>();
+            final ArrayList<Channel> selChan=new ArrayList<>();
+            mBuilder.setMultiChoiceItems(listItems, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int position, boolean isChecked) {
+                    //salvo la selezione
+                    if (isChecked) {
+                        // mUserItems.add(position);
+                        name.add(list.get(position).substring(0,list.get(position).indexOf("(")));
+                        selectedPos.add(posField.get(position));
+                        selChan.add(selectedChannel.get(position));
+                    } else {
+                        // mUserItems.remove((Integer.valueOf(position)));
+                        name.remove(list.get(position).substring(0,list.get(position).indexOf("(")));
+                        selectedPos.remove(posField.get(position));
+                        selChan.remove(selectedChannel.get(position));
+                    }
                 }
-            }
-        });
+            });
 
-        mBuilder.setCancelable(false);
-        //azione da svolgere quando premo sul pulsante visualizza
-        mBuilder.setPositiveButton("VISUALIZZA", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int which) {
-                if (list.size() == 0)
-                    Toast.makeText(cont, "INSERISCI UN CHANNEL!", Toast.LENGTH_SHORT).show();
-                else if (name.size() == 0)
-                    Toast.makeText(cont, "NESSUN GRAFICO SELEZIONATO!", Toast.LENGTH_SHORT).show();
-                else {
-                    Intent intent = com.example.firstapp.Graphic.MainActivity.getActivityintent(MainActivity.this);
-                    com.example.firstapp.Graphic.MainActivity.setGrapView(name, selChan,selectedPos);
-                    startActivity(intent);
+            mBuilder.setCancelable(false);
+            //azione da svolgere quando premo sul pulsante visualizza
+            mBuilder.setPositiveButton("VISUALIZZA", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int which) {
+
+                    if (name.size() == 0)
+                        Toast.makeText(cont, "NESSUN GRAFICO SELEZIONATO!", Toast.LENGTH_SHORT).show();
+                    else {
+                        Intent intent = com.example.firstapp.Graphic.MainActivity.getActivityintent(MainActivity.this);
+                        com.example.firstapp.Graphic.MainActivity.setGrapView(name, selChan,selectedPos);
+                        startActivity(intent);
+                    }
                 }
-            }
-        });
+            });
 
-        //azione da svolgere quando premo sul pulsante cancella tutto
-        mBuilder.setNeutralButton("ANNULLA", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int which) {
-                //elimino tutte le selezioni
-                for (int i = 0; i < checkedItems.length; i++) {
-                    checkedItems[i] = false;
-                    mUserItems.clear();
-                    name.clear();
+            //azione da svolgere quando premo sul pulsante cancella tutto
+            mBuilder.setNeutralButton("ANNULLA", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int which) {
+                    //elimino tutte le selezioni
+                    for (int i = 0; i < checkedItems.length; i++) {
+                        checkedItems[i] = false;
+                        mUserItems.clear();
+                        name.clear();
 
+                    }
                 }
-            }
-        });
-        AlertDialog mDialog = mBuilder.create();
-        mDialog.show();
+            });
+            AlertDialog mDialog = mBuilder.create();
+            mDialog.show();
+        }
+
     }
 
     //azione che devo eseguirequando premo il puksante impostazioni
@@ -305,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("FINE");
 
         List<savedValues> arrayList1 = database.SavedDao().getAll();
-        System.out.println("stampo il database cannel");
+        System.out.println("stampo channel default");
         for (int i = 0; i < arrayList1.size(); i++)
             System.out.println(arrayList1.get(i).getId() + " --" + arrayList1.get(i).getPosition() + " --" + arrayList1.get(i).getKey());
 

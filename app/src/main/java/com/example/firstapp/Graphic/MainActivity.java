@@ -25,6 +25,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+/*
+ * Progetto: svilluppo App Android per Tirocinio interno
+ *
+ * Dipartimento di Informatica Università di Pisa
+ *
+ * Autore:Domenico Profumo matricola 533695
+ * Si dichiara che il programma è in ogni sua parte, opera originale dell'autore
+ *
+ */
 
 public class MainActivity extends AppCompatActivity {
 
@@ -84,8 +93,6 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d("MainActivity", "download eseguito correttamente");
-                        Toast x= Toast.makeText(getApplicationContext(),"download eseguito correttamente",Toast.LENGTH_SHORT);
-                        x.show();
                         try {
                             //recupero l'array feeds
                             JSONArray jsonArray = response.getJSONArray("feeds");

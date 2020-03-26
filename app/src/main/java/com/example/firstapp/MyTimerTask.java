@@ -22,6 +22,15 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimerTask;
 
+/*
+ * Progetto: svilluppo App Android per Tirocinio interno
+ *
+ * Dipartimento di Informatica Università di Pisa
+ *
+ * Autore:Domenico Profumo matricola 533695
+ * Si dichiara che il programma è in ogni sua parte, opera originale dell'autore
+ *
+ */
 public class MyTimerTask extends TimerTask {
 
     TextView textTemp;

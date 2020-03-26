@@ -15,6 +15,16 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
+/*
+ * Progetto: svilluppo App Android per Tirocinio interno
+ *
+ * Dipartimento di Informatica Università di Pisa
+ *
+ * Autore:Domenico Profumo matricola 533695
+ * Si dichiara che il programma è in ogni sua parte, opera originale dell'autore
+ *
+ */
+
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVieworder> {
     private static int pos=0;
     private List<Channel> channel;

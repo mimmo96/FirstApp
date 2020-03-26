@@ -9,6 +9,15 @@ import com.example.firstapp.Channel.Channel;
 
 import java.util.List;
 
+/*
+ * Progetto: svilluppo App Android per Tirocinio interno
+ *
+ * Dipartimento di Informatica Università di Pisa
+ *
+ * Autore:Domenico Profumo matricola 533695
+ * Si dichiara che il programma è in ogni sua parte, opera originale dell'autore
+ *
+ */
 
 @Dao
 public interface SavedDao {

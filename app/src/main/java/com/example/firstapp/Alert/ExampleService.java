@@ -11,6 +11,16 @@ import androidx.annotation.Nullable;
 
 import java.util.Timer;
 
+/*
+ * Progetto: svilluppo App Android per Tirocinio interno
+ *
+ * Dipartimento di Informatica Università di Pisa
+ *
+ * Autore:Domenico Profumo matricola 533695
+ * Si dichiara che il programma è in ogni sua parte, opera originale dell'autore
+ *
+ */
+
 public class ExampleService extends Service {
 
     private static Notification notification;
@@ -49,9 +59,9 @@ public class ExampleService extends Service {
                 phMin, phMax, irraMin, irraMax, pesMin , pesMax, temp,
                 umid,  ph,  cond,  irra,  peso);
         timer = new Timer();
-        timer.scheduleAtFixedRate(timerTask, 0, 30000);
+        timer.scheduleAtFixedRate(timerTask, 0, 3000);
 
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     public static void setvalue(EditText tempMin1,EditText tempMax1,EditText umidMin1,EditText umidMax1,EditText condMin1,EditText condMax1,EditText phMin1,EditText phMax1,EditText irraMin1,

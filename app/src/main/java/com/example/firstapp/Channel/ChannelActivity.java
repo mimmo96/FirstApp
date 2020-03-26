@@ -20,13 +20,30 @@ import com.example.firstapp.MainActivity;
 import com.example.firstapp.MyTimerTask;
 import com.example.firstapp.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+
+/*
+ * Progetto: svilluppo App Android per Tirocinio interno
+ *
+ * Dipartimento di Informatica Università di Pisa
+ *
+ * Autore:Domenico Profumo matricola 533695
+ * Si dichiara che il programma è in ogni sua parte, opera originale dell'autore
+ *
+ */
 
 public class ChannelActivity  extends AppCompatActivity {
 
@@ -188,7 +205,11 @@ public class ChannelActivity  extends AppCompatActivity {
                     if(position-1<0){
                         setPosition(0);
                     }
-                    else pos=position-1;
+                    else{
+                        //se c'è almeno un canale rimasto metto quello come default
+                        if(channel.size()<2) setPosition(0);
+                        else pos=position-1;
+                    }
 
                     Channel nuovo=channel.get(pos);
                     MainActivity.setDefaultSetting(nuovo.getId(), nuovo.getRead_key(), position-1);
@@ -310,6 +331,58 @@ public class ChannelActivity  extends AppCompatActivity {
                     else  id = 0;
                     //cambiare getUid con READ_KEY
                     add.setUid(id + 1);
+
+                    //settare i fields qui appena inserisco il mio channel
+                    BufferedReader br = new BufferedReader(new InputStreamReader(
+                            (conn.getInputStream())));
+
+                    String JSON_DATA=br.readLine();
+                    JSONObject obj = new JSONObject(JSON_DATA);
+
+                        try {
+                           add.setFiled1(String.valueOf(obj.getJSONObject("channel").get("field1")));
+                        } catch (Exception e){
+                            add.setFiled1(null);
+                        }
+
+                        try {
+                            add.setFiled2(String.valueOf(obj.getJSONObject("channel").get("field2")));
+                        } catch (Exception e){
+                            add.setFiled2(null);
+                        }
+
+                        try {
+                          add.setFiled3(String.valueOf(obj.getJSONObject("channel").get("field3")));
+                        } catch (Exception e){
+                            add.setFiled3(null);
+                        }
+
+                        try {
+                            add.setFiled4(String.valueOf(obj.getJSONObject("channel").get("field4")));
+                        } catch (Exception e){
+                            add.setFiled4(null);
+                        }
+                        try {
+                           add.setFiled5(String.valueOf(obj.getJSONObject("channel").get("field5")));
+                        } catch (Exception e){
+                            add.setFiled5(null);
+                        }
+                        try {
+                            add.setFiled6(String.valueOf(obj.getJSONObject("channel").get("field6")));
+                        } catch (Exception e){
+                            add.setFiled6(null);
+                        }
+                        try {
+                          add.setFiled7(String.valueOf(obj.getJSONObject("channel").get("field7")));
+                        } catch (Exception e){
+                            add.setFiled7(null);
+                        }
+                        try {
+                            add.setFiled8(String.valueOf(obj.getJSONObject("channel").get("field8")));
+                        } catch (Exception e){
+                            add.setFiled8(null);
+                        }
+
                     db.ChannelDao().insert(add);
                     channel.add(add);
                     sharedQueue.put(true);
@@ -321,6 +394,4 @@ public class ChannelActivity  extends AppCompatActivity {
         }
 
     }
-
-
 }

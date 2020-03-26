@@ -193,7 +193,7 @@
         android:layout_width="119dp"
         android:layout_height="44dp"
         android:layout_marginBottom="24dp"
-        android:onClick="startService"
+        android:onClick="startButton"
         android:text="Start "
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -206,7 +206,7 @@
         android:layout_height="43dp"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="24dp"
-        android:onClick="stopService"
+        android:onClick="stopButton"
         android:text="STOP"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

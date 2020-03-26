@@ -1,6 +1,7 @@
 package com.example.firstapp.Alert;
 
 
+import android.content.Context;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +17,16 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.TimerTask;
+
+/*
+ * Progetto: svilluppo App Android per Tirocinio interno
+ *
+ * Dipartimento di Informatica Università di Pisa
+ *
+ * Autore:Domenico Profumo matricola 533695
+ * Si dichiara che il programma è in ogni sua parte, opera originale dell'autore
+ *
+ */
 
 public class MyTimerTask extends TimerTask {
 
@@ -37,6 +48,7 @@ public class MyTimerTask extends TimerTask {
     private TextView cond;
     private TextView irra;
     private TextView peso;
+    private static Context cont=AlertActivity.getContext();
 
     String url;
 
@@ -167,10 +179,10 @@ public class MyTimerTask extends TimerTask {
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(AlertActivity.getContext(),"errore download!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(cont,"errore download!",Toast.LENGTH_SHORT).show();
                 }
             });
-            Volley.newRequestQueue(AlertActivity.getContext()).add(jsonObjectRequest);
+            Volley.newRequestQueue(cont).add(jsonObjectRequest);
 
     }
 

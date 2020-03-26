@@ -20,6 +20,16 @@ import java.util.Timer;
 
 import static com.example.firstapp.Alert.App.CHANNEL_1_ID;
 
+/*
+ * Progetto: svilluppo App Android per Tirocinio interno
+ *
+ * Dipartimento di Informatica Università di Pisa
+ *
+ * Autore:Domenico Profumo matricola 533695
+ * Si dichiara che il programma è in ogni sua parte, opera originale dell'autore
+ *
+ */
+
 
 public class AlertActivity extends AppCompatActivity {
     private static NotificationManagerCompat notificationManager;
@@ -43,9 +53,9 @@ public class AlertActivity extends AppCompatActivity {
     private TextView cond;
     private TextView irra;
     private TextView peso;
-    private static MyTimerTask timerTask;
     private static Timer timer;
     private static Boolean go=false;
+    private static Intent serviceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,11 +82,8 @@ public class AlertActivity extends AppCompatActivity {
         cond=findViewById(R.id.textViewcond);
         irra=findViewById(R.id.textViewirra);
         peso=findViewById(R.id.textViewPes);
-        Intent serviceIntent = new Intent(this, ExampleService.class);
-        ExampleService.setvalue(tempMin, tempMax, umidMin, umidMax, condMin, condMax,
-                phMin, phMax, irraMin, irraMax, pesMin, pesMax,temp,umid,ph,cond,irra,peso);
-        go = true;
-        ContextCompat.startForegroundService(this, serviceIntent);
+        serviceIntent = new Intent(this, ExampleService.class);
+        startService();
     }
 
     public static Intent getActivityintent(Context context){
@@ -84,15 +91,20 @@ public class AlertActivity extends AppCompatActivity {
         return intent;
     }
 
-    public void startService(View v) {
-        //se già non è stata avviata l'avvio ora
-        if(go) {
-            Intent serviceIntent = new Intent(this, ExampleService.class);
-            ExampleService.stoptimer();
-            stopService(serviceIntent);
-        }
+    public void startButton(View v) {
+        startService();
+    }
 
-        Intent serviceIntent = new Intent(this, ExampleService.class);
+    public void stopButton(View v) {
+        stopService();
+    }
+
+    public void startService() {
+      //se era stata già avviata fermo la precedente
+        if(go) {
+            stopService();
+        }
+        //se già non è stata avviata l'avvio ora
         ExampleService.setvalue(tempMin, tempMax, umidMin, umidMax, condMin, condMax,
                 phMin, phMax, irraMin, irraMax, pesMin, pesMax,temp,umid,ph,cond,irra,peso);
         go = true;
@@ -100,8 +112,7 @@ public class AlertActivity extends AppCompatActivity {
     }
 
     //fatta quando richiamo il pulsante di stop
-    public void stopService(View v) {
-        Intent serviceIntent = new Intent(this, ExampleService.class);
+    public void stopService() {
         ExampleService.stoptimer();
         stopService(serviceIntent);
     }
@@ -124,11 +135,6 @@ public class AlertActivity extends AppCompatActivity {
 
     public static Context getContext(){
         return cont;
-    }
-
-    public static void setTimer(MyTimerTask myt,Timer tim){
-        timerTask=myt;
-        timer=tim;
     }
 
 

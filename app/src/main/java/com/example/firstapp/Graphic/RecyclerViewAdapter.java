@@ -2,17 +2,13 @@ package com.example.firstapp.Graphic;
 
 
 import android.content.Context;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.firstapp.R;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
@@ -22,10 +18,19 @@ import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.Series;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+/*
+ * Progetto: svilluppo App Android per Tirocinio interno
+ *
+ * Dipartimento di Informatica Università di Pisa
+ *
+ * Autore:Domenico Profumo matricola 533695
+ * Si dichiara che il programma è in ogni sua parte, opera originale dell'autore
+ *
+ */
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>
 {
@@ -79,7 +84,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         });
         graph.getViewport().setScalable(true);
         graph.getViewport().setScrollable(true);
-        graph.getViewport().setScrollableY(true);
         Date xas=new Date((long) graph.getViewport().getMinX(true));
         Date yas=new Date((long) graph.getViewport().getMaxX(true));
         holder.start.setText(sdf.format(xas));
