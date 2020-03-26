@@ -109,38 +109,82 @@ public class MainActivity extends AppCompatActivity {
 
         //lista che mi setta la posizione degli elementi selezionati
         final ArrayList<Integer> mUserItems = new ArrayList<>();
-        final ArrayList<String> list = new ArrayList<String>();
+        final ArrayList<String> list = new ArrayList<>();
+        final List<Channel> allchannel=database.ChannelDao().getAll();
+        //memorizza il channel
+        final List<Channel> selectedChannel=new ArrayList<>();
 
-        //lista che mi salva il nome di tutti gli elementi selezionati
-        final ArrayList<String> name = new ArrayList<String>();
+        //lista che mi salva il nome di tutti gli elementi selezionati e la posizione di essi
+        final ArrayList<String> name = new ArrayList<>();
+        final ArrayList<Integer> posField = new ArrayList<>();
 
-        Channel inUse = database.ChannelDao().findByName(channelID, READ_KEY);
-
-        System.out.println("ho premuto:" + inUse.getFiled1());
-        if (inUse.getFiled1() != null) list.add(inUse.getFiled1());
-        if (inUse.getFiled2() != null) list.add(inUse.getFiled2());
-        if (inUse.getFiled3() != null) list.add(inUse.getFiled3());
-        if (inUse.getFiled4() != null) list.add(inUse.getFiled4());
-        if (inUse.getFiled5() != null) list.add(inUse.getFiled5());
-        if (inUse.getFiled6() != null) list.add(inUse.getFiled6());
-        if (inUse.getFiled7() != null) list.add(inUse.getFiled7());
-        if (inUse.getFiled8() != null) list.add(inUse.getFiled8());
+        //scandisco tutti i channel per trovare il primo
+        for(int i=0;i<allchannel.size();i++) {
+            Channel inUse = allchannel.get(i);
+            System.out.println("ho premuto:" + inUse.getFiled1());
+            if (inUse.getFiled1() != null){
+                list.add(inUse.getFiled1().concat(" (id:").concat(inUse.getId()).concat(")"));
+                selectedChannel.add(inUse);
+                posField.add(1);
+            }
+            if (inUse.getFiled2() != null){
+                list.add(inUse.getFiled2().concat(" (id:").concat(inUse.getId()).concat(")"));
+                selectedChannel.add(inUse);
+                posField.add(2);
+            }
+            if (inUse.getFiled3() != null) {
+                list.add(inUse.getFiled3().concat(" (id:").concat(inUse.getId()).concat(")"));
+                selectedChannel.add(inUse);
+                posField.add(3);
+            }
+            if (inUse.getFiled4() != null){
+                list.add(inUse.getFiled4().concat(" (id:").concat(inUse.getId()).concat(")"));
+                selectedChannel.add(inUse);
+                posField.add(4);
+            }
+            if (inUse.getFiled5() != null){
+                list.add(inUse.getFiled5().concat(" (id:").concat(inUse.getId()).concat(")"));
+                selectedChannel.add(inUse);
+                posField.add(5);
+            }
+            if (inUse.getFiled6() != null){
+                list.add(inUse.getFiled6().concat(" (id:").concat(inUse.getId()).concat(")"));
+                selectedChannel.add(inUse);
+                posField.add(6);
+            }
+            if (inUse.getFiled7() != null){
+                list.add(inUse.getFiled7().concat(" (id:").concat(inUse.getId()).concat(")"));
+                selectedChannel.add(inUse);
+                posField.add(7);
+            }
+            if (inUse.getFiled8() != null){
+                list.add(inUse.getFiled8().concat(" (id:").concat(inUse.getId()).concat(")"));
+                selectedChannel.add(inUse);
+                posField.add(8);
+            }
+        }
 
         listItems = list.toArray(new String[list.size()]);
         checkedItems = new boolean[list.size()];
 
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
         mBuilder.setTitle("Seleziona i tipi di grafici");
+        final ArrayList<Integer> selectedPos=new ArrayList<>();
+        final ArrayList<Channel> selChan=new ArrayList<>();
         mBuilder.setMultiChoiceItems(listItems, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int position, boolean isChecked) {
                 //salvo la selezione
                 if (isChecked) {
-                    mUserItems.add(position);
-                    name.add(list.get(position));
+                   // mUserItems.add(position);
+                    name.add(list.get(position).substring(0,list.get(position).indexOf("(")));
+                    selectedPos.add(posField.get(position));
+                    selChan.add(selectedChannel.get(position));
                 } else {
-                    mUserItems.remove((Integer.valueOf(position)));
-                    name.remove(list.get(position));
+                   // mUserItems.remove((Integer.valueOf(position)));
+                    name.remove(list.get(position).substring(0,list.get(position).indexOf("(")));
+                    selectedPos.remove(posField.get(position));
+                    selChan.remove(selectedChannel.get(position));
                 }
             }
         });
@@ -156,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(cont, "NESSUN GRAFICO SELEZIONATO!", Toast.LENGTH_SHORT).show();
                 else {
                     Intent intent = com.example.firstapp.Graphic.MainActivity.getActivityintent(MainActivity.this);
-                    com.example.firstapp.Graphic.MainActivity.setGrapView(name, mUserItems, channelID, READ_KEY);
+                    com.example.firstapp.Graphic.MainActivity.setGrapView(name, selChan,selectedPos);
                     startActivity(intent);
                 }
             }

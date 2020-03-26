@@ -5,26 +5,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.firstapp.Channel.ChannelActivity;
+import com.example.firstapp.Channel.Channel;
 import com.example.firstapp.R;
-import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,8 +33,9 @@ public class MainActivity extends AppCompatActivity {
     private static String READ_KEY="KLEZNXOV7EPHHEUT";
     private static String url="https://api.thingspeak.com/channels/"+channelID+ "/feeds.json?api_key=" + READ_KEY;
     private RecyclerView recyclerView;
-    private static ArrayList<String> fieldslist;
+    private static ArrayList<String> nameFields;
     private static ArrayList<Integer> position;
+    private static List<Channel> channelPos;
     private List<Double> fields1=new ArrayList<>();
     private List<Double> fields2=new ArrayList<>();
     private List<Double> fields3=new ArrayList<>();
@@ -60,25 +56,27 @@ public class MainActivity extends AppCompatActivity {
 
     private List<ModelData> Insertdata=new ArrayList<>();
 
-    public static void setGrapView(ArrayList<String> gra,ArrayList<Integer> pos,String id,String key){
-        //lista contenente i nomi di tutti i fields da stampare
-        fieldslist=gra;
+    //gra contiene la lista dei nomi dei field, channel il canale ad esso associato con tutte le info e pos indica la posizione del filed nel canale
+    public static void setGrapView(ArrayList<String> nameList, List<Channel> channel, ArrayList<Integer> pos){
+        nameFields=nameList;
         position=pos;
-        url="https://api.thingspeak.com/channels/"+id+ "/feeds.json?api_key=" + key+"&results=8000";
-        channelID=id;
-        READ_KEY=key;
+        channelPos=channel;
+        position=pos;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.graphic_activity_main);
-
         recyclerView = findViewById(R.id.recyclerview);
-        getJsonResponse(url);
+
+        for(int i=0;i<channelPos.size();i++){
+            url="https://api.thingspeak.com/channels/"+channelPos.get(i).getId()+"/feeds.json?api_key="+channelPos.get(i).getRead_key()+"&results=8000";
+            getJsonResponse(url,i);
+        }
     }
 
-    private void getJsonResponse(String url) {
+    private void getJsonResponse(String url, final int i) {
 
         final JsonObjectRequest jsonObjectRequest;
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -91,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             //recupero l'array feeds
                             JSONArray jsonArray = response.getJSONArray("feeds");
+                            String posfil="fields".concat(""+position.get(i));
 
                             //scorro tutto l'array e stampo a schermo il valore di field1
                             for (int i = 0; i < jsonArray.length(); i++) {
@@ -99,71 +98,65 @@ public class MainActivity extends AppCompatActivity {
 
                                 //salvo i valori contenuti nei field1 di tipo double
                                 try {
-                                    if (!value.getString("field1").equals("") && !value.getString("field1").equals("null")) {
+                                    if (posfil.equals("fields1") && !value.getString("field1").equals("") && !value.getString("field1").equals("null")) {
                                         fields1.add(Double.parseDouble(value.getString("field1")));
                                         date_fields1.add(value.getString("created_at"));
                                     }
                                 }catch (Exception e){ }
                                 try {
-                                    if (!value.getString("field2").equals("") && !value.getString("field2").equals("null")) {
+                                    if (posfil.equals("fields2") && !value.getString("field2").equals("") && !value.getString("field2").equals("null")) {
                                         fields2.add(Double.parseDouble(value.getString("field2")));
                                         date_fields2.add(value.getString("created_at"));
                                     }
                                 }catch (Exception e){ }
                                 try {
-                                    if (!value.getString("field3").equals("") && !value.getString("field3").equals("null")) {
+                                    if (posfil.equals("fields3") && !value.getString("field3").equals("") && !value.getString("field3").equals("null")) {
                                         fields3.add(Double.parseDouble(value.getString("field3")));
                                         date_fields3.add(value.getString("created_at"));
                                     }
                                 }catch (Exception e){ }
                                 try {
-                                    if (!value.getString("field4").equals("") && !value.getString("field4").equals("null")) {
+                                    if (posfil.equals("fields4") && !value.getString("field4").equals("") && !value.getString("field4").equals("null")) {
                                         fields4.add(Double.parseDouble(value.getString("field4")));
                                         date_fields4.add(value.getString("created_at"));
                                     }
                                 }catch (Exception e){ }
                                 try{
-                                    if(!value.getString("field5").equals("") && !value.getString("field5").equals("null")){
+                                    if(posfil.equals("fields5") && !value.getString("field5").equals("") && !value.getString("field5").equals("null")){
                                         fields5.add(Double.parseDouble(value.getString("field5")));
                                         date_fields5.add(value.getString("created_at"));
                                     }
                                 }catch (Exception e){ }
                                 try {
-                                    if (!value.getString("field6").equals("") && !value.getString("field6").equals("null")) {
+                                    if (posfil.equals("fields6") && !value.getString("field6").equals("") && !value.getString("field6").equals("null")) {
                                         fields6.add(Double.parseDouble(value.getString("field6")));
                                         date_fields6.add(value.getString("created_at"));
                                     }
                                 }catch (Exception e){ }
                                 try{
-                                    if(!value.getString("field7").equals("") && !value.getString("field7").equals("null")){
+                                    if(posfil.equals("fields7") && !value.getString("field7").equals("") && !value.getString("field7").equals("null")){
                                         fields7.add(Double.parseDouble(value.getString("field7")));
                                         date_fields7.add(value.getString("created_at"));
                                     }
                                 }catch (Exception e){ }
 
                                 try{
-                                      if(!value.getString("field8").equals("") && !value.getString("field8").equals("null")){
+                                      if(posfil.equals("fields8") && !value.getString("field8").equals("") && !value.getString("field8").equals("null")){
                                          fields8.add(Double.parseDouble(value.getString("field8")));
                                           date_fields8.add(value.getString("created_at"));
                                 }
                                   }catch (Exception e){ }
-
                             }
 
-                            //stampa();
 
-                            for (int i = 0; i < position.size(); i++) {
-                                int pos=position.get(i);
-                                String posfil="fields".concat(""+pos);
-                                if(posfil.equals("fields0"))makegraph(fieldslist.get(i),fields1,date_fields1);
-                                if(posfil.equals("fields1"))makegraph(fieldslist.get(i),fields2,date_fields2);
-                                if(posfil.equals("fields2"))makegraph(fieldslist.get(i),fields3,date_fields3);
-                                if(posfil.equals("fields3"))makegraph(fieldslist.get(i),fields4,date_fields4);
-                                if(posfil.equals("fields4"))makegraph(fieldslist.get(i),fields5,date_fields5);
-                                if(posfil.equals("fields5"))makegraph(fieldslist.get(i),fields6,date_fields6);
-                                if(posfil.equals("fields6"))makegraph(fieldslist.get(i),fields7,date_fields7);
-                                if(posfil.equals("fields7"))makegraph(fieldslist.get(i),fields8,date_fields8);
-                            }
+                                if(posfil.equals("fields1"))makegraph(nameFields.get(i),fields1,date_fields1);
+                                if(posfil.equals("fields2"))makegraph(nameFields.get(i),fields2,date_fields2);
+                                if(posfil.equals("fields3"))makegraph(nameFields.get(i),fields3,date_fields3);
+                                if(posfil.equals("fields4"))makegraph(nameFields.get(i),fields4,date_fields4);
+                                if(posfil.equals("fields5"))makegraph(nameFields.get(i),fields5,date_fields5);
+                                if(posfil.equals("fields6"))makegraph(nameFields.get(i),fields6,date_fields6);
+                                if(posfil.equals("fields7"))makegraph(nameFields.get(i),fields7,date_fields7);
+                                if(posfil.equals("fields8"))makegraph(nameFields.get(i),fields8,date_fields8);
 
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                             recyclerView.setLayoutManager(linearLayoutManager);
@@ -184,7 +177,17 @@ public class MainActivity extends AppCompatActivity {
                 x.show();
             }
         });
+
         Volley.newRequestQueue(getApplicationContext()).add(jsonObjectRequest);
+        //libero tutta la memoria
+        fields1.clear();
+        fields2.clear();
+        fields3.clear();
+        fields4.clear();
+        fields5.clear();
+        fields7.clear();
+        fields6.clear();
+        fields8.clear();
     }
 
     private void makegraph(String name, List<Double> list,List<String> created) {
@@ -203,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
             int minuti = Integer.valueOf(data_creazione.substring(14, 16));
             int secondi = Integer.valueOf(data_creazione.substring(17, 19));
 
-
             date_value.set(Calendar.YEAR, anno);
             date_value.set(Calendar.MONTH, mese - 1);
             date_value.set(Calendar.DAY_OF_MONTH, giorno);
@@ -215,23 +217,29 @@ public class MainActivity extends AppCompatActivity {
 
         }
         series = new LineGraphSeries<>(data);
-
         Insertdata.add(new ModelData(name, series));
-
     }
 
         public static Intent getActivityintent(Context context){
-        Intent intent=new Intent(context, MainActivity.class);
-        return intent;
-    }
-
-    public static void stampa() {
-        for (int i = 0; i < fieldslist.size(); i++) {
-            System.out.println(i + ": " + fieldslist.get(i));
+            Intent intent=new Intent(context, MainActivity.class);
+            return intent;
         }
 
+    public static void stampa() {
+        System.out.println("Stampo lista nomi :");
+        for (int i = 0; i < nameFields.size(); i++) {
+            System.out.println(i + ": " + nameFields.get(i));
+        }
+        System.out.println("FINE");
+        System.out.println("Stampo lista posizioni :");
         for (int i = 0; i < position.size(); i++) {
             System.out.println(i + ": " + position.get(i));
         }
+        System.out.println("FINE");
+        System.out.println("Stampo lista channel :");
+        for (int i = 0; i < channelPos.size(); i++) {
+            System.out.println(i + ": " + channelPos.get(i).getId());
+        }
+        System.out.println("FINE");
     }
 }
