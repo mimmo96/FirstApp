@@ -33,7 +33,6 @@ import static com.example.firstapp.Alert.App.CHANNEL_1_ID;
 
 public class AlertActivity extends AppCompatActivity {
     private static NotificationManagerCompat notificationManager;
-    private EditText editTextinput;
     private static Context cont;
     private EditText tempMin;
     private EditText tempMax;
@@ -53,7 +52,7 @@ public class AlertActivity extends AppCompatActivity {
     private TextView cond;
     private TextView irra;
     private TextView peso;
-    private static Timer timer;
+    public static String url=null;
     private static Boolean go=false;
     private static Intent serviceIntent;
 
@@ -106,7 +105,7 @@ public class AlertActivity extends AppCompatActivity {
         }
         //se già non è stata avviata l'avvio ora
         ExampleService.setvalue(tempMin, tempMax, umidMin, umidMax, condMin, condMax,
-                phMin, phMax, irraMin, irraMax, pesMin, pesMax,temp,umid,ph,cond,irra,peso);
+                phMin, phMax, irraMin, irraMax, pesMin, pesMax,temp,umid,ph,cond,irra,peso,url);
         go = true;
         ContextCompat.startForegroundService(this, serviceIntent);
     }
@@ -115,6 +114,10 @@ public class AlertActivity extends AppCompatActivity {
     public void stopService() {
         ExampleService.stoptimer();
         stopService(serviceIntent);
+    }
+
+    public static void setUrl(String id,String key){
+        url = "https://api.thingspeak.com/channels/" + id + "/feeds.json?api_key=" + key + "&results=1";
     }
 
     public static void printnotify(String text,int i){

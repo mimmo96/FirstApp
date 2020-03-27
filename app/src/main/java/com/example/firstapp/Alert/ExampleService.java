@@ -2,6 +2,7 @@ package com.example.firstapp.Alert;
 
 import android.app.Notification;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.widget.EditText;
@@ -42,7 +43,7 @@ public class ExampleService extends Service {
     private static TextView cond;
     private static TextView irra;
     private static TextView peso;
-    public static String url="https://api.thingspeak.com/channels/816869/feeds.json?api_key=KLEZNXOV7EPHHEUT&results=1";
+    private static String url=null;
     private static MyTimerTask timerTask=null;
     private static Timer timer=null;
 
@@ -61,65 +62,66 @@ public class ExampleService extends Service {
         timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 0, 3000);
 
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     public static void setvalue(EditText tempMin1,EditText tempMax1,EditText umidMin1,EditText umidMax1,EditText condMin1,EditText condMax1,EditText phMin1,EditText phMax1,EditText irraMin1,
                                 EditText irraMax1,EditText pesMin1,EditText pesMax1,TextView temp1,
-                                TextView umid1, TextView ph1, TextView cond1, TextView irra1, TextView peso1){
+                                TextView umid1, TextView ph1, TextView cond1, TextView irra1, TextView peso1,String url1){
+        url=url1;
         try {
-        tempMin = new Double(tempMin1.getText().toString());
+        tempMin = Double.valueOf(tempMin1.getText().toString());
         } catch (NumberFormatException e) {
-            tempMin = 0.0; // your default value
+            tempMin = null;
         }
         try {
-            tempMax = new Double(tempMax1.getText().toString());
+            tempMax = Double.valueOf(tempMax1.getText().toString());
         } catch (NumberFormatException e) {
-            tempMax = 0.0; // your default value
+            tempMax = null;
         }
         try {
-            umidMin = new Double(umidMin1.getText().toString());
+            umidMin = Double.valueOf(umidMin1.getText().toString());
         } catch (NumberFormatException e) {
-            umidMin = 0.0; // your default value
+            umidMin= null;
         }
         try {
-            umidMax = new Double(umidMax1.getText().toString());
+            umidMax = Double.valueOf(umidMax1.getText().toString());
         } catch (NumberFormatException e) {
-            umidMax = 0.0; // your default value
+            umidMax = null;
         }
         try {
-            condMin = new Double(condMin1.getText().toString());
+            condMin = Double.valueOf(condMin1.getText().toString());
         } catch (NumberFormatException e) {
-            condMin = 0.0; // your default value
+            condMin = null;
         }
         try {
-            condMax = new Double(condMax1.getText().toString());
+            condMax = Double.valueOf(condMax1.getText().toString());
         } catch (NumberFormatException e) {
-            condMax = 0.0; // your default value
+            condMax = null;
         } try {
-            phMin = new Double(phMin1.getText().toString());
+            phMin = Double.valueOf(phMin1.getText().toString());
         } catch (NumberFormatException e) {
-            phMin = 0.0; // your default value
+            phMin = null;
         }try {
-            phMax = new Double(phMax1.getText().toString());
+            phMax = Double.valueOf(phMax1.getText().toString());
         } catch (NumberFormatException e) {
-            phMax = 0.0; // your default value
+            phMax = null;
         }try {
-            irraMin = new Double(irraMin1.getText().toString());
+            irraMin = Double.valueOf(irraMin1.getText().toString());
         } catch (NumberFormatException e) {
-            irraMin = 0.0; // your default value
+            irraMin = null;
         }try {
-            irraMax = new Double(irraMax1.getText().toString());
+            irraMax = Double.valueOf(irraMax1.getText().toString());
         } catch (NumberFormatException e) {
-            irraMax = 0.0; // your default value
+            irraMax = null;
         }try {
-            pesMin = new Double(pesMin1.getText().toString());
+            pesMin = Double.valueOf(pesMin1.getText().toString());
         } catch (NumberFormatException e) {
-            pesMin = 0.0; // your default value
+            pesMin = null;
         }try {
-            pesMax = new Double(pesMax1.getText().toString());
+            pesMax = Double.valueOf(pesMax1.getText().toString());
         } catch (NumberFormatException e) {
-            pesMax = 0.0; // your default value
+            pesMax = null;
         }
 
         temp=temp1;

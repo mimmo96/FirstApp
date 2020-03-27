@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             startTimer(cont);
         }
 
-        stampa();
+       // stampa();
     }
 
     private void BackupValues(Bundle savedInstanceState) {
@@ -247,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
     //azione che devo eseguirequando premo il puksante attenzione
     public void notifiche(View v) {
         Intent intent = AlertActivity.getActivityintent(MainActivity.this);
+        AlertActivity.setUrl(channelID,READ_KEY);
         startActivity(intent);
     }
 

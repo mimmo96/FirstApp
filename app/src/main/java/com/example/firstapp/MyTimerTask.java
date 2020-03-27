@@ -98,7 +98,6 @@ public class MyTimerTask extends TimerTask {
 
                                 }
 
-                                //stampa();
                                 //recupero il canale e lo cancello, dopo aver settato i valori lo reinserisco
                                 Channel v=database.ChannelDao().findByName(channelID,READ_KEY);
                                 if(v!=null) database.ChannelDao().delete(v);

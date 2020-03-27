@@ -79,25 +79,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.graphic_activity_main);
         recyclerView = findViewById(R.id.recyclerview);
 
+        stampa();
         for(int i=0;i<channelPos.size();i++){
             url="https://api.thingspeak.com/channels/"+channelPos.get(i).getId()+"/feeds.json?api_key="+channelPos.get(i).getRead_key()+"&results=8000";
             getJsonResponse(url,i);
         }
     }
 
-    private void getJsonResponse(String url, final int i) {
+    private void getJsonResponse(String url, final int index) {
 
         final JsonObjectRequest jsonObjectRequest;
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("MainActivity", "download eseguito correttamente");
+                        Log.d("Graphic/MainActivity", "download eseguito correttamente");
                         try {
                             //recupero l'array feeds
                             JSONArray jsonArray = response.getJSONArray("feeds");
-                            String posfil="fields".concat(""+position.get(i));
-
+                            String posfil="fields".concat(""+position.get(index));
                             //scorro tutto l'array e stampo a schermo il valore di field1
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 //recupero il primo oggetto dell'array
@@ -156,15 +156,15 @@ public class MainActivity extends AppCompatActivity {
                             }
 
 
-                                if(posfil.equals("fields1"))makegraph(nameFields.get(i),fields1,date_fields1);
-                                if(posfil.equals("fields2"))makegraph(nameFields.get(i),fields2,date_fields2);
-                                if(posfil.equals("fields3"))makegraph(nameFields.get(i),fields3,date_fields3);
-                                if(posfil.equals("fields4"))makegraph(nameFields.get(i),fields4,date_fields4);
-                                if(posfil.equals("fields5"))makegraph(nameFields.get(i),fields5,date_fields5);
-                                if(posfil.equals("fields6"))makegraph(nameFields.get(i),fields6,date_fields6);
-                                if(posfil.equals("fields7"))makegraph(nameFields.get(i),fields7,date_fields7);
-                                if(posfil.equals("fields8"))makegraph(nameFields.get(i),fields8,date_fields8);
-
+                                if(posfil.equals("fields1"))makegraph(nameFields.get(index),fields1,date_fields1);
+                                if(posfil.equals("fields2"))makegraph(nameFields.get(index),fields2,date_fields2);
+                                if(posfil.equals("fields3"))makegraph(nameFields.get(index),fields3,date_fields3);
+                                if(posfil.equals("fields4"))makegraph(nameFields.get(index),fields4,date_fields4);
+                                if(posfil.equals("fields5"))makegraph(nameFields.get(index),fields5,date_fields5);
+                                if(posfil.equals("fields6"))makegraph(nameFields.get(index),fields6,date_fields6);
+                                if(posfil.equals("fields7"))makegraph(nameFields.get(index),fields7,date_fields7);
+                                if(posfil.equals("fields8"))makegraph(nameFields.get(index),fields8,date_fields8);
+//
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                             recyclerView.setLayoutManager(linearLayoutManager);
 
@@ -184,21 +184,27 @@ public class MainActivity extends AppCompatActivity {
                 x.show();
             }
         });
-
         Volley.newRequestQueue(getApplicationContext()).add(jsonObjectRequest);
         //libero tutta la memoria
         fields1.clear();
+        date_fields1.clear();
         fields2.clear();
+        date_fields2.clear();
         fields3.clear();
+        date_fields3.clear();
         fields4.clear();
+        date_fields4.clear();
         fields5.clear();
+        date_fields5.clear();
         fields7.clear();
+        date_fields6.clear();
         fields6.clear();
+        date_fields7.clear();
         fields8.clear();
+        date_fields8.clear();
     }
 
     private void makegraph(String name, List<Double> list,List<String> created) {
-
         DataPoint[] data = new DataPoint[created.size()];
 
         Calendar date_value = Calendar.getInstance();
@@ -221,10 +227,10 @@ public class MainActivity extends AppCompatActivity {
             date_value.set(Calendar.SECOND, secondi);
             Date dat = date_value.getTime();
             data[i] = new DataPoint(dat, list.get(i));
-
         }
         series = new LineGraphSeries<>(data);
         Insertdata.add(new ModelData(name, series));
+        date_value.clear();
     }
 
         public static Intent getActivityintent(Context context){
@@ -233,17 +239,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
     public static void stampa() {
-        System.out.println("Stampo lista nomi :");
+        System.out.println("Stampo nameFields :");
         for (int i = 0; i < nameFields.size(); i++) {
             System.out.println(i + ": " + nameFields.get(i));
         }
         System.out.println("FINE");
-        System.out.println("Stampo lista posizioni :");
+        System.out.println("Stampo position :");
         for (int i = 0; i < position.size(); i++) {
             System.out.println(i + ": " + position.get(i));
         }
         System.out.println("FINE");
-        System.out.println("Stampo lista channel :");
+        System.out.println("Stampo channelPos :");
         for (int i = 0; i < channelPos.size(); i++) {
             System.out.println(i + ": " + channelPos.get(i).getId());
         }

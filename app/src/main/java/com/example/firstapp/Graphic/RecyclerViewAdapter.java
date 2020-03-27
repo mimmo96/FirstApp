@@ -2,6 +2,7 @@ package com.example.firstapp.Graphic;
 
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         ModelData user = data.get(position);
         holder.text.setText(user.getName());
         holder.series=user.getSeries();
+        Log.d("Graphic/Recyclerview", user.getName());
         final LineGraphSeries<DataPoint> series=holder.series;
         final GraphView graph= holder.graph;
         series.setDrawDataPoints(true);
