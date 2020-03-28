@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private List<String> date_fields7=new ArrayList<>();
     private List<String> date_fields8=new ArrayList<>();
     private Context context=this;
+    private static int i=0;
 
     private List<ModelData> Insertdata=new ArrayList<>();
 
@@ -79,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.graphic_activity_main);
         recyclerView = findViewById(R.id.recyclerview);
 
-        stampa();
         for(int i=0;i<channelPos.size();i++){
             url="https://api.thingspeak.com/channels/"+channelPos.get(i).getId()+"/feeds.json?api_key="+channelPos.get(i).getRead_key()+"&results=8000";
             getJsonResponse(url,i);
@@ -150,26 +150,43 @@ public class MainActivity extends AppCompatActivity {
                                 try{
                                       if(posfil.equals("fields8") && !value.getString("field8").equals("") && !value.getString("field8").equals("null")){
                                          fields8.add(Double.parseDouble(value.getString("field8")));
-                                          date_fields8.add(value.getString("created_at"));
+                                         date_fields8.add(value.getString("created_at"));
                                 }
                                   }catch (Exception e){ }
                             }
 
+                            if(posfil.equals("fields1"))makegraph(nameFields.get(index),fields1,date_fields1);
+                            if(posfil.equals("fields2"))makegraph(nameFields.get(index),fields2,date_fields2);
+                            if(posfil.equals("fields3"))makegraph(nameFields.get(index),fields3,date_fields3);
+                            if(posfil.equals("fields4"))makegraph(nameFields.get(index),fields4,date_fields4);
+                            if(posfil.equals("fields5"))makegraph(nameFields.get(index),fields5,date_fields5);
+                            if(posfil.equals("fields6"))makegraph(nameFields.get(index),fields6,date_fields6);
+                            if(posfil.equals("fields7"))makegraph(nameFields.get(index),fields7,date_fields7);
+                            if(posfil.equals("fields8"))makegraph(nameFields.get(index),fields8,date_fields8);
 
-                                if(posfil.equals("fields1"))makegraph(nameFields.get(index),fields1,date_fields1);
-                                if(posfil.equals("fields2"))makegraph(nameFields.get(index),fields2,date_fields2);
-                                if(posfil.equals("fields3"))makegraph(nameFields.get(index),fields3,date_fields3);
-                                if(posfil.equals("fields4"))makegraph(nameFields.get(index),fields4,date_fields4);
-                                if(posfil.equals("fields5"))makegraph(nameFields.get(index),fields5,date_fields5);
-                                if(posfil.equals("fields6"))makegraph(nameFields.get(index),fields6,date_fields6);
-                                if(posfil.equals("fields7"))makegraph(nameFields.get(index),fields7,date_fields7);
-                                if(posfil.equals("fields8"))makegraph(nameFields.get(index),fields8,date_fields8);
-//
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                             recyclerView.setLayoutManager(linearLayoutManager);
 
                             recyclerView.setAdapter(new RecyclerViewAdapter(Insertdata, context));
                             recyclerView.setHasFixedSize(true); //le cardView sono tutte delle stesse dimensioni
+
+                            //libero tutta la memoria
+                            fields1.clear();
+                            date_fields1.clear();
+                            fields2.clear();
+                            date_fields2.clear();
+                            fields3.clear();
+                            date_fields3.clear();
+                            fields4.clear();
+                            date_fields4.clear();
+                            fields5.clear();
+                            date_fields5.clear();
+                            fields7.clear();
+                            date_fields6.clear();
+                            fields6.clear();
+                            date_fields7.clear();
+                            fields8.clear();
+                            date_fields8.clear();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -185,23 +202,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         Volley.newRequestQueue(getApplicationContext()).add(jsonObjectRequest);
-        //libero tutta la memoria
-        fields1.clear();
-        date_fields1.clear();
-        fields2.clear();
-        date_fields2.clear();
-        fields3.clear();
-        date_fields3.clear();
-        fields4.clear();
-        date_fields4.clear();
-        fields5.clear();
-        date_fields5.clear();
-        fields7.clear();
-        date_fields6.clear();
-        fields6.clear();
-        date_fields7.clear();
-        fields8.clear();
-        date_fields8.clear();
+
     }
 
     private void makegraph(String name, List<Double> list,List<String> created) {
