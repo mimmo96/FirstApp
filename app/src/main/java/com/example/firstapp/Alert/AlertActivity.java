@@ -13,10 +13,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+import androidx.room.Room;
 
+import com.example.firstapp.AppDatabase;
+import com.example.firstapp.Channel.Channel;
+import com.example.firstapp.Channel.savedValues;
 import com.example.firstapp.MainActivity;
 import com.example.firstapp.R;
-import java.util.Timer;
+
+import java.util.List;
 
 import static com.example.firstapp.Alert.App.CHANNEL_1_ID;
 
@@ -55,6 +60,8 @@ public class AlertActivity extends AppCompatActivity {
     public static String url=null;
     private static Boolean go=false;
     private static Intent serviceIntent;
+    private static Channel channel;    //channel usato
+    private  static  AppDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +88,28 @@ public class AlertActivity extends AppCompatActivity {
         cond=findViewById(R.id.textViewcond);
         irra=findViewById(R.id.textViewirra);
         peso=findViewById(R.id.textViewPes);
+
+        //ripristino i valori relativi al channel precedentemente salvati
+        if (channel.getTempMin()!= null ) tempMin.setText(String.format(channel.getTempMin().toString()));
+        if (channel.getTempMax()!=null) tempMax.setText(String.format(channel.getTempMax().toString()));
+        if (channel.getUmidMin()!=null) umidMin.setText(String.format(channel.getUmidMin().toString()));
+        if (channel.getUmidMax()!=null) umidMax.setText(String.format(channel.getUmidMax().toString()));
+        if (channel.getCondMin()!=null) condMin.setText(String.format(channel.getCondMin().toString()));
+        if (channel.getCondMax()!=null) condMax.setText(String.format(channel.getCondMax().toString()));
+        if (channel.getPhMin()!=null) phMin.setText(String.format(channel.getPhMin().toString()));
+        if (channel.getPhMax()!=null) phMax.setText(String.format(channel.getPhMax().toString()));
+        if (channel.getIrraMin()!=null) irraMin.setText(String.format(channel.getIrraMin().toString()));
+        if (channel.getIrraMax()!=null) irraMax.setText(String.format(channel.getIrraMax().toString()));
+        if (channel.getPesMin()!=null) pesMin.setText(String.format(channel.getPesMin().toString()));
+        if (channel.getPesMax()!=null) pesMax.setText(String.format(channel.getPesMax().toString()));
+
+        database = Room.databaseBuilder(this, AppDatabase.class, "prodiction")
+                //consente l'aggiunta di richieste nel thred principale
+                .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
+                //build mi serve per costruire il tutto
+                .build();
+
         serviceIntent = new Intent(this, ExampleService.class);
         startService();
     }
@@ -105,7 +134,7 @@ public class AlertActivity extends AppCompatActivity {
         }
         //se già non è stata avviata l'avvio ora
         ExampleService.setvalue(tempMin, tempMax, umidMin, umidMax, condMin, condMax,
-                phMin, phMax, irraMin, irraMax, pesMin, pesMax,temp,umid,ph,cond,irra,peso,url);
+                phMin, phMax, irraMin, irraMax, pesMin, pesMax,temp,umid,ph,cond,irra,peso,url,channel,database);
         go = true;
         ContextCompat.startForegroundService(this, serviceIntent);
     }
@@ -116,8 +145,9 @@ public class AlertActivity extends AppCompatActivity {
         stopService(serviceIntent);
     }
 
-    public static void setUrl(String id,String key){
-        url = "https://api.thingspeak.com/channels/" + id + "/feeds.json?api_key=" + key + "&results=1";
+    public static void setUrl(Channel chan){
+        channel=chan;
+        url = "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key=" + channel.getRead_key() + "&results=1";
     }
 
     public static void printnotify(String text,int i){

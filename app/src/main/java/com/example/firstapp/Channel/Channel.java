@@ -35,6 +35,18 @@ public class Channel {
     private String filed6=null;
     private String filed7=null;
     private String filed8=null;
+    private  Double tempMin=null;
+    private  Double tempMax=null;
+    private  Double umidMin=null;
+    private  Double umidMax=null;
+    private  Double condMin=null;
+    private  Double condMax=null;
+    private  Double phMin=null;
+    private  Double phMax=null;
+    private  Double irraMin=null;
+    private  Double irraMax=null;
+    private  Double pesMin=null;
+    private  Double pesMax=null;
 
     public Channel(String id, String read_key) {
         this.id = id;
@@ -137,4 +149,99 @@ public class Channel {
         this.position = pos;
     }
 
+    public Double getTempMin() {
+        return tempMin;
+    }
+
+    public void setTempMin(Double tempMin) {
+        this.tempMin = tempMin;
+    }
+
+    public Double getTempMax() {
+        return tempMax;
+    }
+
+    public void setTempMax(Double tempMax) {
+        this.tempMax = tempMax;
+    }
+
+    public Double getUmidMin() {
+        return umidMin;
+    }
+
+    public void setUmidMin(Double umidMin) {
+        this.umidMin = umidMin;
+    }
+
+    public Double getUmidMax() {
+        return umidMax;
+    }
+
+    public void setUmidMax(Double umidMax) {
+        this.umidMax = umidMax;
+    }
+
+    public Double getCondMin() {
+        return condMin;
+    }
+
+    public void setCondMin(Double condMin) {
+        this.condMin = condMin;
+    }
+
+    public Double getCondMax() {
+        return condMax;
+    }
+
+    public void setCondMax(Double condMax) {
+        this.condMax = condMax;
+    }
+
+    public Double getPhMin() {
+        return phMin;
+    }
+
+    public void setPhMin(Double phMin) {
+        this.phMin = phMin;
+    }
+
+    public Double getPhMax() {
+        return phMax;
+    }
+
+    public void setPhMax(Double phMax) {
+        this.phMax = phMax;
+    }
+
+    public Double getIrraMin() {
+        return irraMin;
+    }
+
+    public void setIrraMin(Double irraMin) {
+        this.irraMin = irraMin;
+    }
+
+    public Double getIrraMax() {
+        return irraMax;
+    }
+
+    public void setIrraMax(Double irraMax) {
+        this.irraMax = irraMax;
+    }
+
+    public Double getPesMin() {
+        return pesMin;
+    }
+
+    public void setPesMin(Double pesMin) {
+        this.pesMin = pesMin;
+    }
+
+    public Double getPesMax() {
+        return pesMax;
+    }
+
+    public void setPesMax(Double pesMax) {
+        this.pesMax = pesMax;
+    }
 }

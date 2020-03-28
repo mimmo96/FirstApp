@@ -6,11 +6,14 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.room.Room;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.firstapp.AppDatabase;
 import com.example.firstapp.Channel.Channel;
 
 import org.json.JSONArray;
@@ -22,6 +25,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TimerTask;
 
 /*
@@ -36,18 +40,7 @@ import java.util.TimerTask;
 
 public class MyTimerTask extends TimerTask {
 
-    private Double tempMin;
-    private Double tempMax;
-    private Double umidMin;
-    private Double umidMax;
-    private Double condMin;
-    private Double condMax;
-    private Double phMin;
-    private Double phMax;
-    private Double irraMin;
-    private Double irraMax;
-    private Double pesMin;
-    private Double pesMax;
+    private Channel channel;
     private TextView temp;
     private TextView umid;
     private TextView ph;
@@ -59,21 +52,8 @@ public class MyTimerTask extends TimerTask {
     String urlString;
 
 
-    public MyTimerTask(String url, Double tempMin, Double tempMax, Double umidMin, Double umidMax, Double condMin, Double condMax,
-                       Double phMin, Double phMax, Double irraMin, Double irraMax, Double pesMin, Double pesMax, TextView temp,
-                       TextView umid, TextView ph, TextView cond, TextView irra, TextView peso) {
-        this.tempMin = tempMin;
-        this.tempMax = tempMax;
-        this.umidMin = umidMin;
-        this.umidMax = umidMax;
-        this.condMin = condMin;
-        this.condMax = condMax;
-        this.phMin = phMin;
-        this.phMax = phMax;
-        this.irraMin = irraMin;
-        this.irraMax = irraMax;
-        this.pesMin = pesMin;
-        this.pesMax = pesMax;
+    public MyTimerTask(String url,Channel chan,TextView temp,  TextView umid, TextView ph, TextView cond, TextView irra, TextView peso) {
+        channel=chan;
         urlString = url;
         this.temp = temp;
         this.umid = umid;
@@ -92,7 +72,6 @@ public class MyTimerTask extends TimerTask {
 
     //metodo per reperire le risposte json
     private void getJsonResponse(String urlString) {
-        //se non ho nessun url inserita setto i valori a 0
 
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlString, null,
                 new Response.Listener<JSONObject>() {
@@ -158,29 +137,29 @@ public class MyTimerTask extends TimerTask {
                                     peso.setText(String.valueOf(pe).concat(" g"));
                                 } else peso.setText("- -");
 
-                                if (tempMin != null && t < tempMin)
+                                if (channel.getTempMin() != null && t < channel.getTempMin())
                                     AlertActivity.printnotify("temperatura bassa!", 1);
-                                if (tempMax != null && t > tempMax)
+                                if (channel.getTempMax() != null && t > channel.getTempMax())
                                     AlertActivity.printnotify("temperatura alta!", 2);
-                                if (umidMin != null && u < umidMin)
+                                if (channel.getUmidMin() != null && u < channel.getUmidMin())
                                     AlertActivity.printnotify("umidità bassa!", 3);
-                                if (umidMax != null && u > umidMax)
+                                if (channel.getUmidMax()  != null && u > channel.getUmidMax())
                                     AlertActivity.printnotify("umidità alta!", 4);
-                                if (condMin != null && c < condMin)
+                                if (channel.getCondMin() != null && c < channel.getCondMin())
                                     AlertActivity.printnotify("conducibilità bassa!", 5);
-                                if (condMax != null && c > condMax)
+                                if (channel.getCondMax() != null && c > channel.getCondMax())
                                     AlertActivity.printnotify("conducibilità alta!", 6);
-                                if (phMin != null && p < phMin)
+                                if (channel.getPhMin() != null && p < channel.getPhMin())
                                     AlertActivity.printnotify("ph basso!", 7);
-                                if (phMax != null && p > phMax)
+                                if (channel.getPhMax() != null && p > channel.getPhMax())
                                     AlertActivity.printnotify("ph alto!", 8);
-                                if (irraMin != null && ir < irraMin)
+                                if (channel.getIrraMin() != null && ir < channel.getIrraMin())
                                     AlertActivity.printnotify("irradianza bassa!", 9);
-                                if (irraMax != null && ir > irraMax)
+                                if (channel.getIrraMax() != null && ir > channel.getIrraMax())
                                     AlertActivity.printnotify("irradianza alta!", 10);
-                                if (pesMin != null && pe < pesMin)
+                                if (channel.getPesMin() != null && pe < channel.getPesMin())
                                     AlertActivity.printnotify("peso basso!", 11);
-                                if (pesMax != null && pe > pesMax)
+                                if (channel.getPesMax() != null && pe > channel.getPesMax())
                                     AlertActivity.printnotify("peso alto!", 12);
 
                             }

@@ -247,7 +247,15 @@ public class MainActivity extends AppCompatActivity {
     //azione che devo eseguirequando premo il puksante attenzione
     public void notifiche(View v) {
         Intent intent = AlertActivity.getActivityintent(MainActivity.this);
-        AlertActivity.setUrl(channelID,READ_KEY);
+
+        List<Channel> channeList=database.ChannelDao().getAll();
+        Channel trovato=null;
+        for(int i=0;i<channeList.size();i++){
+            if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
+                trovato=channeList.get(i);
+            }
+        }
+        AlertActivity.setUrl(trovato);
         startActivity(intent);
     }
 
