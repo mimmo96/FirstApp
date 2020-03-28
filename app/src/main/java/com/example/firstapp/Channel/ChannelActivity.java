@@ -15,6 +15,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
+
+import com.example.firstapp.Alert.AlertActivity;
 import com.example.firstapp.AppDatabase;
 import com.example.firstapp.MainActivity;
 import com.example.firstapp.MyTimerTask;
@@ -118,6 +120,7 @@ public class ChannelActivity  extends AppCompatActivity {
                                                     //comunico il database aggiornato al thread
                                                     MyTimerTask.updateDatabase(db);
                                                     Toast.makeText(BasicContext, "operazione eseguita correttamente!", Toast.LENGTH_SHORT).show();
+                                                    AlertActivity.stopService();
                                                     //segnalo al thread principale i nuovi id,key
                                                     if(pos==-1) pos=0;
                                                     MainActivity.setDefaultSetting(DEFAULT_ID,DEFAULT_READ_KEY,pos);
@@ -242,6 +245,7 @@ public class ChannelActivity  extends AppCompatActivity {
         //cancello il channel precedente come default se è diverso dal precedente
         Channel prec=channel.get(pos);
         if(chan.getId()!=prec.getId()) {
+            AlertActivity.stopService();
             prec.setPosition(0);
             db.ChannelDao().findByName(prec.getId(), prec.getRead_key()).setPosition(0);
 
@@ -267,7 +271,6 @@ public class ChannelActivity  extends AppCompatActivity {
         }
         //invio i nuovi dati di default
         MainActivity.setDefaultSetting(DEFAULT_ID, DEFAULT_READ_KEY,pos);
-        stampa();
 
     }
 

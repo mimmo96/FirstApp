@@ -65,9 +65,7 @@ public class MyTimerTask extends TimerTask {
 
     @Override
     public void run() {
-        Log.d("Thread background", "vamoossss");
         getJsonResponse(urlString);
-
     }
 
     //metodo per reperire le risposte json

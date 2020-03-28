@@ -178,6 +178,7 @@ public class ExampleService extends Service {
     public static void stoptimer(){
         if(timer!=null) timer.cancel();
         if(timerTask!=null) timerTask.cancel();
+        Log.d("Background service","Servizio interrotto!");
     }
 
     @Override

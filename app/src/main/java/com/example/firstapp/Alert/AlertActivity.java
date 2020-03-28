@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -140,9 +141,8 @@ public class AlertActivity extends AppCompatActivity {
     }
 
     //fatta quando richiamo il pulsante di stop
-    public void stopService() {
+    public static void stopService() {
         ExampleService.stoptimer();
-        stopService(serviceIntent);
     }
 
     public static void setUrl(Channel chan){
