@@ -159,7 +159,7 @@ public class ExampleService extends Service {
 
         Channel x=database.ChannelDao().findByName(channel.getId(),channel.getRead_key());
         database.ChannelDao().delete(x);
-
+        x.setTempMin(tempMin);
         x.setTempMax(tempMax);
         x.setUmidMin(umidMin);
         x.setUmidMax(umidMax);

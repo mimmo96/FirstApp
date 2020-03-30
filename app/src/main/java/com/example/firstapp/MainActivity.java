@@ -259,8 +259,14 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    //azione eseguita quando premo pulsante refresh
+    public  void refresh(View v){
+        restartTimer(cont);
+    }
+
     public static void setDefaultSetting(String id, String key, int pos) {
-        System.out.println("SET DEFAULT SETTING");
+
+        //se non ho nessun canale (pos=-1) cancello tutto
         if (pos == -1) {
             channelID = null;
             READ_KEY = null;
@@ -284,22 +290,19 @@ public class MainActivity extends AppCompatActivity {
             timer.cancel();
             timerTask.cancel();
         } else {
-            //aggiungo alla lista channel default il nuovo
-            if (channeldefault.size() != 0) channeldefault.clear();
-            channeldefault.add(new savedValues(id, key, pos));
-            database.SavedDao().deleteAll();
-            database.SavedDao().insert(new savedValues(id, key, pos));
-            List<savedValues> x = database.SavedDao().getAll();
+            //aggiungo alla lista channel default il nuovo solo se è diverso dal precedente
+            if(pos!=channeldefault.get(0).getPosition()) {
+                if (channeldefault.size() != 0) channeldefault.clear();
+                channeldefault.add(new savedValues(id, key, pos));
+                database.SavedDao().deleteAll();
+                database.SavedDao().insert(new savedValues(id, key, pos));
 
-            for (int i = 0; i < x.size(); i++) {
-                System.out.println(i + ": " + x.get(i).getPosition());
+                channelID = id;
+                READ_KEY = key;
+                url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=1";
+                restartTimer(cont);
             }
-            System.out.println("FINE");
 
-            channelID = id;
-            READ_KEY = key;
-            url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=1";
-            restartTimer(cont);
         }
 
     }
@@ -310,13 +313,13 @@ public class MainActivity extends AppCompatActivity {
         if (timerTask != null) timerTask.cancel();
         timerTask = new MyTimerTask(channelID, READ_KEY, url, textTemp, textUmidity, textPh, textConducibilita, textIrradianza, textPeso, textStato, testo1, cont, database);
         timer = new Timer();
-        timer.scheduleAtFixedRate(timerTask, 0, 3000);
+        timer.scheduleAtFixedRate(timerTask, 0, 60000);
     }
 
     public static void startTimer(Context cont) {
         timerTask = new MyTimerTask(channelID, READ_KEY, url, textTemp, textUmidity, textPh, textConducibilita, textIrradianza, textPeso, textStato, testo1, cont, database);
         timer = new Timer();
-        timer.scheduleAtFixedRate(timerTask, 0, 3000);
+        timer.scheduleAtFixedRate(timerTask, 0, 60000);
     }
 
     public static void stampa() {
