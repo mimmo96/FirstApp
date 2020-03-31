@@ -114,9 +114,9 @@ public class MainActivity extends AppCompatActivity {
             String dob_var=(dataStart.getText().toString());
             dateObject = formatter.parse(dob_var);
 
-            giornoStart=dateObject.getDate()+1;
+            giornoStart=dateObject.getDate();
             if(giornoStart<0 || giornoStart >31) throw new ParseException("giorno non corretto",1);
-            meseStart=dateObject.getMonth()+1;
+            meseStart=dateObject.getMonth();
             if(meseStart<0 ||  meseStart>12) throw new ParseException("mese non corretto",1);
             annoStart=dateObject.getYear()+1900;
             if(annoStart<2000) throw new ParseException("data non corretta",1);
@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         if(stop==0) {
+            Insertdata.clear();
             for (int i = 0; i < channelPos.size(); i++) {
                 url = "https://api.thingspeak.com/channels/" + channelPos.get(i).getId() + "/feeds.json?api_key=" + channelPos.get(i).getRead_key() +
                         "&start=" + annoStart + "-" + meseStart + "-" + giornoStart + "%2000:00:00&end=" + annoEnd + "-" + meseEnd + "-" + giornoEnd + "%2000:00:00" + "&results=8000";
@@ -233,7 +234,6 @@ public class MainActivity extends AppCompatActivity {
 
                             recyclerView.setAdapter(new RecyclerViewAdapter(Insertdata, context));
                             recyclerView.setHasFixedSize(true); //le cardView sono tutte delle stesse dimensioni
-
                             //libero tutta la memoria
                             fields1.clear();
                             date_fields1.clear();
