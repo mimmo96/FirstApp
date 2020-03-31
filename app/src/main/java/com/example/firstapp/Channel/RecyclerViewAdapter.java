@@ -47,6 +47,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(final MyVieworder holder, final int position) {
         final Channel chan=channel.get(position);
         holder.testo.setText("Channel: " + chan.getId());
+        if(channel.get(position).getNotification()) holder.notifiche.setText("NOTIFICHE ON");
+        else holder.notifiche.setText("NOTIFICHE OFF");
         pos=ChannelActivity.getposition();
         if(pos==position) ChannelActivity.sendPrefer(holder.star,context,pos);
 
@@ -74,6 +76,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public static class MyVieworder extends RecyclerView.ViewHolder{
 
         private TextView testo;
+        private TextView notifiche;
         private FloatingActionButton bottone;
         private RelativeLayout touch_layout;
         private ImageButton star;
@@ -84,7 +87,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             bottone=itemView.findViewById(R.id.Button2);
             star=itemView.findViewById(R.id.favorite);
             touch_layout=itemView.findViewById(R.id.touch_layout);
-
+            notifiche=itemView.findViewById(R.id.textNotification);
         }
     }
 

@@ -1,21 +1,14 @@
 package com.example.firstapp.Alert;
 
-import android.app.Notification;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
-import androidx.room.Room;
-
 import com.example.firstapp.AppDatabase;
 import com.example.firstapp.Channel.Channel;
-
-import java.util.List;
 import java.util.Timer;
 
 /*
@@ -53,6 +46,7 @@ public class ExampleService extends Service {
     private static Timer timer=null;
     private static Channel channel;
     private static AppDatabase database;
+    private static TextView notification;
 
     @Override
     public void onCreate() {
@@ -73,9 +67,10 @@ public class ExampleService extends Service {
 
     public static void setvalue(EditText tempMin1, EditText tempMax1, EditText umidMin1, EditText umidMax1, EditText condMin1, EditText condMax1, EditText phMin1, EditText phMax1, EditText irraMin1,
                                 EditText irraMax1, EditText pesMin1, EditText pesMax1, TextView temp1,
-                                TextView umid1, TextView ph1, TextView cond1, TextView irra1, TextView peso1, String url1, Channel chan,AppDatabase db){
+                                TextView umid1, TextView ph1, TextView cond1, TextView irra1, TextView peso1, String url1, Channel chan, AppDatabase db, TextView notifiche){
         database=db;
         channel=chan;
+        notification=notifiche;
         url=url1;
         try {
         tempMin = Double.valueOf(tempMin1.getText().toString());
@@ -171,14 +166,23 @@ public class ExampleService extends Service {
         x.setIrraMax(irraMax);
         x.setPesMin(pesMin);
         x.setPesMax(pesMax);
+        x.setNotification(true);
         database.ChannelDao().insert(x);
-
     }
 
     public static void stoptimer(){
-        if(timer!=null) timer.cancel();
+        if(timer!=null){
+            timer.cancel();
+            Channel x=database.ChannelDao().findByName(channel.getId(),channel.getRead_key());
+            database.ChannelDao().delete(x);
+            x.setNotification(false);
+            database.ChannelDao().insert(x);
+            notification.setText("notifiche non attive");
+            Log.d("Background service","Servizio interrotto!");
+        }
         if(timerTask!=null) timerTask.cancel();
-        Log.d("Background service","Servizio interrotto!");
+
+
     }
 
     @Override

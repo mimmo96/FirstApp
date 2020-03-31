@@ -58,10 +58,11 @@ public class AlertActivity extends AppCompatActivity {
     private TextView cond;
     private TextView irra;
     private TextView peso;
+    private TextView notifiche;
     public static String url=null;
     private static Boolean go=false;
     private static Intent serviceIntent;
-    private static Channel channel;    //channel usato
+    private static Channel channel;             //channel usato
     private  static  AppDatabase database;
 
     @Override
@@ -89,6 +90,7 @@ public class AlertActivity extends AppCompatActivity {
         cond=findViewById(R.id.textViewcond);
         irra=findViewById(R.id.textViewirra);
         peso=findViewById(R.id.textViewPes);
+        notifiche=findViewById(R.id.textNotifiche);
 
         //ripristino i valori relativi al channel precedentemente salvati
         if (channel.getTempMin()!= null ) tempMin.setText(String.format(channel.getTempMin().toString()));
@@ -103,6 +105,8 @@ public class AlertActivity extends AppCompatActivity {
         if (channel.getIrraMax()!=null) irraMax.setText(String.format(channel.getIrraMax().toString()));
         if (channel.getPesMin()!=null) pesMin.setText(String.format(channel.getPesMin().toString()));
         if (channel.getPesMax()!=null) pesMax.setText(String.format(channel.getPesMax().toString()));
+        if ( channel.getNotification()) notifiche.setText("notifiche attive");
+        else notifiche.setText("notifiche non attive");
 
         database = Room.databaseBuilder(this, AppDatabase.class, "prodiction")
                 //consente l'aggiunta di richieste nel thred principale
@@ -135,9 +139,10 @@ public class AlertActivity extends AppCompatActivity {
         }
         //se già non è stata avviata l'avvio ora
         ExampleService.setvalue(tempMin, tempMax, umidMin, umidMax, condMin, condMax,
-                phMin, phMax, irraMin, irraMax, pesMin, pesMax,temp,umid,ph,cond,irra,peso,url,channel,database);
+                phMin, phMax, irraMin, irraMax, pesMin, pesMax,temp,umid,ph,cond,irra,peso,url,channel,database,notifiche);
         go = true;
         ContextCompat.startForegroundService(this, serviceIntent);
+        notifiche.setText("notifiche attive");
     }
 
     //fatta quando richiamo il pulsante di stop

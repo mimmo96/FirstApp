@@ -2,6 +2,8 @@ package com.example.firstapp.Graphic;
 
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.Series;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /*
@@ -59,6 +62,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         final LineGraphSeries<DataPoint> series=holder.series;
         final GraphView graph= holder.graph;
         series.setDrawDataPoints(true);
+        //series.setColor(Color.RED);
         series.setDataPointsRadius(5);
         final SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy HH:mm");
         graph.addSeries(holder.series);
@@ -87,6 +91,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Date yas=new Date((long) graph.getViewport().getMaxX(true));
         holder.start.setText(sdf.format(xas));
         holder.end.setText(sdf.format(yas));
+        holder.max.setText(String.valueOf(series.getHighestValueY()));
+        holder.min.setText(String.valueOf(series.getLowestValueY()));
+        holder.avg.setText(String.valueOf(user.getMedia()));
         graph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
         graph.getViewport().setOnXAxisBoundsChangedListener(new Viewport.OnXAxisBoundsChangedListener() {
             @Override
@@ -96,6 +103,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 Date yas=new Date((long) maxX);
                 holder.start.setText(sdf.format(xas));
                 holder.end.setText(sdf.format(yas));
+
+                //faccio la scanzione di tutti i punti compresi tra minX e maxX per individuare minimo,massimo e media
+                Iterator<DataPoint> massimo=series.getValues(minX,maxX);
+
             }
         });
 
@@ -115,6 +126,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         private GraphView graph;
         private RelativeLayout touch_layout;
         private TextView start;
+        private TextView min;
+        private TextView max;
+        private TextView avg;
         private TextView end;
 
         public ViewHolder(View itemView) {
@@ -124,6 +138,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             touch_layout = itemView.findViewById(R.id.touch_layout);
             start=itemView.findViewById(R.id.textViewstart);
             end=itemView.findViewById(R.id.textViewend);
+            min=itemView.findViewById(R.id.textViewMin);
+            max=itemView.findViewById(R.id.textViewMax);
+            avg=itemView.findViewById(R.id.textViewMed);
         }
     }
 }

@@ -398,4 +398,14 @@
         app:layout_constraintBottom_toTopOf="@+id/textViewirra"
         app:layout_constraintEnd_toStartOf="@+id/imageUminidy" />
 
+    <TextView
+        android:id="@+id/textNotifiche"
+        android:layout_width="175dp"
+        android:layout_height="27dp"
+        android:layout_marginEnd="84dp"
+        android:layout_marginBottom="20dp"
+        android:text="NOTIFICHE ATTIVE"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintEnd_toEndOf="@+id/button3" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

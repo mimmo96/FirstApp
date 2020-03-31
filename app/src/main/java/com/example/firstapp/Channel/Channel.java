@@ -27,6 +27,7 @@ public class Channel {
 
     @ColumnInfo(name = "position_key")
     private int position=0;
+    private boolean notification=true;
     private String filed1=null;
     private String filed2=null;
     private String filed3=null;
@@ -35,22 +36,30 @@ public class Channel {
     private String filed6=null;
     private String filed7=null;
     private String filed8=null;
-    private  Double tempMin=null;
-    private  Double tempMax=null;
-    private  Double umidMin=null;
-    private  Double umidMax=null;
-    private  Double condMin=null;
-    private  Double condMax=null;
-    private  Double phMin=null;
-    private  Double phMax=null;
-    private  Double irraMin=null;
-    private  Double irraMax=null;
-    private  Double pesMin=null;
-    private  Double pesMax=null;
+    private Double tempMin=null;
+    private Double tempMax=null;
+    private Double umidMin=null;
+    private Double umidMax=null;
+    private Double condMin=null;
+    private Double condMax=null;
+    private Double phMin=null;
+    private Double phMax=null;
+    private Double irraMin=null;
+    private Double irraMax=null;
+    private Double pesMin=null;
+    private Double pesMax=null;
 
     public Channel(String id, String read_key) {
         this.id = id;
         this.read_key=read_key;
+    }
+
+    public boolean getNotification() {
+        return notification;
+    }
+
+    public void setNotification(boolean notification) {
+        this.notification = notification;
     }
 
     public String getFiled1() {

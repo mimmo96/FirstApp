@@ -18,7 +18,7 @@ import com.example.firstapp.Channel.savedValues;
  *
  */
 
-@Database(entities = {Channel.class, savedValues.class}, version = 2,exportSchema = false)
+@Database(entities = {Channel.class, savedValues.class}, version = 1,exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract ChannelDao ChannelDao();
     public abstract SavedDao SavedDao();

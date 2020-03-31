@@ -209,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
         DataPoint[] data = new DataPoint[created.size()];
 
         Calendar date_value = Calendar.getInstance();
-
+        Double somma=0.0;
         for (int i = 0; i < created.size(); i++) {
             String data_creazione = created.get(i);
 
@@ -228,9 +228,11 @@ public class MainActivity extends AppCompatActivity {
             date_value.set(Calendar.SECOND, secondi);
             Date dat = date_value.getTime();
             data[i] = new DataPoint(dat, list.get(i));
+            somma=somma+list.get(i);
         }
         series = new LineGraphSeries<>(data);
-        Insertdata.add(new ModelData(name, series));
+        Double media=Math.round((somma/created.size()) * 100.0) / 100.0;
+        Insertdata.add(new ModelData(name, series,media));
         date_value.clear();
     }
 

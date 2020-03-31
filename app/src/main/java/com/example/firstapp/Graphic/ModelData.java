@@ -17,12 +17,14 @@ public class ModelData
 {
     private String name;
     private LineGraphSeries<DataPoint> series;
+    private Double media;
 
     public ModelData() {}
 
-    public ModelData(String name, LineGraphSeries<DataPoint> series) {
+    public ModelData(String name, LineGraphSeries<DataPoint> series, Double media) {
         this.name = name;
         this.series = series;
+        this.media=media;
     }
 
     public String getName() {
@@ -31,6 +33,14 @@ public class ModelData
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Double getMedia() {
+        return media;
+    }
+
+    public void setMedia(Double media) {
+        this.media = media;
     }
 
     public LineGraphSeries<DataPoint> getSeries() {

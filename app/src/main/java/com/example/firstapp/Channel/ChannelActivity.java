@@ -15,22 +15,17 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
-
 import com.example.firstapp.Alert.AlertActivity;
 import com.example.firstapp.AppDatabase;
 import com.example.firstapp.MainActivity;
 import com.example.firstapp.MyTimerTask;
 import com.example.firstapp.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;

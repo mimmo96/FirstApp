@@ -28,9 +28,7 @@ import com.example.firstapp.Channel.savedValues;
  *
  * Autore:Domenico Profumo matricola 533695
  * Si dichiara che il programma è in ogni sua parte, opera originale dell'autore
- *
  */
-
 public class MainActivity extends AppCompatActivity {
 
     public static TextView textTemp;
@@ -58,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
         //ripristino valori salvati precedentemente se ci sono
         BackupValues(savedInstanceState);
 
+       // database.ChannelDao().deleteAll();
+       // database.SavedDao().deleteAll();
         textTemp = findViewById(R.id.textTemp);
         textUmidity = findViewById(R.id.textUmidity);
         textPh = findViewById(R.id.textPh);
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         testo1 = findViewById(R.id.textView1);
         cont = getApplicationContext();
 
-        //controllo se ho almeno un chnnel inserito
+        //controllo se ho almeno un channel inserito
         if (url == null) {
             textTemp.setText("- -");
             textUmidity.setText("- -");
@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //azione che devo eseguirequando premo il puksante impostazioni
+    //azione che devo eseguire quando premo il pulsante impostazioni
     public void settingChannel(View v) {
         Intent intent = ChannelActivity.getActivityintent(MainActivity.this);
         startActivity(intent);
@@ -255,8 +255,13 @@ public class MainActivity extends AppCompatActivity {
                 trovato=channeList.get(i);
             }
         }
-        AlertActivity.setUrl(trovato);
-        startActivity(intent);
+        if(trovato==null){
+         Toast.makeText(cont,"INSERISCI UN CHANNEL",Toast.LENGTH_SHORT).show();
+        }
+        else {
+            AlertActivity.setUrl(trovato);
+            startActivity(intent);
+        }
     }
 
     //azione eseguita quando premo pulsante refresh
@@ -291,7 +296,6 @@ public class MainActivity extends AppCompatActivity {
             timerTask.cancel();
         } else {
             //aggiungo alla lista channel default il nuovo solo se è diverso dal precedente
-            if(pos!=channeldefault.get(0).getPosition()) {
                 if (channeldefault.size() != 0) channeldefault.clear();
                 channeldefault.add(new savedValues(id, key, pos));
                 database.SavedDao().deleteAll();
@@ -301,9 +305,8 @@ public class MainActivity extends AppCompatActivity {
                 READ_KEY = key;
                 url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=1";
                 restartTimer(cont);
-            }
 
-        }
+            }
 
     }
 
