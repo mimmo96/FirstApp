@@ -191,12 +191,12 @@ public class MainActivity extends AppCompatActivity {
                     //salvo la selezione
                     if (isChecked) {
                         // mUserItems.add(position);
-                        name.add(list.get(position).substring(0,list.get(position).indexOf("(")));
+                        name.add(list.get(position));
                         selectedPos.add(posField.get(position));
                         selChan.add(selectedChannel.get(position));
                     } else {
                         // mUserItems.remove((Integer.valueOf(position)));
-                        name.remove(list.get(position).substring(0,list.get(position).indexOf("(")));
+                        name.remove(list.get(position));
                         selectedPos.remove(posField.get(position));
                         selChan.remove(selectedChannel.get(position));
                     }

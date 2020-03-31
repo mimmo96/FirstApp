@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +22,10 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -80,9 +86,67 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.graphic_activity_main);
         recyclerView = findViewById(R.id.recyclerview);
 
+
         for(int i=0;i<channelPos.size();i++){
             url="https://api.thingspeak.com/channels/"+channelPos.get(i).getId()+"/feeds.json?api_key="+channelPos.get(i).getRead_key()+"&results=8000";
             getJsonResponse(url,i);
+        }
+    }
+
+    //azione che deve avvenire quando premo sul pulsante vai
+    public void visualizzaGrafici(View v){
+
+        EditText dataStart=findViewById(R.id.editTextDatestart);
+        EditText dataEnd=findViewById(R.id.editTextDateEnd);
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); // Make sure user insert date into edittext in this format.
+
+        Date dateObject;
+        Date dateObject1;
+        int giornoStart=0;
+        int meseStart=0;
+        int annoStart=0;
+        int giornoEnd=0;
+        int meseEnd=0;
+        int annoEnd=0;
+        int stop=0;
+        try{
+            //parsing data inizio
+            String dob_var=(dataStart.getText().toString());
+            dateObject = formatter.parse(dob_var);
+
+            giornoStart=dateObject.getDate()+1;
+            if(giornoStart<0 || giornoStart >31) throw new ParseException("giorno non corretto",1);
+            meseStart=dateObject.getMonth()+1;
+            if(meseStart<0 ||  meseStart>12) throw new ParseException("mese non corretto",1);
+            annoStart=dateObject.getYear()+1900;
+            if(annoStart<2000) throw new ParseException("data non corretta",1);
+
+            //parsing data fine
+            String dob_var1=(dataEnd.getText().toString());
+            dateObject1 = formatter.parse(dob_var1);
+
+            giornoEnd=dateObject1.getDate()+1;
+            if(giornoEnd<0 || giornoEnd >31) throw new ParseException("giorno non corretto",2);
+            meseEnd=dateObject.getMonth()+1;
+            if(meseEnd<0 ||  meseEnd>12) throw new ParseException("mese non corretto",2);
+            annoEnd=dateObject.getYear()+1900;
+            if(annoEnd<2000) throw new ParseException("data non corretta",2);
+        }
+
+        catch (java.text.ParseException e)
+        {
+            stop=1;
+            Toast.makeText(getApplicationContext(), "data inserita non corretta",Toast.LENGTH_SHORT).show();
+            Log.i("Graphc/MainActivity", e.toString());
+        }
+
+
+        if(stop==0) {
+            for (int i = 0; i < channelPos.size(); i++) {
+                url = "https://api.thingspeak.com/channels/" + channelPos.get(i).getId() + "/feeds.json?api_key=" + channelPos.get(i).getRead_key() +
+                        "&start=" + annoStart + "-" + meseStart + "-" + giornoStart + "%2000:00:00&end=" + annoEnd + "-" + meseEnd + "-" + giornoEnd + "%2000:00:00" + "&results=8000";
+                getJsonResponse(url, i);
+            }
         }
     }
 

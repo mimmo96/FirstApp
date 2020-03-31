@@ -11,33 +11,35 @@
         layout="@layout/graphic_content_main"
         android:layout_width="match_parent"
         android:layout_height="488dp"
-        android:layout_below="@+id/editText2"
+        android:layout_below="@+id/editTextDateEnd"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="-3dp" />
 
     <EditText
-        android:id="@+id/editText"
-        android:layout_width="158dp"
-        android:layout_height="34dp"
+        android:id="@+id/editTextDatestart"
+        android:layout_width="151dp"
+        android:layout_height="39dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="111dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="118dp"
         android:ems="10"
+        android:hint="GG/MM/YYYY"
         android:inputType="date" />
 
     <EditText
-        android:id="@+id/editText2"
-        android:layout_width="158dp"
-        android:layout_height="34dp"
+        android:id="@+id/editTextDateEnd"
+        android:layout_width="151dp"
+        android:layout_height="39dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="49dp"
-        android:layout_marginEnd="111dp"
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="118dp"
         android:ems="10"
+        android:hint="GG/MM/YYYY"
         android:inputType="date" />
 
     <TextView
@@ -61,13 +63,14 @@
         android:text="Data fine:" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/buttonStart"
         android:layout_width="58dp"
         android:layout_height="37dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="23dp"
         android:layout_marginEnd="19dp"
+        android:onClick="visualizzaGrafici"
         android:text="VAI" />
 
 

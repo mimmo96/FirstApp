@@ -19,18 +19,18 @@
 
             <TextView
                 android:id="@+id/titleText"
-                android:layout_width="191dp"
-                android:layout_height="wrap_content"
+                android:layout_width="284dp"
+                android:layout_height="26dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="89dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="92dp"
+                android:layout_marginStart="69dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="19dp"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                tools:text="Title" />
+                tools:text="Temperature (id:123456)" />
 
             <com.jjoe64.graphview.GraphView
                 android:id="@+id/graph"
@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/titleText"
                 android:layout_alignStart="@+id/titleText"
-                android:layout_marginStart="-79dp"
+                android:layout_marginStart="-58dp"
                 android:layout_marginTop="17dp"
                 android:text="Minimo:" />
 
