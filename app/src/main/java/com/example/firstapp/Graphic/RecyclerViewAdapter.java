@@ -62,7 +62,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         final LineGraphSeries<DataPoint> series=holder.series;
         final GraphView graph= holder.graph;
         series.setDrawDataPoints(true);
-        //series.setColor(Color.RED);
+        series.setColor(Color.RED);
+        series.setBackgroundColor(Color.BLUE);
         series.setDataPointsRadius(5);
         final SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy HH:mm");
         graph.addSeries(holder.series);
@@ -106,7 +107,23 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
                 //faccio la scanzione di tutti i punti compresi tra minX e maxX per individuare minimo,massimo e media
                 Iterator<DataPoint> massimo=series.getValues(minX,maxX);
-
+                Double val=massimo.next().getY();
+                Double min=val;
+                Double max=val;
+                Double med=0.0;
+                int conta=1;
+                Double somma=0.0;
+                while (massimo.hasNext()){
+                    conta++;
+                    val=massimo.next().getY();
+                    if(val>max) max=val;
+                    if(val<min) min=val;
+                    somma=somma+val;
+                }
+                med=Math.round((somma/conta)*100.0)/100.0;
+                holder.max.setText(String.valueOf(max));
+                holder.min.setText(String.valueOf(min));
+                holder.avg.setText(String.valueOf(med));
             }
         });
 
