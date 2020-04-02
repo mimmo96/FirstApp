@@ -2,6 +2,7 @@ package com.example.firstapp.Graphic;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -116,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
             giornoStart=dateObject.getDate();
             if(giornoStart<0 || giornoStart >31) throw new ParseException("giorno non corretto",1);
-            meseStart=dateObject.getMonth();
+            meseStart=dateObject.getMonth()+1;
             if(meseStart<0 ||  meseStart>12) throw new ParseException("mese non corretto",1);
             annoStart=dateObject.getYear()+1900;
             if(annoStart<2000) throw new ParseException("data non corretta",1);
@@ -125,12 +126,20 @@ public class MainActivity extends AppCompatActivity {
             String dob_var1=(dataEnd.getText().toString());
             dateObject1 = formatter.parse(dob_var1);
 
-            giornoEnd=dateObject1.getDate()+1;
+            giornoEnd=dateObject1.getDate();
             if(giornoEnd<0 || giornoEnd >31) throw new ParseException("giorno non corretto",2);
-            meseEnd=dateObject.getMonth()+1;
+            meseEnd=dateObject1.getMonth()+1;
             if(meseEnd<0 ||  meseEnd>12) throw new ParseException("mese non corretto",2);
-            annoEnd=dateObject.getYear()+1900;
+          //  if(giornoEnd==32){
+          //      giornoEnd=1;
+          //      meseEnd++;
+          //  }
+            annoEnd=dateObject1.getYear()+1900;
             if(annoEnd<2000) throw new ParseException("data non corretta",2);
+          //  if(meseEnd==13){
+          //      meseEnd=1;
+          //      annoEnd++;
+          //  }
         }
 
         catch (java.text.ParseException e)
@@ -139,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "data inserita non corretta",Toast.LENGTH_SHORT).show();
             Log.i("Graphc/MainActivity", e.toString());
         }
-
+        Log.i("Graphc/MainActivity","ho inserito:\n data inizio: " + giornoStart+"-"+meseStart+"-"+annoStart+"\n"+"data fine: "+ giornoEnd+"-"+meseEnd+"-"+annoEnd);
 
         if(stop==0) {
             Insertdata.clear();
@@ -295,6 +304,7 @@ public class MainActivity extends AppCompatActivity {
             somma=somma+list.get(i);
         }
         series = new LineGraphSeries<>(data);
+        series.setColor(Color.RED);
         Double media=Math.round((somma/created.size()) * 100.0) / 100.0;
         Insertdata.add(new ModelData(name, series,media));
         date_value.clear();

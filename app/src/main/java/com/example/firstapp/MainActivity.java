@@ -343,6 +343,39 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+    //funzioni per settare i vari valori dei singoli fields non appena li premo
+
+    public void tempSettings(View v){
+        Intent intent = settingSingleValues.getActivityintent(MainActivity.this);
+        settingSingleValues.settingsValues("Temperature",textTemp.getText().toString(),database,channelID,READ_KEY);
+        startActivity(intent);
+    }
+
+    public void phSettings(View v){
+        Intent intent = settingSingleValues.getActivityintent(MainActivity.this);
+        settingSingleValues.settingsValues("Ph",textPh.getText().toString(),database,channelID,READ_KEY);
+        startActivity(intent);
+    }
+    public void irraSettings(View v){
+        Intent intent = settingSingleValues.getActivityintent(MainActivity.this);
+        settingSingleValues.settingsValues("Irradianza",textIrradianza.getText().toString(),database,channelID,READ_KEY);
+        startActivity(intent);
+    }
+    public void condSettings(View v){
+        Intent intent = settingSingleValues.getActivityintent(MainActivity.this);
+        settingSingleValues.settingsValues("Conducibilità elettrica",textConducibilita.getText().toString(),database,channelID,READ_KEY);
+        startActivity(intent);
+    }
+    public void pesoSettings(View v){
+        Intent intent = settingSingleValues.getActivityintent(MainActivity.this);
+        settingSingleValues.settingsValues("Peso",textPeso.getText().toString(),database,channelID,READ_KEY);
+        startActivity(intent);
+    }
+    public void umidSettings(View v){
+        Intent intent = settingSingleValues.getActivityintent(MainActivity.this);
+        settingSingleValues.settingsValues("Umidità",textUmidity.getText().toString(),database,channelID,READ_KEY);
+        startActivity(intent);
+    }
 
 }
 

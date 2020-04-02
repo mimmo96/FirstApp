@@ -62,9 +62,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         final LineGraphSeries<DataPoint> series=holder.series;
         final GraphView graph= holder.graph;
         series.setDrawDataPoints(true);
-        series.setColor(Color.RED);
-        series.setBackgroundColor(Color.BLUE);
-        series.setDataPointsRadius(5);
+        series.setDrawBackground(true);
+        series.setBackgroundColor(Color.LTGRAY);
+        series.setDataPointsRadius(8);
         final SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy HH:mm");
         graph.addSeries(holder.series);
 

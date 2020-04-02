@@ -20,6 +20,10 @@
             android:label="ChannelActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
+            android:name=".settingSingleValues"
+            android:label="settingSingleValues"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
             android:name=".Alert.AlertActivity"
             android:label="AlertActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
