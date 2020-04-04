@@ -4,6 +4,11 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.example.firstapp.Alert.MyTimerTask;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
 /*
  * Progetto: svilluppo App Android per Tirocinio interno
  *
@@ -27,7 +32,7 @@ public class Channel {
 
     @ColumnInfo(name = "position_key")
     private int position=0;
-    private boolean notification=true;
+    private boolean notification=false;
     private String filed1=null;
     private String filed2=null;
     private String filed3=null;
@@ -48,6 +53,8 @@ public class Channel {
     private Double irraMax=null;
     private Double pesMin=null;
     private Double pesMax=null;
+    private static Timer timer=null;
+    private static MyTimerTask timerTask=null;
 
     public Channel(String id, String read_key) {
         this.id = id;
@@ -60,6 +67,22 @@ public class Channel {
 
     public void setNotification(boolean notification) {
         this.notification = notification;
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public void setTimer(Timer timer) {
+        Channel.timer = timer;
+    }
+
+    public MyTimerTask getTimerTask() {
+        return timerTask;
+    }
+
+    public void setTimerTask(MyTimerTask timerTask) {
+        Channel.timerTask = timerTask;
     }
 
     public String getFiled1() {

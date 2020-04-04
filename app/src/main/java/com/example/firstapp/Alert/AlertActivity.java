@@ -63,7 +63,8 @@ public class AlertActivity extends AppCompatActivity {
     private static Boolean go=false;
     private static Intent serviceIntent;
     private static Channel channel;             //channel usato
-    private  static  AppDatabase database;
+    private static AppDatabase database;
+    private static Boolean canstart=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,9 +106,14 @@ public class AlertActivity extends AppCompatActivity {
         if (channel.getIrraMax()!=null) irraMax.setText(String.format(channel.getIrraMax().toString()));
         if (channel.getPesMin()!=null) pesMin.setText(String.format(channel.getPesMin().toString()));
         if (channel.getPesMax()!=null) pesMax.setText(String.format(channel.getPesMax().toString()));
-        if ( channel.getNotification()) notifiche.setText("notifiche attive");
+        if (channel.getNotification()) notifiche.setText("notifiche attive");
         else notifiche.setText("notifiche non attive");
-
+      /*  if (channel.getTempMin()== null && channel.getTempMax()==null && channel.getUmidMin()==null && channel.getUmidMax()==null && channel.getCondMax()==null
+                && channel.getPhMin()==null  && channel.getPhMax()==null && channel.getIrraMin()==null && channel.getIrraMax()==null
+                && channel.getPesMin()==null && channel.getPesMax()==null){
+            canstart=false;
+        }
+*/
         database = Room.databaseBuilder(this, AppDatabase.class, "prodiction")
                 //consente l'aggiunta di richieste nel thred principale
                 .allowMainThreadQueries()
@@ -133,16 +139,19 @@ public class AlertActivity extends AppCompatActivity {
     }
 
     public void startService() {
-      //se era stata già avviata fermo la precedente
-        if(go) {
-            stopService();
+        if(canstart) {
+            //se era stata già avviata fermo la precedente
+            if (channel.getTimer()!=null ) {
+                stopService();
+            }
+            //se già non è stata avviata l'avvio ora
+            ExampleService.setvalue(tempMin, tempMax, umidMin, umidMax, condMin, condMax, phMin, phMax,
+                                    irraMin, irraMax, pesMin, pesMax, temp, umid, ph, cond, irra, peso,
+                                    url, channel, database, notifiche);
+            go = true;
+            ContextCompat.startForegroundService(this, serviceIntent);
+            notifiche.setText("notifiche attive");
         }
-        //se già non è stata avviata l'avvio ora
-        ExampleService.setvalue(tempMin, tempMax, umidMin, umidMax, condMin, condMax,
-                phMin, phMax, irraMin, irraMax, pesMin, pesMax,temp,umid,ph,cond,irra,peso,url,channel,database,notifiche);
-        go = true;
-        ContextCompat.startForegroundService(this, serviceIntent);
-        notifiche.setText("notifiche attive");
     }
 
     //fatta quando richiamo il pulsante di stop
@@ -153,22 +162,6 @@ public class AlertActivity extends AppCompatActivity {
     public static void setUrl(Channel chan){
         channel=chan;
         url = "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key=" + channel.getRead_key() + "&results=1";
-    }
-
-    public static void printnotify(String text,int i){
-        Intent notificationIntent = new Intent(cont, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(cont,0, notificationIntent, 0);
-
-        Notification notification = new NotificationCompat.Builder(cont, CHANNEL_1_ID)
-                .setContentTitle("Example Service")
-                .setContentText(text)
-                .setSmallIcon(R.drawable.pianta)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-                .build();
-
-        notification.flags = Notification.FLAG_INSISTENT | Notification.FLAG_AUTO_CANCEL;
-        notificationManager.notify(i,notification);
     }
 
     public static Context getContext(){
