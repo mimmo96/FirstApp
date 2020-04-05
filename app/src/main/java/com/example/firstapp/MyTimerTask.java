@@ -3,6 +3,7 @@ package com.example.firstapp;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -125,14 +126,8 @@ public class MyTimerTask extends TimerTask {
                                     //recupero il primo oggetto dell'array
                                     final JSONObject value = jsonArray.getJSONObject(i);
 
-                                    String temperature = value.getString("field1");
-                                    String umidity = value.getString("field2");
-                                    String ph = value.getString("field3");
-                                    String conducibilita = value.getString("field4");
-                                    String irradianza = value.getString("field5");
-                                    String peso = value.getString("field6");
-
                                     try {
+                                        String temperature = value.getString("field1");
                                         if (fields.get(0).equals("Temperature"))
                                             textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(temperature)) * 100.0) / 100.0));
                                         else textTemp.setText("- -");
@@ -140,12 +135,14 @@ public class MyTimerTask extends TimerTask {
                                         textTemp.setText("- -");
                                     }
                                     try{
+                                        String umidity = value.getString("field2");
                                         if(fields.get(1).equals("Humidity")) textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0));
                                         else textUmidity.setText("- -");
                                     }catch (Exception e){
                                         textUmidity.setText("- -");
                                     }
                                     try {
+                                        String ph = value.getString("field3");
                                         if (fields.get(2).equals("pH_value"))
                                             textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(ph)) * 100.0) / 100.0));
                                         else textPh.setText("- -");
@@ -153,6 +150,7 @@ public class MyTimerTask extends TimerTask {
                                         textPh.setText("- -");
                                     }
                                     try {
+                                        String conducibilita = value.getString("field4");
                                         if (fields.get(3).equals("electric_conductivity"))
                                             textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(conducibilita)) * 100.0) / 100.0));
                                         else textConducibilita.setText("- -");
@@ -160,6 +158,7 @@ public class MyTimerTask extends TimerTask {
                                         textConducibilita.setText("- -");
                                     }
                                     try {
+                                        String irradianza = value.getString("field5");
                                         if (fields.get(4).equals("Irradiance"))
                                             textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0));
                                         else textIrradianza.setText("- -");
@@ -167,6 +166,7 @@ public class MyTimerTask extends TimerTask {
                                         textIrradianza.setText("- -");
                                     }
                                     try {
+                                        String peso = value.getString("field6");
                                         if (fields.get(5).equals("P0"))
                                             textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(peso)) * 100.0) / 100.0).concat(" g"));
                                         else textPeso.setText("- -");

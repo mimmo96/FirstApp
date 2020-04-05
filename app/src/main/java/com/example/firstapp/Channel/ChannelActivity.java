@@ -107,22 +107,25 @@ public class ChannelActivity  extends AppCompatActivity {
                                         .setPositiveButton("CONFERMA", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                //controllo se i parametri inseriti sono corretti
-                                                DEFAULT_ID = taskEditText.getText().toString();
-                                                DEFAULT_READ_KEY = taskEditText2.getText().toString();
-                                                //controllo se i dati inseriti corrispondono ad un channel
-                                                if (testData(DEFAULT_ID, DEFAULT_READ_KEY)) {
-                                                    //comunico il database aggiornato al thread
-                                                    MyTimerTask.updateDatabase(db);
-                                                    Toast.makeText(BasicContext, "operazione eseguita correttamente!", Toast.LENGTH_SHORT).show();
-                                                    AlertActivity.stopService();
-                                                    //segnalo al thread principale i nuovi id,key
-                                                    if(pos==-1) pos=0;
-                                                    MainActivity.setDefaultSetting(DEFAULT_ID,DEFAULT_READ_KEY,pos);
+                                                //controllo se i dati inseriti corrispondono ad un channel esistente
+                                                if(db.ChannelDao().findByName(taskEditText.getText().toString(),taskEditText2.getText().toString())!=null) Toast.makeText(BasicContext,"channel già esistente!",Toast.LENGTH_SHORT).show();
+                                                else {
+                                                    // controllo se i parametri inseriti sono corretti
+                                                    DEFAULT_ID = taskEditText.getText().toString();
+                                                    DEFAULT_READ_KEY = taskEditText2.getText().toString();
+                                                    if (testData(DEFAULT_ID, DEFAULT_READ_KEY)) {
+                                                        //comunico il database aggiornato al thread
+                                                        MyTimerTask.updateDatabase(db);
+                                                        Toast.makeText(BasicContext, "operazione eseguita correttamente!", Toast.LENGTH_SHORT).show();
+                                                        AlertActivity.stopService();
+                                                        //segnalo al thread principale i nuovi id,key
+                                                        if (pos == -1) pos = 0;
+                                                        MainActivity.setDefaultSetting(DEFAULT_ID, DEFAULT_READ_KEY, pos);
+                                                    } else
+                                                        Toast.makeText(BasicContext, "operazione ERRATA!", Toast.LENGTH_SHORT).show();
+                                                    //segnalo eventuali modifiche
+                                                    adapter.notifyDataSetChanged();
                                                 }
-                                                else  Toast.makeText(BasicContext, "operazione ERRATA!", Toast.LENGTH_SHORT).show();
-                                                //segnalo eventuali modifiche
-                                                adapter.notifyDataSetChanged();
 
                                             }
                                         })

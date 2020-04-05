@@ -69,6 +69,7 @@ public class ExampleService extends Service {
     //funzione che devo fare all'avvio
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("ExampleService","OnStartCommand");
             //recupero la lista del channel attuale
             String id = database.SavedDao().getAll().get(0).getId();
             String key = database.SavedDao().getAll().get(0).getKey();
@@ -84,7 +85,6 @@ public class ExampleService extends Service {
         }
         else{
             this.onDestroy();
-            return  START_NOT_STICKY;
         }
         return START_STICKY;
     }
