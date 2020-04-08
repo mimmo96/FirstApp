@@ -243,7 +243,6 @@ public class ChannelActivity  extends AppCompatActivity {
         //cancello il channel precedente come default se è diverso dal precedente
         Channel prec=channel.get(pos);
         if(chan.getId()!=prec.getId()) {
-            AlertActivity.stopService();
             prec.setPosition(0);
             db.ChannelDao().findByName(prec.getId(), prec.getRead_key()).setPosition(0);
 

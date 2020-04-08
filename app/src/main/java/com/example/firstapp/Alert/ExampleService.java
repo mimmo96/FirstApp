@@ -207,7 +207,7 @@ public class ExampleService extends Service {
                 x.setTimer(null);
                 x.setTimerTask(null);
                 database.ChannelDao().insert(x);
-                if (notification != null) notification.setText("notifiche non attive");
+                notification.setText("notifiche non attive");
                 Log.d("Background service", "Servizio interrotto!");
             }
         }

@@ -11,8 +11,8 @@
 
     <TextView
         android:id="@+id/textPh"
-        android:layout_width="45dp"
-        android:layout_height="22dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
@@ -45,13 +45,13 @@
 
     <TextView
         android:id="@+id/textConducibility"
-        android:layout_width="50dp"
-        android:layout_height="26dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_centerInParent="true"
-        android:text="00.00"
+        android:text="00.00 dS/m"
         android:textSize="18sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:text="00.00"
+        android:text="00.00 °C"
         android:textSize="18sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -132,7 +132,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.492"
-        app:srcCompat="@drawable/ph" />
+        app:srcCompat="@drawable/phprova" />
 
     <ImageView
         android:id="@+id/imageIrradiance"
@@ -157,7 +157,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:text="00.00"
+        android:text="00.00 w/m²"
         android:textSize="18sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -199,13 +199,13 @@
 
     <TextView
         android:id="@+id/textPeso"
-        android:layout_width="102dp"
-        android:layout_height="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginBottom="80dp"
-        android:text="00.00 g"
+        android:text="0000.00 g"
         android:textSize="18sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="parent"

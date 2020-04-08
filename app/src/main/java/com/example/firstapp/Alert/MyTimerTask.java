@@ -127,7 +127,7 @@ public class MyTimerTask extends TimerTask {
                                         printnotify("Channel ("+channel.getId()+") temperatura alta!", 2);
                                      } else temp.setText("- -");
                                 }catch (Exception e){
-                                    temp.setText("- -");
+                                    if(temp!=null)     temp.setText("- -");
                                 }
                                 try{
                                     String umidity = value.getString("field2");
@@ -140,7 +140,7 @@ public class MyTimerTask extends TimerTask {
                                             printnotify("Channel("+channel.getId()+") umidità alta!", 4);
                                     } else umid.setText("- -");
                                 }catch (Exception e){
-                                    umid.setText("- -");
+                                    if(umid!=null)      umid.setText("- -");
                                 }
                                 try {
                                     String ph1 = value.getString("field3");
@@ -155,7 +155,7 @@ public class MyTimerTask extends TimerTask {
                                     } else ph.setText("- -");
 
                                 }catch (Exception e){
-                                    ph.setText("- -");
+                                      if(ph!=null)         ph.setText("- -");
                                 }
                                 try {
                                     String conducibilita = value.getString("field4");
@@ -169,7 +169,7 @@ public class MyTimerTask extends TimerTask {
 
                                     } else cond.setText("- -");
                                 }catch (Exception e){
-                                    cond.setText("- -");
+                                  if(cond!=null)  cond.setText("- -");
                                 }
                                 try {
                                     String irradianza = value.getString("field5");
@@ -183,7 +183,7 @@ public class MyTimerTask extends TimerTask {
 
                                     } else irra.setText("- -");
                                 }catch (Exception e){
-                                    irra.setText("- -");
+                                   if(irra!=null) irra.setText("- -");
                                 }
                                 try {
                                     String peso1 = value.getString("field6");
@@ -196,7 +196,7 @@ public class MyTimerTask extends TimerTask {
                                             printnotify("Channel("+channel.getId()+") peso alto!", 12);
                                     } else peso.setText("- -");
                                 }catch (Exception e){
-                                    peso.setText("- -");
+                                   if(peso!=null) peso.setText("- -");
                                 }
 
                             }

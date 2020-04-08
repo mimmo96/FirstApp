@@ -3,11 +3,17 @@ package com.example.firstapp;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.firstapp.Alert.AlertActivity;
+import com.example.firstapp.Alert.ExampleService;
 import com.example.firstapp.Channel.Channel;
+
+import java.util.List;
 
 public class settingSingleValues extends AppCompatActivity {
 
@@ -16,6 +22,10 @@ public class settingSingleValues extends AppCompatActivity {
     private static String id;
     private static String key;
     private static AppDatabase db;
+    private static TextView min;
+    private static TextView max;
+    private static Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,10 +34,11 @@ public class settingSingleValues extends AppCompatActivity {
 
         TextView valoreCorrente=findViewById(R.id.SingleCurr);
         TextView title=findViewById(R.id.textViewTitle);
-        TextView min=findViewById(R.id.SingleMin);
-        TextView max=findViewById(R.id.SingleMax);
+        min=findViewById(R.id.SingleMin);
+        max=findViewById(R.id.SingleMax);
         title.setText(titolo);
         valoreCorrente.setText(corrente);
+        context=getApplicationContext();
 
         Channel x=db.ChannelDao().findByName(id,key);
         if(titolo.equals("Temperature")){
@@ -68,6 +79,141 @@ public class settingSingleValues extends AppCompatActivity {
         db=database;
         id=id1;
         key=key1;
+    }
+
+    public static void ButtonReset(View view){
+        Channel x=db.ChannelDao().findByName(id,key);
+        db.ChannelDao().delete(x);
+
+        if(titolo.equals("Temperature")){
+           x.setTempMin(null);
+           x.setTempMax(null);
+           min.setText("- -");
+           max.setText("- -");
+        }
+        if(titolo.equals("Ph")){
+            x.setPhMin(null);
+            x.setPhMax(null);
+            min.setText("- -");
+            max.setText("- -");
+        }
+        if(titolo.equals("Irradianza")){
+            x.setIrraMin(null);
+            x.setIrraMax(null);
+            min.setText("- -");
+            max.setText("- -");
+        }
+        if(titolo.equals("Conducibilità elettrica")){
+           x.setCondMin(null);
+           x.setCondMax(null);
+            min.setText("- -");
+            max.setText("- -");
+        }
+        if(titolo.equals("Peso")){
+            x.setPesMin(null);
+            x.setPesMax(null);
+            min.setText("- -");
+            max.setText("- -");
+        }
+        if(titolo.equals("Umidità")){
+            x.setUmidMin(null);
+            x.setUmidMax(null);
+            min.setText("- -");
+            max.setText("- -");
+        }
+        db.ChannelDao().insert(x);
+
+    }
+
+    public static void ButtonConferma(View view){
+        Channel x=db.ChannelDao().findByName(id,key);
+        db.ChannelDao().delete(x);
+
+        if(titolo.equals("Temperature")){
+            try {
+                Double Minimo = Double.valueOf(min.getText().toString());
+                x.setTempMin(Minimo);
+            } catch (NumberFormatException e) {
+
+            }
+            try {
+                Double Massimo = Double.valueOf(max.getText().toString());
+                x.setTempMax(Massimo);
+            } catch (NumberFormatException e) {
+
+            }
+        }
+        if(titolo.equals("Ph")){
+            try {
+                Double Minimo = Double.valueOf(min.getText().toString());
+                x.setPhMin(Minimo);
+            } catch (NumberFormatException e) {
+
+            }
+            try {
+                Double Massimo = Double.valueOf(max.getText().toString());
+                x.setPhMax(Massimo);
+            } catch (NumberFormatException e) {
+
+            }
+        }
+        if(titolo.equals("Irradianza")){
+            try {
+                Double Minimo = Double.valueOf(min.getText().toString());
+                x.setIrraMin(Minimo);
+            } catch (NumberFormatException e) {
+
+            }
+            try {
+                Double Massimo = Double.valueOf(max.getText().toString());
+                x.setIrraMax(Massimo);
+            } catch (NumberFormatException e) {
+
+            }
+        }
+        if(titolo.equals("Conducibilità elettrica")){
+            try {
+                Double Minimo = Double.valueOf(min.getText().toString());
+                x.setCondMin(Minimo);
+            } catch (NumberFormatException e) {
+
+            }
+            try {
+                Double Massimo = Double.valueOf(max.getText().toString());
+                x.setCondMax(Massimo);
+            } catch (NumberFormatException e) {
+
+            }
+        }
+        if(titolo.equals("Peso")){
+            try {
+                Double Minimo = Double.valueOf(min.getText().toString());
+                x.setPesMin(Minimo);
+            } catch (NumberFormatException e) {
+
+            }
+            try {
+                Double Massimo = Double.valueOf(max.getText().toString());
+                x.setPesMax(Massimo);
+            } catch (NumberFormatException e) {
+
+            }
+        }
+        if(titolo.equals("Umidità")){
+            try {
+                Double Minimo = Double.valueOf(min.getText().toString());
+                x.setUmidMin(Minimo);
+            } catch (NumberFormatException e) {
+
+            }
+            try {
+                Double Massimo = Double.valueOf(max.getText().toString());
+                x.setUmidMax(Massimo);
+            } catch (NumberFormatException e) {
+            }
+        }
+
+        db.ChannelDao().insert(x);
 
     }
 }

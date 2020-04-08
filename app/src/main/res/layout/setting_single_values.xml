@@ -58,22 +58,24 @@
         app:layout_constraintVertical_bias="0.641" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/buttonConferma"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="ButtonConferma"
         android:text="CONFERMA"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.626"
-        app:layout_constraintStart_toEndOf="@+id/button4"
+        app:layout_constraintStart_toEndOf="@+id/buttonReset"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.904" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/buttonReset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="48dp"
+        android:onClick="ButtonReset"
         android:text="RESET"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -88,6 +90,7 @@
         android:layout_height="46dp"
         android:layout_marginStart="8dp"
         android:ems="10"
+        android:hint="- -"
         android:inputType="numberSigned|numberDecimal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView16"
@@ -100,6 +103,7 @@
         android:layout_height="44dp"
         android:layout_marginStart="12dp"
         android:ems="10"
+        android:hint="- -"
         android:inputType="numberSigned|numberDecimal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView17"

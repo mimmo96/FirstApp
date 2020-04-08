@@ -3,6 +3,7 @@ package com.example.firstapp.Graphic;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.OnDataPointTapListener;
+import com.jjoe64.graphview.series.PointsGraphSeries;
 import com.jjoe64.graphview.series.Series;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,9 +39,9 @@ import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>
 {
-
     private List<ModelData> data;
     private Context context;
+    private PointsGraphSeries<DataPoint> last=null;
 
     public RecyclerViewAdapter(List<ModelData> data, Context context) {
         this.data = data;
@@ -56,6 +58,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     //impostare gli oggetti presi dalla lista popolata da classi "model"
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
+
         ModelData user = data.get(position);
         holder.text.setText(user.getName());
         holder.series=user.getSeries();
@@ -84,6 +87,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             public void onTap(Series series, DataPointInterface dataPoint) {
                 Date dat=new Date((long) dataPoint.getX());
                 Toast.makeText(context,"x: " + sdf.format(dat) +"\ny: "+dataPoint.getY(),Toast.LENGTH_SHORT).show();
+
+                //da sistemare
+                if(last!=null){
+                    graph.removeSeries(last);
+
+                }
+                last=null;
+                last = new PointsGraphSeries<>(new DataPoint[] {
+                        new DataPoint( dataPoint.getX(), dataPoint.getY()),
+
+                });
+                last.setColor(Color.BLUE);
+                last.setSize(8);
+                graph.addSeries(last);
+                //graph.removeSeries(last);
             }
         });
         graph.getViewport().setScalable(true);
@@ -92,8 +110,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Date yas=new Date((long) graph.getViewport().getMaxX(true));
         holder.start.setText(sdf.format(xas));
         holder.end.setText(sdf.format(yas));
-        holder.max.setText(String.valueOf(series.getHighestValueY()));
-        holder.min.setText(String.valueOf(series.getLowestValueY()));
+        Double max=Math.round(series.getHighestValueY()*100.0)/100.0;
+        Double min=Math.round(series.getLowestValueY()*100.0)/100.0;
+        holder.max.setText(String.valueOf(max));
+        holder.min.setText(String.valueOf(min));
         holder.avg.setText(String.valueOf(user.getMedia()));
         graph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
         graph.getViewport().setOnXAxisBoundsChangedListener(new Viewport.OnXAxisBoundsChangedListener() {
@@ -121,6 +141,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     somma=somma+val;
                 }
                 med=Math.round((somma/conta)*100.0)/100.0;
+                max=Math.round(max*100.0)/100.0;
+                min=Math.round(min*100.0)/100.0;
                 holder.max.setText(String.valueOf(max));
                 holder.min.setText(String.valueOf(min));
                 holder.avg.setText(String.valueOf(med));

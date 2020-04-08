@@ -129,7 +129,7 @@ public class MyTimerTask extends TimerTask {
                                     try {
                                         String temperature = value.getString("field1");
                                         if (fields.get(0).equals("Temperature"))
-                                            textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(temperature)) * 100.0) / 100.0));
+                                            textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(temperature)) * 100.0) / 100.0).concat(" °C"));
                                         else textTemp.setText("- -");
                                     }catch (Exception e){
                                         textTemp.setText("- -");
@@ -152,7 +152,7 @@ public class MyTimerTask extends TimerTask {
                                     try {
                                         String conducibilita = value.getString("field4");
                                         if (fields.get(3).equals("electric_conductivity"))
-                                            textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(conducibilita)) * 100.0) / 100.0));
+                                            textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(conducibilita)) * 100.0) / 100.0).concat(" dS/m"));
                                         else textConducibilita.setText("- -");
                                     }catch (Exception e){
                                         textConducibilita.setText("- -");
@@ -160,7 +160,7 @@ public class MyTimerTask extends TimerTask {
                                     try {
                                         String irradianza = value.getString("field5");
                                         if (fields.get(4).equals("Irradiance"))
-                                            textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0));
+                                            textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0).concat(" w/m²"));
                                         else textIrradianza.setText("- -");
                                     }catch (Exception e){
                                         textIrradianza.setText("- -");

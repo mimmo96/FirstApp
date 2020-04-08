@@ -52,19 +52,17 @@ public class AlertActivity extends AppCompatActivity {
     private EditText irraMax;
     private EditText pesMin;
     private EditText pesMax;
-    private TextView temp;
-    private TextView umid;
-    private TextView ph;
-    private TextView cond;
-    private TextView irra;
-    private TextView peso;
-    private TextView notifiche;
+    private static TextView temp;
+    private static TextView umid;
+    private static TextView ph;
+    private static TextView cond;
+    private static TextView irra;
+    private static TextView peso;
+    private static TextView notifiche;
     public static String url=null;
-    private static Boolean go=false;
     private static Intent serviceIntent;
     private static Channel channel;             //channel usato
     private static AppDatabase database;
-    private static Boolean canstart=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +120,6 @@ public class AlertActivity extends AppCompatActivity {
                 .build();
 
         serviceIntent = new Intent(this, ExampleService.class);
-        startService();
     }
 
     public static Intent getActivityintent(Context context){
@@ -139,19 +136,17 @@ public class AlertActivity extends AppCompatActivity {
     }
 
     public void startService() {
-        if(canstart) {
             //se era stata già avviata fermo la precedente
             if (channel.getTimer()!=null ) {
+                Log.d("TERMINO","sto terminando");
                 stopService();
             }
             //se già non è stata avviata l'avvio ora
             ExampleService.setvalue(tempMin, tempMax, umidMin, umidMax, condMin, condMax, phMin, phMax,
                                     irraMin, irraMax, pesMin, pesMax, temp, umid, ph, cond, irra, peso,
                                     url, channel, database, notifiche);
-            go = true;
             ContextCompat.startForegroundService(this, serviceIntent);
             notifiche.setText("notifiche attive");
-        }
     }
 
     //fatta quando richiamo il pulsante di stop
@@ -167,6 +162,15 @@ public class AlertActivity extends AppCompatActivity {
     public static Context getContext(){
         return cont;
     }
-
+/*
+    public static void setvalues(String temp1,  String umid1, String ph1, String cond1, String irra1, String peso1){
+        temp.setText(temp1);
+        umid.setText(umid1);
+        ph.setText(ph1);
+        cond.setText(cond1);
+        irra.setText(irra1);
+        peso.setText(peso1);
+    }
+*/
 
 }
