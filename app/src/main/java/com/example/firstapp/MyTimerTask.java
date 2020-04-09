@@ -130,14 +130,20 @@ public class MyTimerTask extends TimerTask {
                                         String temperature = value.getString("field1");
                                         if (fields.get(0).equals("Temperature"))
                                             textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(temperature)) * 100.0) / 100.0).concat(" °C"));
-                                        else textTemp.setText("- -");
+                                        else{
+                                            String field=value.getString(v.getImagetemp());
+                                            textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
+                                        }
                                     }catch (Exception e){
                                         textTemp.setText("- -");
                                     }
                                     try{
                                         String umidity = value.getString("field2");
                                         if(fields.get(1).equals("Humidity")) textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0));
-                                        else textUmidity.setText("- -");
+                                        else{
+                                            String field=value.getString(v.getImageumid());
+                                            textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
+                                        }
                                     }catch (Exception e){
                                         textUmidity.setText("- -");
                                     }
@@ -145,7 +151,10 @@ public class MyTimerTask extends TimerTask {
                                         String ph = value.getString("field3");
                                         if (fields.get(2).equals("pH_value"))
                                             textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(ph)) * 100.0) / 100.0));
-                                        else textPh.setText("- -");
+                                        else{
+                                            String field=value.getString(v.getImageph());
+                                            textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
+                                        }
                                     }catch (Exception e){
                                         textPh.setText("- -");
                                     }
@@ -153,7 +162,10 @@ public class MyTimerTask extends TimerTask {
                                         String conducibilita = value.getString("field4");
                                         if (fields.get(3).equals("electric_conductivity"))
                                             textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(conducibilita)) * 100.0) / 100.0).concat(" dS/m"));
-                                        else textConducibilita.setText("- -");
+                                        else{
+                                            String field=value.getString(v.getImagecond());
+                                            textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
+                                        }
                                     }catch (Exception e){
                                         textConducibilita.setText("- -");
                                     }
@@ -161,7 +173,10 @@ public class MyTimerTask extends TimerTask {
                                         String irradianza = value.getString("field5");
                                         if (fields.get(4).equals("Irradiance"))
                                             textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0).concat(" w/m²"));
-                                        else textIrradianza.setText("- -");
+                                        else{
+                                            String field=value.getString(v.getImageirra());
+                                            textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
+                                        }
                                     }catch (Exception e){
                                         textIrradianza.setText("- -");
                                     }
@@ -169,7 +184,10 @@ public class MyTimerTask extends TimerTask {
                                         String peso = value.getString("field6");
                                         if (fields.get(5).equals("P0"))
                                             textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(peso)) * 100.0) / 100.0).concat(" g"));
-                                        else textPeso.setText("- -");
+                                        else{
+                                            String field=value.getString(v.getImagepeso());
+                                            textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
+                                        }
                                     }catch (Exception e){
                                         textPeso.setText("- -");
                                     }
@@ -219,6 +237,7 @@ public class MyTimerTask extends TimerTask {
         date_value.set (Calendar.MINUTE,minuti);
         date_value.set (Calendar.SECOND, secondi);
 
+        //System.out.println(date_now.get(Calendar.ZONE_OFFSET)/(60*60*1000));
 
         //durata in secondi
         long durata= (date_now.getTimeInMillis()/1000 - date_value.getTimeInMillis()/1000);

@@ -20,6 +20,8 @@ import com.example.firstapp.Channel.Channel;
 import com.example.firstapp.R;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.PointsGraphSeries;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -304,9 +306,10 @@ public class MainActivity extends AppCompatActivity {
             somma=somma+list.get(i);
         }
         series = new LineGraphSeries<>(data);
+        PointsGraphSeries<DataPoint> last=null;
         series.setColor(Color.RED);
         Double media=Math.round((somma/created.size()) * 100.0) / 100.0;
-        Insertdata.add(new ModelData(name, series,media));
+        Insertdata.add(new ModelData(name, series,media,last));
         date_value.clear();
     }
 

@@ -23,6 +23,7 @@ import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 import com.jjoe64.graphview.series.Series;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -41,7 +42,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 {
     private List<ModelData> data;
     private Context context;
-    private PointsGraphSeries<DataPoint> last=null;
+    private PointsGraphSeries<DataPoint> last;
 
     public RecyclerViewAdapter(List<ModelData> data, Context context) {
         this.data = data;
@@ -62,6 +63,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         ModelData user = data.get(position);
         holder.text.setText(user.getName());
         holder.series=user.getSeries();
+        last=user.getPoint();
         final LineGraphSeries<DataPoint> series=holder.series;
         final GraphView graph= holder.graph;
         series.setDrawDataPoints(true);
@@ -88,20 +90,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 Date dat=new Date((long) dataPoint.getX());
                 Toast.makeText(context,"x: " + sdf.format(dat) +"\ny: "+dataPoint.getY(),Toast.LENGTH_SHORT).show();
 
-                //da sistemare
-                if(last!=null){
-                    graph.removeSeries(last);
+                /*
+               if(last!=null) last.clearReference(graph);
+               DataPoint[] data=new DataPoint[1];
+               data[0]=new DataPoint(dataPoint.getX(), dataPoint.getY());
+               dataPoint.
+                LineGraphSeries<DataPoint> serie1=new LineGraphSeries<>(data);
+                serie1.setColor(Color.BLUE);
 
-                }
-                last=null;
-                last = new PointsGraphSeries<>(new DataPoint[] {
-                        new DataPoint( dataPoint.getX(), dataPoint.getY()),
 
-                });
-                last.setColor(Color.BLUE);
-                last.setSize(8);
-                graph.addSeries(last);
+                graph.addSeries(serie1);
                 //graph.removeSeries(last);
+*/
             }
         });
         graph.getViewport().setScalable(true);

@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -345,36 +346,152 @@ public class MainActivity extends AppCompatActivity {
     }
     //funzioni per settare i vari valori dei singoli fields non appena li premo
 
-    public void tempSettings(View v){
-        Intent intent = settingSingleValues.getActivityintent(MainActivity.this);
-        settingSingleValues.settingsValues("Temperature",textTemp.getText().toString(),database,channelID,READ_KEY);
-        startActivity(intent);
+    public void tempSettings(View v) {
+        //reperisco il channel utilizzato di default e faccio il parsing per scoprire quale fields è stato settato(posizione)
+        final List<savedValues> allchannel = database.SavedDao().getAll();
+        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getKey());
+        int pos=0;
+        if(inUse.getImagetemp()!=null) pos=Integer.parseInt(inUse.getImagetemp().substring(5));
+        fieldssettings(0,pos);
     }
 
     public void phSettings(View v){
-        Intent intent = settingSingleValues.getActivityintent(MainActivity.this);
-        settingSingleValues.settingsValues("Ph",textPh.getText().toString(),database,channelID,READ_KEY);
-        startActivity(intent);
+        final List<savedValues> allchannel = database.SavedDao().getAll();
+        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getKey());
+        int pos=0;
+        if(inUse.getImageph()!=null) pos=Integer.parseInt(inUse.getImageph().substring(5));
+        fieldssettings(1,pos);
     }
     public void irraSettings(View v){
-        Intent intent = settingSingleValues.getActivityintent(MainActivity.this);
-        settingSingleValues.settingsValues("Irradianza",textIrradianza.getText().toString(),database,channelID,READ_KEY);
-        startActivity(intent);
+        final List<savedValues> allchannel = database.SavedDao().getAll();
+        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getKey());
+        int pos=0;
+        if(inUse.getImageirra()!=null) pos=Integer.parseInt(inUse.getImageirra().substring(5));
+        fieldssettings(2,pos);
     }
     public void condSettings(View v){
-        Intent intent = settingSingleValues.getActivityintent(MainActivity.this);
-        settingSingleValues.settingsValues("Conducibilità elettrica",textConducibilita.getText().toString(),database,channelID,READ_KEY);
-        startActivity(intent);
+        final List<savedValues> allchannel = database.SavedDao().getAll();
+        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getKey());
+        int pos=0;
+        if(inUse.getImagecond()!=null)  pos=Integer.parseInt(inUse.getImagecond().substring(5));
+        fieldssettings(3,pos);
     }
     public void pesoSettings(View v){
-        Intent intent = settingSingleValues.getActivityintent(MainActivity.this);
-        settingSingleValues.settingsValues("Peso",textPeso.getText().toString(),database,channelID,READ_KEY);
-        startActivity(intent);
+        final List<savedValues> allchannel = database.SavedDao().getAll();
+        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getKey());
+        int pos=0;
+        if(inUse.getImagepeso()!=null)  pos=Integer.parseInt(inUse.getImagepeso().substring(5));
+        fieldssettings(4,pos);
     }
     public void umidSettings(View v){
-        Intent intent = settingSingleValues.getActivityintent(MainActivity.this);
-        settingSingleValues.settingsValues("Umidità",textUmidity.getText().toString(),database,channelID,READ_KEY);
-        startActivity(intent);
+        final List<savedValues> allchannel = database.SavedDao().getAll();
+        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getKey());
+        int pos=0;
+        if(inUse.getImageumid()!=null)  pos=Integer.parseInt(inUse.getImageumid().substring(5));
+        fieldssettings(5,pos);
+    }
+
+    public void fieldssettings(final int field,int posizione){
+        final String[] listItems;
+        final int[] pos = new int[1];
+        //contiene i nomi dei fields
+        final ArrayList<String> list = new ArrayList<>();
+
+        //nome del fileds selezionato
+        final String[] name = new String[1];
+
+        final List<savedValues> allchannel = database.SavedDao().getAll();
+        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getKey());
+        if (inUse.getFiled1() != null) {
+            list.add(inUse.getFiled1());
+        }
+        if (inUse.getFiled2() != null) {
+            list.add(inUse.getFiled2());
+        }
+        if (inUse.getFiled3() != null) {
+            list.add(inUse.getFiled3());
+        }
+        if (inUse.getFiled4() != null) {
+            list.add(inUse.getFiled4());
+        }
+        if (inUse.getFiled5() != null) {
+            list.add(inUse.getFiled5());
+        }
+        if (inUse.getFiled6() != null) {
+            list.add(inUse.getFiled6());
+        }
+        if (inUse.getFiled7() != null) {
+            list.add(inUse.getFiled7());
+        }
+        if (inUse.getFiled8() != null) {
+            list.add(inUse.getFiled8());
+        }
+
+        //converte la lista contenete i nomi in un array
+        listItems = list.toArray(new String[list.size()]);
+
+
+        if (list.size() == 0)
+            Toast.makeText(cont, "INSERISCI UN CHANNEL!", Toast.LENGTH_SHORT).show();
+        else {
+            //avvio la schermata per selezionare il rispettivo channel
+            AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+            mBuilder.setTitle("Seleziona il field da visulaizzare");
+            mBuilder.setSingleChoiceItems(listItems, posizione-1, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int i) {
+                   name[0]=listItems[i];
+                   pos[0]=i;
+                }
+            });
+
+            mBuilder.setCancelable(false);
+            //azione da svolgere quando premo sul pulsante visualizza
+            mBuilder.setPositiveButton("VISUALIZZA", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int which) {
+                    Channel x=database.ChannelDao().findByName(channelID,READ_KEY);
+                    database.ChannelDao().delete(x);
+                    if(field==0) x.setImagetemp("field"+(pos[0]+1));
+                    if(field==1) x.setImageph("field"+(pos[0]+1));
+                    if(field==2) x.setImageirra("field"+(pos[0]+1));
+                    if(field==3) x.setImagecond("field"+(pos[0]+1));
+                    if(field==4) x.setImagepeso("field"+(pos[0]+1));
+                    if(field==5) x.setImageumid("field"+(pos[0]+1));
+                    database.ChannelDao().insert(x);
+                    restartTimer(cont);
+                }
+            });
+
+            //azione da svolgere quando premo sul pulsante cancella tutto
+            mBuilder.setNegativeButton("RESET", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int which) {
+                    Channel x=database.ChannelDao().findByName(channelID,READ_KEY);
+                    database.ChannelDao().delete(x);
+                    if(field==0) x.setImagetemp(null);
+                    if(field==1) x.setImageph(null);
+                    if(field==2) x.setImageirra(null);
+                    if(field==3) x.setImagecond(null);
+                    if(field==4) x.setImagepeso(null);
+                    if(field==5) x.setImageumid(null);
+                    database.ChannelDao().insert(x);
+                    restartTimer(cont);
+                    dialogInterface.dismiss();
+                }
+            });
+
+            //azione da svolgere quando premo sul pulsante cancella tutto
+            mBuilder.setNeutralButton("ANNULLA", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int which) {
+                    dialogInterface.dismiss();
+                }
+            });
+            AlertDialog mDialog = mBuilder.create();
+            mDialog.show();
+        }
+
     }
 
 }

@@ -29,6 +29,7 @@ public class Channel {
 
     @ColumnInfo(name = "read_key")
     private String read_key;
+    private String write_key;
 
     @ColumnInfo(name = "position_key")
     private int position=0;
@@ -53,12 +54,20 @@ public class Channel {
     private Double irraMax=null;
     private Double pesMin=null;
     private Double pesMax=null;
+    private String imagetemp=null;
+    private String imageumid=null;
+    private String imageph=null;
+    private String imagecond=null;
+    private String imageirra=null;
+    private String imagepeso=null;
+
     private static Timer timer=null;
     private static MyTimerTask timerTask=null;
 
     public Channel(String id, String read_key) {
         this.id = id;
         this.read_key=read_key;
+       // this.write_key=write_key;
     }
 
     public boolean getNotification() {
@@ -173,6 +182,14 @@ public class Channel {
         this.read_key = read_key;
     }
 
+    public String getWrite_key() {
+        return write_key;
+    }
+
+    public void setWrite_key(String write_key) {
+        this.write_key = write_key;
+    }
+
     public int getPosition() {
         return position;
     }
@@ -275,5 +292,53 @@ public class Channel {
 
     public void setPesMax(Double pesMax) {
         this.pesMax = pesMax;
+    }
+
+    public String getImagetemp() {
+        return imagetemp;
+    }
+
+    public void setImagetemp(String imagetemp) {
+        this.imagetemp = imagetemp;
+    }
+
+    public String getImageumid() {
+        return imageumid;
+    }
+
+    public void setImageumid(String imageumid) {
+        this.imageumid = imageumid;
+    }
+
+    public String getImageph() {
+        return imageph;
+    }
+
+    public void setImageph(String imageph) {
+        this.imageph = imageph;
+    }
+
+    public String getImagecond() {
+        return imagecond;
+    }
+
+    public void setImagecond(String imagecond) {
+        this.imagecond = imagecond;
+    }
+
+    public String getImageirra() {
+        return imageirra;
+    }
+
+    public void setImageirra(String imageirra) {
+        this.imageirra = imageirra;
+    }
+
+    public String getImagepeso() {
+        return imagepeso;
+    }
+
+    public void setImagepeso(String imagepeso) {
+        this.imagepeso = imagepeso;
     }
 }

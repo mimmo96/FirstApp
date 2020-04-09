@@ -2,6 +2,7 @@ package com.example.firstapp.Graphic;
 
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.PointsGraphSeries;
 
 /*
  * Progetto: svilluppo App Android per Tirocinio interno
@@ -18,15 +19,25 @@ public class ModelData
     private String name;
     private LineGraphSeries<DataPoint> series;
     private Double media;
+    private PointsGraphSeries<DataPoint> point;
 
     public ModelData() {}
 
-    public ModelData(String name, LineGraphSeries<DataPoint> series, Double media) {
+
+    public ModelData(String name, LineGraphSeries<DataPoint> series, Double media, PointsGraphSeries<DataPoint> poi) {
         this.name = name;
         this.series = series;
         this.media=media;
+        point=poi;
     }
 
+    public PointsGraphSeries<DataPoint> getPoint() {
+        return point;
+    }
+
+    public void setPoint(PointsGraphSeries<DataPoint> point) {
+        this.point = point;
+    }
     public String getName() {
         return name;
     }
