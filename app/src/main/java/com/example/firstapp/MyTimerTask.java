@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.TimerTask;
 
 /*
@@ -216,12 +217,11 @@ public class MyTimerTask extends TimerTask {
     }
 
     private void distanza(String data) {
-
         Calendar date_now= Calendar.getInstance ();
+        date_now.setTimeZone(TimeZone.getTimeZone("GMT"));
         Calendar date_value = Calendar.getInstance ();
 
         //parsing della data
-
         int giorno=Integer.valueOf(data.substring(8, 10));
         int mese=Integer.valueOf(data.substring(5, 7));
         int anno=Integer.valueOf(data.substring(0, 4));
@@ -229,7 +229,7 @@ public class MyTimerTask extends TimerTask {
         int minuti=Integer.valueOf(data.substring(14, 16));
         int secondi=Integer.valueOf(data.substring(17, 19));
 
-
+        //setto le impostazioni relative alla data
         date_value.set(Calendar.YEAR,anno);
         date_value.set(Calendar.MONTH,mese-1);
         date_value.set(Calendar.DAY_OF_MONTH,giorno);
@@ -237,7 +237,8 @@ public class MyTimerTask extends TimerTask {
         date_value.set (Calendar.MINUTE,minuti);
         date_value.set (Calendar.SECOND, secondi);
 
-        //System.out.println(date_now.get(Calendar.ZONE_OFFSET)/(60*60*1000));
+        //converto la data del cloud alla mia zona gmt
+        date_value.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         //durata in secondi
         long durata= (date_now.getTimeInMillis()/1000 - date_value.getTimeInMillis()/1000);
@@ -250,7 +251,6 @@ public class MyTimerTask extends TimerTask {
 
 
         text1.setText("Ultimo aggiornamento: " + giorni1 + " giorni " + ore1 + " ore " + minuti1 + " minuti " + secondi1+ " secondi ");
-
     }
 
     public static void updateDatabase(AppDatabase db){
