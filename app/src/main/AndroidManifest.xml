@@ -23,6 +23,10 @@
             android:name=".Alert.AlertActivity"
             android:label="AlertActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".Irrigation.IrrigationActivity"
+            android:label="IrrigationActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

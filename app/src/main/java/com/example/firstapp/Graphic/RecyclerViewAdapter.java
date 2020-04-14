@@ -1,9 +1,9 @@
 package com.example.firstapp.Graphic;
 
-
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Point;
+import android.graphics.Paint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +23,6 @@ import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 import com.jjoe64.graphview.series.Series;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +41,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 {
     private List<ModelData> data;
     private Context context;
-    private PointsGraphSeries<DataPoint> last;
 
     public RecyclerViewAdapter(List<ModelData> data, Context context) {
         this.data = data;
@@ -59,20 +57,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     //impostare gli oggetti presi dalla lista popolata da classi "model"
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-
+        Log.d("TEST","SONO ONBIND");
         ModelData user = data.get(position);
         holder.text.setText(user.getName());
         holder.series=user.getSeries();
-        last=user.getPoint();
-        final LineGraphSeries<DataPoint> series=holder.series;
+        final LineGraphSeries<DataPoint> serie=holder.series;
         final GraphView graph= holder.graph;
-        series.setDrawDataPoints(true);
-        series.setDrawBackground(true);
-        series.setBackgroundColor(Color.LTGRAY);
-        series.setDataPointsRadius(8);
+        serie.setDrawDataPoints(true);
+        serie.setDrawBackground(true);
+        serie.setBackgroundColor(Color.LTGRAY);
+        serie.setDataPointsRadius(8);
         final SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        graph.addSeries(holder.series);
-
+        graph.addSeries(serie);
         //setto la data come valore da mostrare
         graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
                 @Override
@@ -84,34 +80,38 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 }
         });
 
-        series.setOnDataPointTapListener(new OnDataPointTapListener() {
+        serie.setOnDataPointTapListener(new OnDataPointTapListener() {
             @Override
             public void onTap(Series series, DataPointInterface dataPoint) {
                 Date dat=new Date((long) dataPoint.getX());
                 Toast.makeText(context,"x: " + sdf.format(dat) +"\ny: "+dataPoint.getY(),Toast.LENGTH_SHORT).show();
 
-                /*
-               if(last!=null) last.clearReference(graph);
-               DataPoint[] data=new DataPoint[1];
-               data[0]=new DataPoint(dataPoint.getX(), dataPoint.getY());
-               dataPoint.
-                LineGraphSeries<DataPoint> serie1=new LineGraphSeries<>(data);
-                serie1.setColor(Color.BLUE);
-
-
-                graph.addSeries(serie1);
-                //graph.removeSeries(last);
+                DataPoint[] data= new DataPoint[] {new DataPoint(dataPoint.getX(), dataPoint.getY())};
+                PointsGraphSeries<DataPoint> series1 = new PointsGraphSeries<>(data);
+                series1.setColor(Color.BLUE);
+                series1.setSize(8);
+                holder.last=series1;
+                graph.addSeries(series1);
+/*
+                Canvas can=new Canvas();
+                can.drawColor(Color.BLUE);
+                Paint paint = new Paint();
+                paint.setStyle(Paint.Style.FILL_AND_STROKE);
+                can.drawCircle((float)dataPoint.getX(), (float) dataPoint.getY(), 25, paint);
+                serie.drawSelection(graph, can,true,dataPoint);
 */
             }
         });
+
+
         graph.getViewport().setScalable(true);
         graph.getViewport().setScrollable(true);
         Date xas=new Date((long) graph.getViewport().getMinX(true));
         Date yas=new Date((long) graph.getViewport().getMaxX(true));
         holder.start.setText(sdf.format(xas));
         holder.end.setText(sdf.format(yas));
-        Double max=Math.round(series.getHighestValueY()*100.0)/100.0;
-        Double min=Math.round(series.getLowestValueY()*100.0)/100.0;
+        Double max=Math.round(serie.getHighestValueY()*100.0)/100.0;
+        Double min=Math.round(serie.getLowestValueY()*100.0)/100.0;
         holder.max.setText(String.valueOf(max));
         holder.min.setText(String.valueOf(min));
         holder.avg.setText(String.valueOf(user.getMedia()));
@@ -126,7 +126,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 holder.end.setText(sdf.format(yas));
 
                 //faccio la scanzione di tutti i punti compresi tra minX e maxX per individuare minimo,massimo e media
-                Iterator<DataPoint> massimo=series.getValues(minX,maxX);
+                Iterator<DataPoint> massimo=serie.getValues(minX,maxX);
                 Double val=massimo.next().getY();
                 Double min=val;
                 Double max=val;
@@ -169,6 +169,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         private TextView max;
         private TextView avg;
         private TextView end;
+        private PointsGraphSeries<DataPoint> last=null;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -180,6 +181,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             min=itemView.findViewById(R.id.textViewMin);
             max=itemView.findViewById(R.id.textViewMax);
             avg=itemView.findViewById(R.id.textViewMed);
+            Log.d("GRAFICO","SONO NEL MAIN");
         }
     }
 }

@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /*
  * Progetto: svilluppo App Android per Tirocinio interno
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private static String READ_KEY="KLEZNXOV7EPHHEUT";
     private static String url="https://api.thingspeak.com/channels/"+channelID+ "/feeds.json?api_key=" + READ_KEY;
     private RecyclerView recyclerView;
+    private RecyclerViewAdapter adapter;
     private static ArrayList<String> nameFields;
     private static ArrayList<Integer> position;
     private static List<Channel> channelPos;
@@ -243,8 +245,10 @@ public class MainActivity extends AppCompatActivity {
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                             recyclerView.setLayoutManager(linearLayoutManager);
 
-                            recyclerView.setAdapter(new RecyclerViewAdapter(Insertdata, context));
+                            adapter=new RecyclerViewAdapter(Insertdata, context);
+                            recyclerView.setAdapter(adapter);
                             recyclerView.setHasFixedSize(true); //le cardView sono tutte delle stesse dimensioni
+                            adapter.notifyDataSetChanged();
                             //libero tutta la memoria
                             fields1.clear();
                             date_fields1.clear();
@@ -301,6 +305,10 @@ public class MainActivity extends AppCompatActivity {
             date_value.set(Calendar.HOUR_OF_DAY, ore);
             date_value.set(Calendar.MINUTE, minuti);
             date_value.set(Calendar.SECOND, secondi);
+
+            //converto la data del cloud alla mia zona gmt
+            date_value.setTimeZone(TimeZone.getTimeZone("GMT"));
+
             Date dat = date_value.getTime();
             data[i] = new DataPoint(dat, list.get(i));
             somma=somma+list.get(i);
@@ -334,5 +342,9 @@ public class MainActivity extends AppCompatActivity {
             System.out.println(i + ": " + channelPos.get(i).getId());
         }
         System.out.println("FINE");
+    }
+
+    public static void aggiorna(){
+
     }
 }

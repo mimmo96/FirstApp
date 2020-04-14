@@ -21,6 +21,7 @@ import com.example.firstapp.Alert.AlertActivity;
 import com.example.firstapp.Channel.Channel;
 import com.example.firstapp.Channel.ChannelActivity;
 import com.example.firstapp.Channel.savedValues;
+import com.example.firstapp.Irrigation.IrrigationActivity;
 
 /*
  * Progetto: svilluppo App Android per Tirocinio interno
@@ -436,7 +437,7 @@ public class MainActivity extends AppCompatActivity {
         else {
             //avvio la schermata per selezionare il rispettivo channel
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-            mBuilder.setTitle("Seleziona il field da visulaizzare");
+            mBuilder.setTitle("Seleziona il field da visualizzare");
             mBuilder.setSingleChoiceItems(listItems, posizione-1, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int i) {
@@ -492,6 +493,11 @@ public class MainActivity extends AppCompatActivity {
             mDialog.show();
         }
 
+    }
+
+    public void irrigation(View v){
+        Intent intent = IrrigationActivity.getActivityintent(MainActivity.this);
+        startActivity(intent);
     }
 
 }
