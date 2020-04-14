@@ -3,11 +3,8 @@ package com.example.firstapp.Channel;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
 import com.example.firstapp.Alert.MyTimerTask;
-
 import java.util.Timer;
-import java.util.TimerTask;
 
 /*
  * Progetto: svilluppo App Android per Tirocinio interno
@@ -60,14 +57,17 @@ public class Channel {
     private String imagecond=null;
     private String imageirra=null;
     private String imagepeso=null;
-
+    private Double IrrigationDuration=null;
+    private Double FlussoAcqua=null;
+    private Double Leachingfactor =null;
+    private Double Numirra =null;
     private static Timer timer=null;
     private static MyTimerTask timerTask=null;
 
-    public Channel(String id, String read_key) {
+    public Channel(String id, String read_key,String write_key) {
         this.id = id;
         this.read_key=read_key;
-       // this.write_key=write_key;
+        this.write_key=write_key;
     }
 
     public boolean getNotification() {
@@ -286,9 +286,7 @@ public class Channel {
         this.pesMin = pesMin;
     }
 
-    public Double getPesMax() {
-        return pesMax;
-    }
+    public Double getPesMax() { return pesMax; }
 
     public void setPesMax(Double pesMax) {
         this.pesMax = pesMax;
@@ -306,9 +304,7 @@ public class Channel {
         return imageumid;
     }
 
-    public void setImageumid(String imageumid) {
-        this.imageumid = imageumid;
-    }
+    public void setImageumid(String imageumid) { this.imageumid = imageumid; }
 
     public String getImageph() {
         return imageph;
@@ -341,4 +337,21 @@ public class Channel {
     public void setImagepeso(String imagepeso) {
         this.imagepeso = imagepeso;
     }
+
+    public Double getIrrigationDuration() { return IrrigationDuration; }
+
+    public void setIrrigationDuration(Double irrigationDuration) { IrrigationDuration = irrigationDuration; }
+
+    public Double getFlussoAcqua() { return FlussoAcqua; }
+
+    public void setFlussoAcqua(Double flussoAcqua) { FlussoAcqua = flussoAcqua; }
+
+    public Double getLeachingfactor() { return Leachingfactor; }
+
+    public void setLeachingfactor(Double leachingfactor) { Leachingfactor = leachingfactor; }
+
+    public Double getNumirra() { return Numirra; }
+
+    public void setNumirra(Double numirra) { Numirra = numirra; }
+
 }

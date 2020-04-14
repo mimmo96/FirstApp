@@ -72,7 +72,7 @@ public class ExampleService extends Service {
         Log.d("ExampleService","OnStartCommand");
             //recupero la lista del channel attuale
             String id = database.SavedDao().getAll().get(0).getId();
-            String key = database.SavedDao().getAll().get(0).getKey();
+            String key = database.SavedDao().getAll().get(0).getRead_key();
             channel = database.ChannelDao().findByName(id, key);
         if(channel.getNotification()) {
             database.ChannelDao().delete(channel);

@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private static List<savedValues> channeldefault;
     private static String channelID = null;
     private static String READ_KEY = null;
+    private static String WRITE_KEY = null;
     private static String url;
     private static AppDatabase database;
     private static TimerTask timerTask;
@@ -101,7 +102,8 @@ public class MainActivity extends AppCompatActivity {
             if (channeldefault.size() > 0) {
                 //se avevo un elmento inserito imposto quest'ultimo come default
                 channelID = channeldefault.get(0).getId();
-                READ_KEY = channeldefault.get(0).getKey();
+                READ_KEY = channeldefault.get(0).getRead_key();
+                WRITE_KEY=channeldefault.get(0).getWrite_key();
                 url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=1";
                 ChannelActivity.setPosition(channeldefault.get(0).getPosition());
             }
@@ -109,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
             else {
                 channelID = null;
                 READ_KEY = null;
+                WRITE_KEY=null;
                 url = null;
                 ChannelActivity.setPosition(-1);
             }
@@ -271,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
         restartTimer(cont);
     }
 
-    public static void setDefaultSetting(String id, String key, int pos) {
+    public static void setDefaultSetting(String id, String key_read,String key_write,  int pos) {
 
         //se non ho nessun canale (pos=-1) cancello tutto
         if (pos == -1) {
@@ -299,12 +302,13 @@ public class MainActivity extends AppCompatActivity {
         } else {
             //aggiungo alla lista channel default il nuovo solo se è diverso dal precedente
                 if (channeldefault.size() != 0) channeldefault.clear();
-                channeldefault.add(new savedValues(id, key, pos));
+                channeldefault.add(new savedValues(id, key_read,key_write, pos));
                 database.SavedDao().deleteAll();
-                database.SavedDao().insert(new savedValues(id, key, pos));
+                database.SavedDao().insert(new savedValues(id, key_read,key_write, pos));
 
                 channelID = id;
-                READ_KEY = key;
+                READ_KEY = key_read;
+                WRITE_KEY=key_write;
                 url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=1";
                 restartTimer(cont);
 
@@ -339,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
         List<savedValues> arrayList1 = database.SavedDao().getAll();
         System.out.println("stampo channel default");
         for (int i = 0; i < arrayList1.size(); i++)
-            System.out.println(arrayList1.get(i).getId() + " --" + arrayList1.get(i).getPosition() + " --" + arrayList1.get(i).getKey());
+            System.out.println(arrayList1.get(i).getId() + " --" + arrayList1.get(i).getPosition() + " --" + arrayList1.get(i).getRead_key());
 
         System.out.println("FINE");
 
@@ -350,7 +354,7 @@ public class MainActivity extends AppCompatActivity {
     public void tempSettings(View v) {
         //reperisco il channel utilizzato di default e faccio il parsing per scoprire quale fields è stato settato(posizione)
         final List<savedValues> allchannel = database.SavedDao().getAll();
-        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getKey());
+        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
         int pos=0;
         if(inUse.getImagetemp()!=null) pos=Integer.parseInt(inUse.getImagetemp().substring(5));
         fieldssettings(0,pos);
@@ -358,35 +362,35 @@ public class MainActivity extends AppCompatActivity {
 
     public void phSettings(View v){
         final List<savedValues> allchannel = database.SavedDao().getAll();
-        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getKey());
+        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
         int pos=0;
         if(inUse.getImageph()!=null) pos=Integer.parseInt(inUse.getImageph().substring(5));
         fieldssettings(1,pos);
     }
     public void irraSettings(View v){
         final List<savedValues> allchannel = database.SavedDao().getAll();
-        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getKey());
+        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
         int pos=0;
         if(inUse.getImageirra()!=null) pos=Integer.parseInt(inUse.getImageirra().substring(5));
         fieldssettings(2,pos);
     }
     public void condSettings(View v){
         final List<savedValues> allchannel = database.SavedDao().getAll();
-        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getKey());
+        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
         int pos=0;
         if(inUse.getImagecond()!=null)  pos=Integer.parseInt(inUse.getImagecond().substring(5));
         fieldssettings(3,pos);
     }
     public void pesoSettings(View v){
         final List<savedValues> allchannel = database.SavedDao().getAll();
-        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getKey());
+        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
         int pos=0;
         if(inUse.getImagepeso()!=null)  pos=Integer.parseInt(inUse.getImagepeso().substring(5));
         fieldssettings(4,pos);
     }
     public void umidSettings(View v){
         final List<savedValues> allchannel = database.SavedDao().getAll();
-        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getKey());
+        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
         int pos=0;
         if(inUse.getImageumid()!=null)  pos=Integer.parseInt(inUse.getImageumid().substring(5));
         fieldssettings(5,pos);
@@ -402,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
         final String[] name = new String[1];
 
         final List<savedValues> allchannel = database.SavedDao().getAll();
-        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getKey());
+        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
         if (inUse.getFiled1() != null) {
             list.add(inUse.getFiled1());
         }
@@ -497,6 +501,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void irrigation(View v){
         Intent intent = IrrigationActivity.getActivityintent(MainActivity.this);
+
+        //cerco nel database il channel in uso e lo mando
+        List<savedValues> allchannel = database.SavedDao().getAll();
+        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
+
+        IrrigationActivity.setChannle(inUse);
         startActivity(intent);
     }
 

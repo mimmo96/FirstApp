@@ -270,7 +270,7 @@ public class MyTimerTask extends TimerTask {
 
         List <savedValues> arrayList1 = database.SavedDao().getAll();
         System.out.println("stampo il database saved");
-        for(int i=0;i<arrayList1.size();i++) System.out.println(arrayList1.get(i).getId() +" --" + arrayList1.get(i).getPosition() +" --" + arrayList1.get(i).getKey() );
+        for(int i=0;i<arrayList1.size();i++) System.out.println(arrayList1.get(i).getId() +" --" + arrayList1.get(i).getPosition() +" --" + arrayList1.get(i).getRead_key() );
 
         System.out.println("FINE");
 

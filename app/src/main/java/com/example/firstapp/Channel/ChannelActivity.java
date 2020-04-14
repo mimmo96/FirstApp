@@ -54,6 +54,7 @@ public class ChannelActivity  extends AppCompatActivity {
     private static int pos=0;
     private static String DEFAULT_ID =null;
     private static String DEFAULT_READ_KEY = null;
+    private static String DEFAULT_WRITE_KEY = null;
 
     public static void setPosition(int position) {
         pos=position;
@@ -93,6 +94,7 @@ public class ChannelActivity  extends AppCompatActivity {
                 taskEditText.setRawInputType(Configuration.KEYBOARD_12KEY);
 
                 final EditText taskEditText2 =new EditText(BasicContext);
+                final EditText taskEditText3 =new EditText(BasicContext);
                 AlertDialog.Builder dialog=new AlertDialog.Builder(BasicContext)
                         .setTitle("NUOVO CANALE")
                         .setMessage("INSERISCI ID")
@@ -102,31 +104,49 @@ public class ChannelActivity  extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 AlertDialog.Builder dialog2=new AlertDialog.Builder(BasicContext)
                                         .setTitle("NUOVO CANALE")
-                                        .setMessage("INSERISCI READ_KEY")
+                                        .setMessage("INSERISCI CHIAVE LETTURA")
                                         .setView(taskEditText2)
-                                        .setPositiveButton("CONFERMA", new DialogInterface.OnClickListener() {
+                                        .setPositiveButton("AVANTI", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                //controllo se i dati inseriti corrispondono ad un channel esistente
-                                                if(db.ChannelDao().findByName(taskEditText.getText().toString(),taskEditText2.getText().toString())!=null) Toast.makeText(BasicContext,"channel già esistente!",Toast.LENGTH_SHORT).show();
-                                                else {
-                                                    // controllo se i parametri inseriti sono corretti
-                                                    DEFAULT_ID = taskEditText.getText().toString();
-                                                    DEFAULT_READ_KEY = taskEditText2.getText().toString();
-                                                    if (testData(DEFAULT_ID, DEFAULT_READ_KEY)) {
-                                                        //comunico il database aggiornato al thread
-                                                        MyTimerTask.updateDatabase(db);
-                                                        Toast.makeText(BasicContext, "operazione eseguita correttamente!", Toast.LENGTH_SHORT).show();
-                                                        AlertActivity.stopService();
-                                                        //segnalo al thread principale i nuovi id,key
-                                                        if (pos == -1) pos = 0;
-                                                        MainActivity.setDefaultSetting(DEFAULT_ID, DEFAULT_READ_KEY, pos);
-                                                    } else
-                                                        Toast.makeText(BasicContext, "operazione ERRATA!", Toast.LENGTH_SHORT).show();
-                                                    //segnalo eventuali modifiche
-                                                    adapter.notifyDataSetChanged();
-                                                }
-
+                                                 AlertDialog.Builder dialog3=new AlertDialog.Builder(BasicContext)
+                                                .setTitle("NUOVO CANALE")
+                                                .setMessage("INSERISCI CHIAVE SCRITTURA")
+                                                .setView(taskEditText3)
+                                                .setPositiveButton("CONFERMA", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                    //controllo se i dati inseriti corrispondono ad un channel esistente
+                                                                if (db.ChannelDao().findByName(taskEditText.getText().toString(), taskEditText2.getText().toString()) != null)
+                                                                    Toast.makeText(BasicContext, "channel già esistente!", Toast.LENGTH_SHORT).show();
+                                                                else {
+                                                                    // controllo se i parametri inseriti sono corretti
+                                                                    DEFAULT_ID = taskEditText.getText().toString();
+                                                                    DEFAULT_READ_KEY = taskEditText2.getText().toString();
+                                                                    DEFAULT_WRITE_KEY = taskEditText2.getText().toString();
+                                                                    if (testData(DEFAULT_ID, DEFAULT_READ_KEY,DEFAULT_WRITE_KEY)) {
+                                                                        //comunico il database aggiornato al thread
+                                                                        MyTimerTask.updateDatabase(db);
+                                                                        Toast.makeText(BasicContext, "operazione eseguita correttamente!", Toast.LENGTH_SHORT).show();
+                                                                        AlertActivity.stopService();
+                                                                        //segnalo al thread principale i nuovi id,key
+                                                                        if (pos == -1) pos = 0;
+                                                                        MainActivity.setDefaultSetting(DEFAULT_ID, DEFAULT_READ_KEY, DEFAULT_WRITE_KEY, pos);
+                                                                    } else
+                                                                        Toast.makeText(BasicContext, "operazione ERRATA!", Toast.LENGTH_SHORT).show();
+                                                                    //segnalo eventuali modifiche
+                                                                    adapter.notifyDataSetChanged();
+                                                                }
+                                                            }
+                                                        })
+                                                         .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                                                             @Override
+                                                             public void onClick(DialogInterface dialog, int which) {
+                                                                 Toast.makeText(BasicContext,"operazione annullata!",Toast.LENGTH_SHORT).show();
+                                                             }
+                                                         });
+                                                 AlertDialog allert3=dialog3.create();
+                                                 allert3.show();
                                             }
                                         })
                                         .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -137,7 +157,6 @@ public class ChannelActivity  extends AppCompatActivity {
                                         });
                                 AlertDialog allert2=dialog2.create();
                                 allert2.show();
-                                //azione che devo fare
                             }
                         })
                         .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -197,7 +216,7 @@ public class ChannelActivity  extends AppCompatActivity {
                     //cancello il database dei canali
                     db.ChannelDao().deleteAll();
                     //invio agli altri che adesso è tutto null!
-                    MainActivity.setDefaultSetting(null, null,-1);
+                    MainActivity.setDefaultSetting(null, null,null,-1);
                 }
                 else {
                     db.ChannelDao().delete(channel.get(position));
@@ -213,7 +232,7 @@ public class ChannelActivity  extends AppCompatActivity {
                     }
 
                     Channel nuovo=channel.get(pos);
-                    MainActivity.setDefaultSetting(nuovo.getId(), nuovo.getRead_key(), position-1);
+                    MainActivity.setDefaultSetting(nuovo.getId(), nuovo.getRead_key(),nuovo.getWrite_key(), position-1);
                     Toast.makeText(BasicContext, "canale " + position + " cancellato!", Toast.LENGTH_SHORT).show();
                 }
                 adapter.notifyDataSetChanged();
@@ -267,7 +286,7 @@ public class ChannelActivity  extends AppCompatActivity {
 
         }
         //invio i nuovi dati di default
-        MainActivity.setDefaultSetting(DEFAULT_ID, DEFAULT_READ_KEY,pos);
+        MainActivity.setDefaultSetting(DEFAULT_ID, DEFAULT_READ_KEY,DEFAULT_WRITE_KEY,pos);
 
     }
 
@@ -282,11 +301,11 @@ public class ChannelActivity  extends AppCompatActivity {
     }
 
 
-        public boolean testData(String valueID, String valueKEY) {
+        public boolean testData(String valueID, String valueREADKEY,String valueWRITEKEY) {
 
         BlockingQueue<Boolean> esito = new LinkedBlockingQueue<Boolean>();
         ExecutorService pes = Executors.newFixedThreadPool(1);
-        pes.submit(new Task(esito, valueID, valueKEY));
+        pes.submit(new Task(esito, valueID, valueREADKEY,valueWRITEKEY));
         pes.shutdown();
         boolean esit=false;
         try {
@@ -306,24 +325,26 @@ public class ChannelActivity  extends AppCompatActivity {
 
     class Task implements Runnable {
         private String id = null;
-        private String key = null;
+        private String key_read = null;
+        private String key_write = null;
         private final BlockingQueue<Boolean> sharedQueue;
 
-        public Task(BlockingQueue<Boolean> esito, String valueID, String valueKEY) {
+        public Task(BlockingQueue<Boolean> esito, String valueID, String valueREADKEY,String valueWRITEKEY) {
             this.id = valueID;
-            this.key = valueKEY;
+            this.key_read = valueREADKEY;
+            this.key_write = valueWRITEKEY;
             this.sharedQueue = esito;
         }
 
         @Override
         public void run() {
             try {
-                URL url = new URL("https://api.thingspeak.com/channels/" + id + "/feeds.json?api_key=" + key);
+                URL url = new URL("https://api.thingspeak.com/channels/" + id + "/feeds.json?api_key=" + key_read);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
 
                 if (conn.getResponseCode() == 200) {
-                    Channel add = new Channel(id, key);
+                    Channel add = new Channel(id, key_read,key_write);
                     int id = -1;
                     //prendo uid dell'ultimo elemento inserito
                     if (channel.size() - 1 >= 0)

@@ -23,15 +23,18 @@ public class savedValues {
         private String id;
 
         @ColumnInfo(name = "read_key")
-        private String key;
+        private String read_key;
+
+        private String write_key;
 
         @ColumnInfo(name = "position_key")
         private int position;
 
 
-        public savedValues(String id,String key,int position) {
+        public savedValues(String id,String read_key,String write_key,int position) {
             this.id = id;
-            this.key=key;
+            this.read_key=read_key;
+            this.write_key=write_key;
             this.position=position;
         }
 
@@ -51,21 +54,30 @@ public class savedValues {
             this.id = id;
         }
 
-        public String getKey() {
-            return key;
-        }
+    public String getRead_key() {
+        return read_key;
+    }
 
-        public void setKey(String read_key) {
-            this.key = read_key;
-        }
+    public void setRead_key(String read_key) {
+        this.read_key = read_key;
+    }
 
-        public int getPosition() {
+    public String getWrite_key() {
+        return write_key;
+    }
+
+    public void setWrite_key(String write_key) {
+        this.write_key = write_key;
+    }
+
+    public int getPosition() {
             return position;
         }
 
         public void setPosition(int pos) {
             this.position = pos;
         }
+
 
     }
 
