@@ -86,23 +86,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 Date dat=new Date((long) dataPoint.getX());
                 Toast.makeText(context,"x: " + sdf.format(dat) +"\ny: "+dataPoint.getY(),Toast.LENGTH_SHORT).show();
 
-                DataPoint[] data= new DataPoint[] {new DataPoint(dataPoint.getX(), dataPoint.getY())};
-                PointsGraphSeries<DataPoint> series1 = new PointsGraphSeries<>(data);
-                series1.setColor(Color.BLUE);
-                series1.setSize(8);
-                holder.last=series1;
-                graph.addSeries(series1);
-/*
-                Canvas can=new Canvas();
-                can.drawColor(Color.BLUE);
-                Paint paint = new Paint();
-                paint.setStyle(Paint.Style.FILL_AND_STROKE);
-                can.drawCircle((float)dataPoint.getX(), (float) dataPoint.getY(), 25, paint);
-                serie.drawSelection(graph, can,true,dataPoint);
-*/
+                //avvio un thread per inserire i valori
+                MyThread myThread = new MyThread();
+                myThread.settingsvalues(holder.series,graph,dataPoint);
+                myThread.start();
             }
         });
-
 
         graph.getViewport().setScalable(true);
         graph.getViewport().setScrollable(true);
@@ -148,7 +137,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 holder.avg.setText(String.valueOf(med));
             }
         });
-
     }
 
     //restituire la dimensione della lista
@@ -182,6 +170,30 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             max=itemView.findViewById(R.id.textViewMax);
             avg=itemView.findViewById(R.id.textViewMed);
             Log.d("GRAFICO","SONO NEL MAIN");
+        }
+    }
+
+//thread che mi serve per settare i punti blu nel grafico quando ci clicco sopra
+    public class MyThread extends Thread {
+
+        LineGraphSeries<DataPoint> serie=null;
+        GraphView graph=null;
+        DataPointInterface dataPoint;
+
+        public void run(){
+            graph.removeAllSeries();
+            DataPoint[] data = new DataPoint[]{new DataPoint(dataPoint.getX(), dataPoint.getY())};
+            PointsGraphSeries<DataPoint> series1 = new PointsGraphSeries<>(data);
+            series1.setColor(Color.BLUE);
+            series1.setSize(8);
+            graph.addSeries(serie);
+            graph.addSeries(series1);
+        }
+
+        public void settingsvalues( LineGraphSeries<DataPoint> serie1, GraphView graph1, DataPointInterface dataPoint1){
+            serie=serie1;
+            graph=graph1;
+            dataPoint=dataPoint1;
         }
     }
 }
