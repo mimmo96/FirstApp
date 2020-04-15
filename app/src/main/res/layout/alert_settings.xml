@@ -68,7 +68,7 @@
         android:layout_marginTop="20dp"
         app:layout_constraintEnd_toStartOf="@+id/textViewPh"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ph" />
+        app:srcCompat="@drawable/phprova" />
 
     <ImageView
         android:id="@+id/imageTemperature"

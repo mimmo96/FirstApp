@@ -73,11 +73,10 @@ public class MyTimerTask extends TimerTask {
     }
 
     //metodo per reperire le risposte json
-     private void getJsonResponse (String url){
+     private void getJsonResponse (final String url){
         //se non ho nessun url inserita setto i valori a 0
 
             final List<String> createdtime = new ArrayList<>();
-
 
             final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                     new Response.Listener<JSONObject>() {
@@ -91,7 +90,7 @@ public class MyTimerTask extends TimerTask {
                                 ArrayList<String> fields=new ArrayList<String>();
                                 int dim=response.getJSONObject("channel").length();
 
-                                //salvo tutti i field nell'array
+                                //salvo tutti i nomi dei field nell'array
                                 try {
                                     for(int i=0;i<dim;i++) {
                                         fields.add(String.valueOf(response.getJSONObject("channel").get("field" + (i+1))));
@@ -122,10 +121,10 @@ public class MyTimerTask extends TimerTask {
                                 else v.setFiled8(null);
                                 database.ChannelDao().insert(v);
 
-                                //scorro tutto l'array e stampo a schermo il valore di field1
-                                for (int i = 0; i < jsonArray.length(); i++) {
+                                int size=jsonArray.length()-1;
+                                //scorro tutto l'array di valori che ho ricevuto
                                     //recupero il primo oggetto dell'array
-                                    final JSONObject value = jsonArray.getJSONObject(i);
+                                    final JSONObject value = jsonArray.getJSONObject(size);
 
                                     try {
                                         String temperature = value.getString("field1");
@@ -181,21 +180,32 @@ public class MyTimerTask extends TimerTask {
                                     }catch (Exception e){
                                         textIrradianza.setText("- -");
                                     }
+
+                                Double irrigazione =0.0;
+                                Double drainaggio = 0.0;
+
+                                    //scandisco tutti i 100 valori per trovare i valodi di irrigazione e il drenaggio
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject valori = jsonArray.getJSONObject(i);
                                     try {
-                                        String peso = value.getString("field6");
-                                        if (fields.get(5).equals("P0"))
-                                            textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(peso)) * 100.0) / 100.0).concat(" g"));
-                                        else{
-                                            String field=value.getString(v.getImagepeso());
-                                            textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
+                                        if (!valori.getString("field7").equals("") && !valori.getString("field7").equals("null")) {
+                                            irrigazione=Double.parseDouble(valori.getString("field7"));
+                                            Log.d("CI SONO",String.valueOf(irrigazione));
                                         }
-                                    }catch (Exception e){
-                                        textPeso.setText("- -");
-                                    }
-                                    String cretime = value.getString("created_at");
-                                    createdtime.add(cretime);
-                                    distanza(cretime);
+                                    }catch (Exception e){ }
+
+                                    try {
+                                        if (!valori.getString("field8").equals("") && !valori.getString("field8").equals("null")) {
+                                            drainaggio=Double.parseDouble(valori.getString("field8"));
+                                        }
+                                    }catch (Exception e){ }
+
                                 }
+                                textPeso.setText(String.valueOf(Math.round((irrigazione-drainaggio) * 100.0) / 100.0).concat(" g/m²"));
+
+                                String cretime = value.getString("created_at");
+                                createdtime.add(cretime);
+                                distanza(cretime);
                                 stato.setText("ONLINE");
                                 stato.setTextColor(Color.GREEN);
                             } catch (JSONException e) {

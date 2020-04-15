@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
         EditText dataStart=findViewById(R.id.editTextDatestart);
         EditText dataEnd=findViewById(R.id.editTextDateEnd);
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); // Make sure user insert date into edittext in this format.
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
         Date dateObject;
         Date dateObject1;

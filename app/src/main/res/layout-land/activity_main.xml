@@ -120,7 +120,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.849"
-        app:srcCompat="@drawable/ph" />
+        app:srcCompat="@drawable/phprova" />
 
     <ImageView
         android:id="@+id/imageIrradiance"
@@ -191,7 +191,7 @@
         app:srcCompat="@drawable/umidity" />
 
     <TextView
-        android:id="@+id/textPeso"
+        android:id="@+id/textEvap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="00.000000"
