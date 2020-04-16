@@ -134,16 +134,9 @@ public class MainActivity extends AppCompatActivity {
             if(giornoEnd<0 || giornoEnd >31) throw new ParseException("giorno non corretto",2);
             meseEnd=dateObject1.getMonth()+1;
             if(meseEnd<0 ||  meseEnd>12) throw new ParseException("mese non corretto",2);
-          //  if(giornoEnd==32){
-          //      giornoEnd=1;
-          //      meseEnd++;
-          //  }
+
             annoEnd=dateObject1.getYear()+1900;
             if(annoEnd<2000) throw new ParseException("data non corretta",2);
-          //  if(meseEnd==13){
-          //      meseEnd=1;
-          //      annoEnd++;
-          //  }
         }
 
         catch (java.text.ParseException e)

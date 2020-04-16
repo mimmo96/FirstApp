@@ -181,27 +181,30 @@ public class MyTimerTask extends TimerTask {
                                         textIrradianza.setText("- -");
                                     }
 
-                                Double irrigazione =0.0;
-                                Double drainaggio = 0.0;
+                                    Boolean ok=false;
+                                    Double irrigazione =0.0;
+                                    Double drainaggio = 0.0;
 
                                     //scandisco tutti i 100 valori per trovare i valodi di irrigazione e il drenaggio
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject valori = jsonArray.getJSONObject(i);
                                     try {
                                         if (!valori.getString("field7").equals("") && !valori.getString("field7").equals("null")) {
+                                            ok=true;
                                             irrigazione=Double.parseDouble(valori.getString("field7"));
-                                            Log.d("CI SONO",String.valueOf(irrigazione));
                                         }
                                     }catch (Exception e){ }
 
                                     try {
                                         if (!valori.getString("field8").equals("") && !valori.getString("field8").equals("null")) {
+                                            ok=true;
                                             drainaggio=Double.parseDouble(valori.getString("field8"));
                                         }
                                     }catch (Exception e){ }
 
                                 }
-                                textPeso.setText(String.valueOf(Math.round((irrigazione-drainaggio) * 100.0) / 100.0).concat(" g/m²"));
+                               if(ok) textPeso.setText(String.valueOf(Math.round((irrigazione-drainaggio) * 100.0) / 100.0).concat(" g/m²"));
+                               else textPeso.setText("- -");
 
                                 String cretime = value.getString("created_at");
                                 createdtime.add(cretime);
@@ -240,9 +243,9 @@ public class MyTimerTask extends TimerTask {
         int secondi=Integer.valueOf(data.substring(17, 19));
 
         //setto le impostazioni relative alla data
-        date_value.set(Calendar.YEAR,anno);
-        date_value.set(Calendar.MONTH,mese-1);
-        date_value.set(Calendar.DAY_OF_MONTH,giorno);
+        date_value.set (Calendar.YEAR,anno);
+        date_value.set (Calendar.MONTH,mese-1);
+        date_value.set (Calendar.DAY_OF_MONTH,giorno);
         date_value.set (Calendar.HOUR_OF_DAY,ore);
         date_value.set (Calendar.MINUTE,minuti);
         date_value.set (Calendar.SECOND, secondi);
@@ -258,7 +261,6 @@ public class MyTimerTask extends TimerTask {
         long minuti1=((durata-temp)-3600*ore1)/60;
         temp=(durata-temp)-3600*ore1;
         long secondi1=temp-(minuti1*60);
-
 
         text1.setText("Ultimo aggiornamento: " + giorni1 + " giorni " + ore1 + " ore " + minuti1 + " minuti " + secondi1+ " secondi ");
     }

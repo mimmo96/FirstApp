@@ -1,9 +1,7 @@
 package com.example.firstapp.Graphic;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +55,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     //impostare gli oggetti presi dalla lista popolata da classi "model"
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        Log.d("TEST","SONO ONBIND");
         ModelData user = data.get(position);
         holder.text.setText(user.getName());
         holder.series=user.getSeries();
@@ -169,7 +166,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             min=itemView.findViewById(R.id.textViewMin);
             max=itemView.findViewById(R.id.textViewMax);
             avg=itemView.findViewById(R.id.textViewMed);
-            Log.d("GRAFICO","SONO NEL MAIN");
         }
     }
 
