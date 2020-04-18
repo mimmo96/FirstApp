@@ -220,11 +220,9 @@
         app:srcCompat="@drawable/irrigazione" />
 
     <TextView
-        android:id="@+id/textView21"
+        android:id="@+id/textViewTime"
         android:layout_width="252dp"
         android:layout_height="120dp"
-        android:text="Irrigation 21.4 min  @ 9am \n Irrigation 21.4 min  @ 9am \n Irrigation 21.4 min  @ 9am \n Irrigation 21.4 min  @ 9am
-        \n Irrigation 21.4 min  @ 9am \n Irrigation 21.4 min  @ 9am \n Irrigation 21.4 min  @ 9am \n Irrigation 21.4 min  @ 9am"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

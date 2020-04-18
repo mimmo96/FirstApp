@@ -3,6 +3,7 @@
     package="com.example.firstapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
 
     <application
         android:allowBackup="true"
@@ -35,6 +36,18 @@
             </intent-filter>
         </activity>
         <service android:name=".Alert.ExampleService" />
+
+        <service
+            android:name=".Irrigation.MyNewIntentService"
+            android:exported="false" >
+        </service>
+
+        <receiver
+            android:name=".Irrigation.MyReceiver"
+            android:enabled="true"
+            android:exported="false" >
+        </receiver>
+
     </application>
 
 </manifest>

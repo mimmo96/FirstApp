@@ -1,5 +1,7 @@
 package com.example.firstapp.Irrigation;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,13 +11,11 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
-
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -23,28 +23,33 @@ import com.android.volley.toolbox.Volley;
 import com.example.firstapp.AppDatabase;
 import com.example.firstapp.Channel.Channel;
 import com.example.firstapp.R;
-
-import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
 
 public class IrrigationActivity extends AppCompatActivity {
     private static AppDatabase db;
-    private static EditText duration;
-    private static EditText flusso;
-    private static EditText leaching;
-    private static EditText irraday;
+    private static EditText durationText;
+    private static EditText flussoText;
+    private static EditText leachingText;
+    private static EditText irradayText;
+    private static TextView textTime;
     private static Channel channel;
     private static Switch Switch;
     private static Button irra;
     private static Context cont;
+    private  AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
+    private Double pesoPrec=0.0;
+    private Double pesoAtt=0.0;
+    private Double leaching=0.35;
+    private Double flusso=160.0;
+    private Double numirra=1.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,34 +65,46 @@ public class IrrigationActivity extends AppCompatActivity {
                     .build();
         }
 
-        duration=findViewById(R.id.editTextDuration);
-        flusso=findViewById(R.id.editTextFlusso);
-        leaching=findViewById(R.id.editTextLeaching);
-        irraday=findViewById(R.id.editTextIrraDay);
+        durationText=findViewById(R.id.editTextDuration);
+        flussoText=findViewById(R.id.editTextFlusso);
+        leachingText=findViewById(R.id.editTextLeaching);
+        irradayText=findViewById(R.id.editTextIrraDay);
         Switch= findViewById(R.id.switch1);
         irra=findViewById(R.id.buttonIrra);
+        textTime=findViewById(R.id.textViewTime);
 
         cont=getApplicationContext();
 
-        if(channel.getIrrigationDuration()!=null) duration.setText(String.valueOf(channel.getIrrigationDuration()));
-        if(channel.getFlussoAcqua()!=null) flusso.setText(String.valueOf(channel.getFlussoAcqua()));
-        if(channel.getLeachingfactor()!=null) leaching.setText(String.valueOf(channel.getLeachingfactor()));
-        if(channel.getNumirra()!=null) irraday.setText(String.valueOf(channel.getNumirra()));
+        //minuti che mi serviranno per l'irrigazione automatica
+        if(channel.getIrrigationDuration()!=null) durationText.setText(String.valueOf(channel.getIrrigationDuration()));
+
+        if(channel.getFlussoAcqua()!=null){
+            flusso=channel.getFlussoAcqua();
+            flussoText.setText(String.valueOf(flusso));
+        }
+        if(channel.getLeachingfactor()!=null){
+            leaching=channel.getLeachingfactor();
+            leachingText.setText(String.valueOf(leaching));
+        }
+
+        //numero di irrigazioni al giorno
+        if(channel.getNumirra()!=null){
+            numirra=channel.getNumirra();
+            irradayText.setText(String.valueOf(numirra));
+        }
+
+        MyNewIntentService.settingvalue(leaching,flusso);
 
         Switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //appena l'irrigazione è attiva
                 if (isChecked){
-                    Double pesoPrec=1710.0;
-                    Double pesoAtt=1121.5;
-                    Double leaching=0.35;
-                    Double flusso=160.0;
-                    double min=calcolominuti(pesoPrec,pesoAtt,leaching,flusso);
-                    sendvalue(String.valueOf(min));
+                    startAllarm();
                     Toast.makeText(getBaseContext(),"IRRIGAZIONE AUTOMATICA ATTTIVATA!",Toast.LENGTH_SHORT).show();
                 }
                 else{
+                    stopAllarm();
                     Toast.makeText(getBaseContext(),"IRRIGAZIONE AUTOMATICA DISATTTIVATA!",Toast.LENGTH_SHORT).show();
                 }
             }
@@ -97,13 +114,60 @@ public class IrrigationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(getBaseContext(),"IRRIGAZIONE MANUALE ATTTIVATA!",Toast.LENGTH_SHORT).show();
-                sendvalue(duration.getText().toString());
+                sendvalue(durationText.getText().toString(),"MANUALE");
             }
         });
     }
 
-    //using okhttp
-    private void sendvalue(String value) {
+    public void startAllarm() {
+        Intent notifyIntent = new Intent(this,MyReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(cont, 100, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager = (AlarmManager) cont.getSystemService(Context.ALARM_SERVICE);
+
+        //resetto le date precedentemente impostate
+        textTime.setText("IRRIGAZIONE AUTOMATICA:\n");
+
+        //misuro la distanza tra le ore
+        double distance=(24.0/numirra);
+
+        for(int i=0;i<numirra;i++) {
+            int ora=(int) (distance*i);
+            int minuto= (int)(((distance*i)-ora)*60);
+            /*
+             * da aggiungere solo se devo partire dalle 9
+             *
+             * ora=ora+9;
+             * if(ora>24) ora=ora-24;
+             *
+             */
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, ora);
+            calendar.set(Calendar.MINUTE, minuto);
+            calendar.set(Calendar.SECOND, 00);
+
+            String text=textTime.getText().toString();
+            text=text.concat(ora + ":" + minuto +"\n");
+            textTime.setText(text);
+            //avvia l'allarme esattamente a quell'ora ogni giorno
+            Log.d("DATA SETTATA:",calendar.getTime().toString());
+
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,  calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+
+        Log.d("ALARM","ATTIVATO");
+    }
+
+    public void stopAllarm(){
+        alarmManager.cancel(pendingIntent);
+        Log.d("ALARM","DISATTIVATO");
+    }
+
+    //invio i dati al server
+    private void sendvalue(String value, final String tipo) {
 
         String url = "https://api.thingspeak.com/update.json";
 
@@ -117,27 +181,21 @@ public class IrrigationActivity extends AppCompatActivity {
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Toast.makeText(getBaseContext(),"IRRIGAZIONE MANUALE ATTTIVATA!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(),"IRRIGAZIONE"+tipo+" ATTTIVATA!",Toast.LENGTH_SHORT).show();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getBaseContext(),"ERRORE RICHIESTA IRRIGAZIONE!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(),"ERRORE IRRIGAZIONE " +tipo+"!",Toast.LENGTH_SHORT).show();
                 error.printStackTrace();
             }
         });
 
         Volley.newRequestQueue(this).add(jsonRequest);
-
     }
 
-    private static double calcolominuti(Double pesoPrec,Double pesoAtt,Double leaching,Double flusso) {
-        //durata = -Delta P0*(1+leaching_factor)/flusso
-        Double deltaP0=pesoPrec-pesoAtt;
-        Double durata=deltaP0*(1+leaching)/flusso;
 
-        return durata;
-    }
+    //metodi che mi servono per settare le impostazioni
 
     public void saveirrigationvalues(View v){
         Channel x=db.ChannelDao().findByName(channel.getId(),channel.getRead_key());
@@ -146,25 +204,25 @@ public class IrrigationActivity extends AppCompatActivity {
         if(x!=null){
             db.ChannelDao().delete(x);
             try {
-                x.setIrrigationDuration(Double.parseDouble(duration.getText().toString()));
+                x.setIrrigationDuration(Double.parseDouble(durationText.getText().toString()));
             }catch (Exception e){
                 e.printStackTrace();
                 ok=false;
             }
             try {
-                x.setFlussoAcqua(Double.parseDouble(flusso.getText().toString()));
+                x.setFlussoAcqua(Double.parseDouble(flussoText.getText().toString()));
             }catch (Exception e){
                 e.printStackTrace();
                 ok=false;
             }
             try {
-                x.setLeachingfactor(Double.parseDouble(leaching.getText().toString()));
+                x.setLeachingfactor(Double.parseDouble(leachingText.getText().toString()));
             }catch (Exception e){
                 e.printStackTrace();
                 ok=false;
             }
             try {
-                x.setNumirra(Double.parseDouble(irraday.getText().toString()));
+                x.setNumirra(Double.parseDouble(irradayText.getText().toString()));
             }catch (Exception e){
                 e.printStackTrace();
                 ok=false;
@@ -186,10 +244,10 @@ public class IrrigationActivity extends AppCompatActivity {
             x.setLeachingfactor(null);
             x.setFlussoAcqua(null);
             x.setIrrigationDuration(null);
-            duration.setText("");
-            flusso.setText("");
-            leaching.setText("");
-            irraday.setText("");
+            durationText.setText("");
+            flussoText.setText("");
+            leachingText.setText("");
+            irradayText.setText("");
             db.ChannelDao().insert(x);
         }
         else Toast.makeText(getApplicationContext(),"IMPOSSIBILE TROVARE IL CHANNEL SPECIFICATO",Toast.LENGTH_SHORT).show();
