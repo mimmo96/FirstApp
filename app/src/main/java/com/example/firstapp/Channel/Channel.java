@@ -1,5 +1,7 @@
 package com.example.firstapp.Channel;
 
+import android.app.AlarmManager;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -63,6 +65,8 @@ public class Channel {
     private Double Numirra =null;
     private static Timer timer=null;
     private static MyTimerTask timerTask=null;
+    private static AlarmManager alarmManager=null;
+    private static String TimeAlarm=null;
 
     public Channel(String id, String read_key,String write_key) {
         this.id = id;
@@ -354,4 +358,19 @@ public class Channel {
 
     public void setNumirra(Double numirra) { Numirra = numirra; }
 
+    public AlarmManager getAlarmManager() {
+        return alarmManager;
+    }
+
+    public void setAlarmManager(AlarmManager alarmManager) {
+        this.alarmManager = alarmManager;
+    }
+
+    public String getTimeAlarm() {
+        return TimeAlarm;
+    }
+
+    public void setTimeAlarm(String timeAlarm) {
+        TimeAlarm = timeAlarm;
+    }
 }

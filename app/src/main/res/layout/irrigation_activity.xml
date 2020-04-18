@@ -223,6 +223,7 @@
         android:id="@+id/textViewTime"
         android:layout_width="252dp"
         android:layout_height="120dp"
+        android:text='"NESSUNA IRRIGAZIONE PRESENTE'
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -26,8 +26,11 @@ import com.example.firstapp.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +46,7 @@ public class IrrigationActivity extends AppCompatActivity {
     private static Switch Switch;
     private static Button irra;
     private static Context cont;
-    private  AlarmManager alarmManager;
+    private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
     private Double pesoPrec=0.0;
     private Double pesoAtt=0.0;
@@ -75,6 +78,48 @@ public class IrrigationActivity extends AppCompatActivity {
 
         cont=getApplicationContext();
 
+        setInitialValues();
+
+        Switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //appena l'irrigazione è attiva
+                if (isChecked){
+                    setInitialValues();
+                    startAllarm();
+                    Toast.makeText(getBaseContext(),"IRRIGAZIONE AUTOMATICA ATTTIVATA!",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    stopAllarm();
+                    textTime.setText("NESSUNA IRRIGAZIONE PRESENTE");
+                    Channel x=db.ChannelDao().findByName(channel.getId(),channel.getRead_key());
+                    db.ChannelDao().delete(x);
+                    x.setTimeAlarm("NESSUNA IRRIGAZIONE PRESENTE");
+                    x.setAlarmManager( null);
+                    db.ChannelDao().insert(x);
+                    Toast.makeText(getBaseContext(),"IRRIGAZIONE AUTOMATICA DISATTTIVATA!",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        irra.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendvalue(durationText.getText().toString(),"MANUALE");
+            }
+        });
+    }
+
+    private void setInitialValues() {
+        if(channel.getAlarmManager()!=null){
+            alarmManager=channel.getAlarmManager();
+            Switch.setChecked(true);
+        }
+
+        if(channel.getTimeAlarm()!=null){
+            textTime.setText(channel.getTimeAlarm());
+        }
+
         //minuti che mi serviranno per l'irrigazione automatica
         if(channel.getIrrigationDuration()!=null) durationText.setText(String.valueOf(channel.getIrrigationDuration()));
 
@@ -94,35 +139,15 @@ public class IrrigationActivity extends AppCompatActivity {
         }
 
         MyNewIntentService.settingvalue(leaching,flusso);
-
-        Switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //appena l'irrigazione è attiva
-                if (isChecked){
-                    startAllarm();
-                    Toast.makeText(getBaseContext(),"IRRIGAZIONE AUTOMATICA ATTTIVATA!",Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    stopAllarm();
-                    Toast.makeText(getBaseContext(),"IRRIGAZIONE AUTOMATICA DISATTTIVATA!",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        irra.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Toast.makeText(getBaseContext(),"IRRIGAZIONE MANUALE ATTTIVATA!",Toast.LENGTH_SHORT).show();
-                sendvalue(durationText.getText().toString(),"MANUALE");
-            }
-        });
     }
 
     public void startAllarm() {
         Intent notifyIntent = new Intent(this,MyReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(cont, 100, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager = (AlarmManager) cont.getSystemService(Context.ALARM_SERVICE);
+
+        //secupero il channel associato
+        Channel x=db.ChannelDao().findByName(channel.getId(),channel.getRead_key());
 
         //resetto le date precedentemente impostate
         textTime.setText("IRRIGAZIONE AUTOMATICA:\n");
@@ -142,12 +167,21 @@ public class IrrigationActivity extends AppCompatActivity {
              */
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
+            //controllo che l'ora di partenza è superiore alla mia altrimenti aumento il giorno
+            if(ora<=calendar.getTime().getHours()){
+                Log.d("GIORNOPROVA",String.valueOf(calendar.getTime().getDate()));
+                calendar.set(Calendar.DAY_OF_MONTH,calendar.getTime().getDate()+1);
+            }
             calendar.set(Calendar.HOUR_OF_DAY, ora);
             calendar.set(Calendar.MINUTE, minuto);
             calendar.set(Calendar.SECOND, 00);
 
+            SimpleDateFormat format1 = new SimpleDateFormat("HH:mm:ss");
+            Date date = calendar.getTime();
+            String time = format1.format(date);
+
             String text=textTime.getText().toString();
-            text=text.concat(ora + ":" + minuto +"\n");
+            text=text.concat(time +"\n");
             textTime.setText(text);
             //avvia l'allarme esattamente a quell'ora ogni giorno
             Log.d("DATA SETTATA:",calendar.getTime().toString());
@@ -155,8 +189,15 @@ public class IrrigationActivity extends AppCompatActivity {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,  calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
         }
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
+        //nel caso voglia attivarla con una data mia settata
+        //Calendar calendar = Calendar.getInstance();
+        //calendar.setTimeInMillis(System.currentTimeMillis());
+        //alarmManager.setExact(AlarmManager.RTC_WAKEUP,  calendar.getTimeInMillis(),pendingIntent);
+
+        db.ChannelDao().delete(x);
+        x.setAlarmManager(alarmManager);
+        x.setTimeAlarm(textTime.getText().toString());
+        db.ChannelDao().insert(x);
 
         Log.d("ALARM","ATTIVATO");
     }
@@ -210,19 +251,22 @@ public class IrrigationActivity extends AppCompatActivity {
                 ok=false;
             }
             try {
-                x.setFlussoAcqua(Double.parseDouble(flussoText.getText().toString()));
+                flusso=Double.parseDouble(flussoText.getText().toString());
+                x.setFlussoAcqua(flusso);
             }catch (Exception e){
                 e.printStackTrace();
                 ok=false;
             }
             try {
-                x.setLeachingfactor(Double.parseDouble(leachingText.getText().toString()));
+                leaching=Double.parseDouble(leachingText.getText().toString());
+                x.setLeachingfactor(leaching);
             }catch (Exception e){
                 e.printStackTrace();
                 ok=false;
             }
             try {
-                x.setNumirra(Double.parseDouble(irradayText.getText().toString()));
+                numirra=Double.parseDouble(irradayText.getText().toString());
+                x.setNumirra(numirra);
             }catch (Exception e){
                 e.printStackTrace();
                 ok=false;
@@ -230,6 +274,7 @@ public class IrrigationActivity extends AppCompatActivity {
             if(ok) Toast.makeText(getApplicationContext(),"VALORI SALVATI CORRETTAMENTE",Toast.LENGTH_SHORT).show();
             else Toast.makeText(getApplicationContext(),"ERRORE NEL SALVATAGGIO DI ALCUNI VALORI",Toast.LENGTH_SHORT).show();
             db.ChannelDao().insert(x);
+            MyNewIntentService.settingvalue(leaching,flusso);
         }
         else Toast.makeText(getApplicationContext(),"IMPOSSIBILE TROVARE IL CHANNEL SPECIFICATO",Toast.LENGTH_SHORT).show();
 
@@ -244,6 +289,10 @@ public class IrrigationActivity extends AppCompatActivity {
             x.setLeachingfactor(null);
             x.setFlussoAcqua(null);
             x.setIrrigationDuration(null);
+            x.setAlarmManager(null);
+            x.setTimeAlarm("NESSUNA IRRIGAZIONE PRESENTE");
+            x.setAlarmManager( null);
+            Switch.setChecked(false);
             durationText.setText("");
             flussoText.setText("");
             leachingText.setText("");
