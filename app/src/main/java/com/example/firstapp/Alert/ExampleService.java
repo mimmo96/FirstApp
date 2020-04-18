@@ -51,6 +51,7 @@ public class ExampleService extends Service {
     private static AppDatabase database;
     private static TextView notification;
     private static Context context;
+    private static String minutes=null;
     private static boolean go=false;
 
     @Override
@@ -76,7 +77,8 @@ public class ExampleService extends Service {
             channel = database.ChannelDao().findByName(id, key);
         if(channel.getNotification()) {
             database.ChannelDao().delete(channel);
-            url = "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key=" + channel.getRead_key() + "&results=1";
+            if(minutes==null) minutes="";
+            url = "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key=" + channel.getRead_key() +"&minutes="+minutes +"&offset=2";
             channel.setTimerTask(new MyTimerTask(url, channel, temp, umid, ph, cond, irra, peso, context));
             timer = new Timer();
             timer.scheduleAtFixedRate(channel.getTimerTask(), 0, 3000);
@@ -91,8 +93,9 @@ public class ExampleService extends Service {
 
     public static void setvalue(EditText tempMin1, EditText tempMax1, EditText umidMin1, EditText umidMax1, EditText condMin1, EditText condMax1, EditText phMin1, EditText phMax1, EditText irraMin1,
                                 EditText irraMax1, EditText pesMin1, EditText pesMax1, TextView temp1,
-                                TextView umid1, TextView ph1, TextView cond1, TextView irra1, TextView peso1, String url1, Channel chan, AppDatabase db, TextView notifiche){
+                                TextView umid1, TextView ph1, TextView cond1, TextView irra1, TextView peso1, String url1, Channel chan, AppDatabase db, TextView notifiche, String minutes1){
         database=db;
+        minutes=minutes1;
         channel=chan;
         notification=notifiche;
         url=url1;

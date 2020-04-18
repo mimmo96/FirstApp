@@ -59,6 +59,7 @@ public class AlertActivity extends AppCompatActivity {
     private static TextView irra;
     private static TextView peso;
     private static TextView notifiche;
+    private static EditText minutes;
     public static String url=null;
     private static Intent serviceIntent;
     private static Channel channel;             //channel usato
@@ -90,6 +91,7 @@ public class AlertActivity extends AppCompatActivity {
         irra=findViewById(R.id.textViewirra);
         peso=findViewById(R.id.textViewPes);
         notifiche=findViewById(R.id.textNotifiche);
+        minutes=findViewById(R.id.editTextMinuti);
 
         //ripristino i valori relativi al channel precedentemente salvati
         if (channel.getTempMin()!= null ) tempMin.setText(String.format(channel.getTempMin().toString()));
@@ -141,10 +143,13 @@ public class AlertActivity extends AppCompatActivity {
                 Log.d("TERMINO","sto terminando");
                 stopService();
             }
+
+            //converto i minuti in double;
+            String min=minutes.getText().toString();
             //se già non è stata avviata l'avvio ora
             ExampleService.setvalue(tempMin, tempMax, umidMin, umidMax, condMin, condMax, phMin, phMax,
                                     irraMin, irraMax, pesMin, pesMax, temp, umid, ph, cond, irra, peso,
-                                    url, channel, database, notifiche);
+                                    url, channel, database, notifiche,min);
             ContextCompat.startForegroundService(this, serviceIntent);
             notifiche.setText("notifiche attive");
     }

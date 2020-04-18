@@ -104,101 +104,111 @@ public class MyTimerTask extends TimerTask {
 
                             }
 
-                            //scorro tutto l'array e stampo a schermo il valore di field1
+                            Double somma=0.0;
+
+                            Double t = 0.0;
+                            Double u = 0.0;
+                            Double p = 0.0;
+                            Double c = 0.0;
+                            Double ir = 0.0;
+                            Double pe = 0.0;
+
+                            //scorro tutto l'array
                             for (int i = 0; i < jsonArray.length(); i++) {
+                                somma++;
+
                                 //recupero il primo oggetto dell'array
                                 final JSONObject value = jsonArray.getJSONObject(i);
-
-                                Double t = 0.0;
-                                Double u = 0.0;
-                                Double p = 0.0;
-                                Double c = 0.0;
-                                Double ir = 0.0;
-                                Double pe = 0.0;
-
                                 try {
                                     String temperature = value.getString("field1");
-                                    if (fields.get(0).equals("Temperature")){
-                                        t = Math.round(Double.parseDouble(String.format(temperature)) * 100.0) / 100.0;
-                                    if(temp!=null)    temp.setText(String.valueOf(t));
-                                    if (channel.getTempMin() != null && t < channel.getTempMin())
-                                        printnotify("Channel("+channel.getId()+") temperatura bassa!", 1);
-                                    if (channel.getTempMax() != null && t > channel.getTempMax())
-                                        printnotify("Channel ("+channel.getId()+") temperatura alta!", 2);
-                                     } else temp.setText("- -");
-                                }catch (Exception e){
-                                    if(temp!=null)     temp.setText("- -");
-                                }
+                                    if (fields.get(0).equals("Temperature")) {
+                                        t = t + Double.parseDouble(String.format(temperature));
+                                    }
+                                }catch (Exception e){  }
                                 try{
                                     String umidity = value.getString("field2");
                                     if (fields.get(1).equals("Humidity")) {
-                                        u = Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0;
-                                        if(umid!=null)    umid.setText(String.valueOf(u));
-                                        if (channel.getUmidMin() != null && u < channel.getUmidMin())
-                                            printnotify("Channel("+channel.getId()+") umidità bassa!", 3);
-                                        if (channel.getUmidMax()  != null && u > channel.getUmidMax())
-                                            printnotify("Channel("+channel.getId()+") umidità alta!", 4);
-                                    } else umid.setText("- -");
-                                }catch (Exception e){
-                                    if(umid!=null)      umid.setText("- -");
-                                }
+                                        u = u + Double.parseDouble(String.format(umidity));
+                                    }
+                                }catch (Exception e){  }
                                 try {
                                     String ph1 = value.getString("field3");
                                     if (fields.get(2).equals("pH_value")) {
-                                        p = Math.round(Double.parseDouble(String.format(ph1)) * 100.0) / 100.0;
-                                        if(ph!=null) ph.setText(String.valueOf(p));
-                                        if (channel.getPhMin() != null && p < channel.getPhMin())
-                                            printnotify("Channel("+channel.getId()+") ph basso!", 7);
-                                        if (channel.getPhMax() != null && p > channel.getPhMax())
-                                            printnotify("Channel("+channel.getId()+") ph alto!", 8);
-
-                                    } else ph.setText("- -");
-
-                                }catch (Exception e){
-                                      if(ph!=null)         ph.setText("- -");
-                                }
+                                        p = p + Double.parseDouble(String.format(ph1));
+                                    }
+                                }catch (Exception e){}
                                 try {
                                     String conducibilita = value.getString("field4");
                                     if (fields.get(3).equals("electric_conductivity")) {
-                                        c = Math.round(Double.parseDouble(String.format(conducibilita)) * 100.0) / 100.0;
-                                        if(cond!=null) cond.setText(String.valueOf(c));
-                                        if (channel.getCondMin() != null && c < channel.getCondMin())
-                                            printnotify("Channel("+channel.getId()+") conducibilità bassa!", 5);
-                                        if (channel.getCondMax() != null && c > channel.getCondMax())
-                                            printnotify("Channel("+channel.getId()+") conducibilità alta!", 6);
-
-                                    } else cond.setText("- -");
-                                }catch (Exception e){
-                                  if(cond!=null)  cond.setText("- -");
-                                }
+                                        c = c + Double.parseDouble(String.format(conducibilita));
+                                    }
+                                }catch (Exception e){ }
                                 try {
                                     String irradianza = value.getString("field5");
                                     if (fields.get(4).equals("Irradiance")) {
-                                        ir = Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0;
-                                        if(irra!=null) irra.setText(String.valueOf(ir));
-                                        if (channel.getIrraMin() != null && ir < channel.getIrraMin())
-                                            printnotify("Channel("+channel.getId()+") irradianza bassa!", 9);
-                                        if (channel.getIrraMax() != null && ir > channel.getIrraMax())
-                                            printnotify("Channel("+channel.getId()+") irradianza alta!", 10);
-
-                                    } else irra.setText("- -");
-                                }catch (Exception e){
-                                   if(irra!=null) irra.setText("- -");
-                                }
+                                        ir = ir + Double.parseDouble(String.format(irradianza));
+                                    }
+                                }catch (Exception e){ }
                                 try {
                                     String peso1 = value.getString("field6");
                                     if (fields.get(5).equals("P0")) {
-                                        pe = Math.round(Double.parseDouble(String.format(peso1)) * 100.0) / 100.0;
-                                        if(peso!=null) peso.setText(String.valueOf(pe).concat(" g"));
-                                        if (channel.getPesMin() != null && pe < channel.getPesMin())
-                                            printnotify("Channel("+channel.getId()+") peso basso!", 11);
-                                        if (channel.getPesMax() != null && pe > channel.getPesMax())
-                                            printnotify("Channel("+channel.getId()+") peso alto!", 12);
-                                    } else peso.setText("- -");
-                                }catch (Exception e){
-                                   if(peso!=null) peso.setText("- -");
-                                }
+                                        pe = pe + Double.parseDouble(String.format(peso1));
+                                    }
+                                }catch (Exception e){ }
 
+                            }
+
+                            //calcolo la media di tutti i valori e la confronto con i miei valori,se la supera invio la notifica
+                            t=Math.round(t/somma * 100.0) / 100.0;
+                            u=Math.round(u/somma * 100.0) / 100.0;
+                            p=Math.round(p/somma * 100.0) / 100.0;
+                            c=Math.round(c/somma * 100.0) / 100.0;
+                            ir=Math.round(ir/somma * 100.0) / 100.0;
+                            pe=Math.round(pe/somma * 100.0) / 100.0;
+                            Log.d("SOMMA VALORI: ",somma.toString());
+                            Log.d("MEDIA VALORI: ","t:"+t+" u:"+ u +" p:"+ p +" c:"+ c +" ir:"+ ir +" pe:"+ pe);
+
+                            try {
+                                if(temp!=null)    temp.setText(String.valueOf(t));
+                                if (channel.getTempMin() != null && t < channel.getTempMin()) printnotify("Channel("+channel.getId()+") temperatura bassa!", 1);
+                                if (channel.getTempMax() != null && t > channel.getTempMax()) printnotify("Channel ("+channel.getId()+") temperatura alta!", 2);
+                            }catch (Exception e){
+                                if(temp!=null)     temp.setText("- -");
+                            }
+                            try{
+                                if(umid!=null)    umid.setText(String.valueOf(u));
+                                if (channel.getUmidMin() != null && u < channel.getUmidMin()) printnotify("Channel("+channel.getId()+") umidità bassa!", 3);
+                                if (channel.getUmidMax()  != null && u > channel.getUmidMax()) printnotify("Channel("+channel.getId()+") umidità alta!", 4);
+                            }catch (Exception e){
+                                if(umid!=null)      umid.setText("- -");
+                            }
+                            try {
+                                if(ph!=null) ph.setText(String.valueOf(p));
+                                if (channel.getPhMin() != null && p < channel.getPhMin()) printnotify("Channel("+channel.getId()+") ph basso!", 7);
+                                if (channel.getPhMax() != null && p > channel.getPhMax()) printnotify("Channel("+channel.getId()+") ph alto!", 8);
+                            }catch (Exception e){
+                                if(ph!=null)         ph.setText("- -");
+                            }
+                            try {
+                                if(cond!=null) cond.setText(String.valueOf(c));
+                                if (channel.getCondMin() != null && c < channel.getCondMin()) printnotify("Channel("+channel.getId()+") conducibilità bassa!", 5);
+                                if (channel.getCondMax() != null && c > channel.getCondMax()) printnotify("Channel("+channel.getId()+") conducibilità alta!", 6);
+                            }catch (Exception e){
+                                if(cond!=null)  cond.setText("- -");
+                            }
+                            try {
+                                if(irra!=null) irra.setText(String.valueOf(ir));
+                                if (channel.getIrraMin() != null && ir < channel.getIrraMin()) printnotify("Channel("+channel.getId()+") irradianza bassa!", 9);
+                                if (channel.getIrraMax() != null && ir > channel.getIrraMax()) printnotify("Channel("+channel.getId()+") irradianza alta!", 10);
+                            }catch (Exception e){
+                                if(irra!=null) irra.setText("- -");
+                            }
+                            try {
+                                if(peso!=null) peso.setText(String.valueOf(pe).concat(" g"));
+                                if (channel.getPesMin() != null && pe < channel.getPesMin()) printnotify("Channel("+channel.getId()+") peso basso!", 11);
+                                if (channel.getPesMax() != null && pe > channel.getPesMax()) printnotify("Channel("+channel.getId()+") peso alto!", 12);
+                            }catch (Exception e){
+                                if(peso!=null) peso.setText("- -");
                             }
 
                         } catch (JSONException e) {
