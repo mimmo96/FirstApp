@@ -64,7 +64,6 @@ public class AlertActivity extends AppCompatActivity {
     private static TextView peso;
     private static TextView notifiche;
     private static EditText minutes;
-    public static String url=null;
     private static Intent serviceIntent;
     private static Channel channel;             //channel usato
     private static AppDatabase database;
@@ -138,10 +137,27 @@ public class AlertActivity extends AppCompatActivity {
                 //appena l'irrigazione è attiva
                 if (isChecked){
                     Log.d("AlertActivity","attivo notifiche");
+
+                    //abilito le notifiche
+                    Channel x=database.ChannelDao().findByName(channel.getId(),channel.getRead_key());
+                    database.ChannelDao().delete(x);
+                    x.setNotification(true);
+                    database.ChannelDao().insert(x);
+                    channel=x;
                     startService();
+                    notifiche.setText("notifiche attive");
                 }
                 else{
                     Log.d("AlertActivity","fermo notifiche");
+
+                    //disabilito le notifiche
+                    Channel x=database.ChannelDao().findByName(channel.getId(),channel.getRead_key());
+                    database.ChannelDao().delete(x);
+                    x.setNotification(false);
+                    database.ChannelDao().insert(x);
+
+                    notifiche.setText("notifiche non attive");
+
                     stopService();
                 }
             }
@@ -226,6 +242,7 @@ public class AlertActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             database.ChannelDao().insert(x);
+            Toast.makeText(cont,"VALORI SALVATI CORRETTAMENTE!",Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -249,30 +266,19 @@ public class AlertActivity extends AppCompatActivity {
             database.ChannelDao().insert(x);
 
             //resetto i valori anche nei text
-            tempMin.setText("");
-            tempMin.setHint("- -");
-            tempMax.setText("");
-            tempMax.setHint("- -");
-            umidMin.setText("");
-            umidMin.setHint("- -");
-            umidMax.setText("");
-            umidMax.setHint("- -");
-            condMin.setText("");
-            condMin.setHint("- -");
-            condMax.setText("");
-            condMax.setHint("- -");
-            phMin.setText("");
-            phMin.setHint("- -");
-            phMax.setText("");
-            phMax.setHint("- -");
-            irraMin.setText("");
-            irraMin.setHint("- -");
-            irraMax.setText("");
-            irraMax.setHint("- -");
-            pesMin.setText("");
-            pesMin.setHint("- -");
-            pesMax.setText("");
-            pesMax.setHint("- -");
+            tempMin.setText(" ");
+            tempMax.setText(" ");
+            umidMin.setText(" ");
+            umidMax.setText(" ");
+            condMin.setText(" ");
+            condMax.setText(" ");
+            phMin.setText(" ");
+            phMax.setText(" ");
+            irraMin.setText(" ");
+            irraMax.setText(" ");
+            pesMin.setText(" ");
+            pesMax.setText(" ");
+            minutes.setText(" ");
 
             if (channel.getLastimevalues()!=0) minutes.setText(String.valueOf(channel.getLastimevalues()));
             Toast.makeText(cont,"VALORI RESETTATI CORRETTAMENTE",Toast.LENGTH_SHORT).show();
@@ -292,7 +298,6 @@ public class AlertActivity extends AppCompatActivity {
             //setto i parametri da me impostati al service
             ExampleService.setvalue(temp, umid, ph, cond, irra, peso, channel, database, notifiche,min);
             ContextCompat.startForegroundService(this, serviceIntent);
-            notifiche.setText("notifiche attive");
     }
 
     //fatta quando richiamo il pulsante di stop

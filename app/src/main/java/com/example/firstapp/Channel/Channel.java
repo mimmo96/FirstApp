@@ -67,7 +67,7 @@ public class Channel {
     private static MyTimerTask timerTask=null;
     private static AlarmManager alarmManager=null;
     private static String TimeAlarm=null;
-    private static int lastimevalues=0;
+    private int lastimevalues=0;
 
     public Channel(String id, String read_key,String write_key) {
         this.id = id;
@@ -375,11 +375,11 @@ public class Channel {
         TimeAlarm = timeAlarm;
     }
 
-    public static int getLastimevalues() {
+    public int getLastimevalues() {
         return lastimevalues;
     }
 
-    public static void setLastimevalues(int lastimevalues) {
-        Channel.lastimevalues = lastimevalues;
+    public void setLastimevalues(int Lastimevalues) {
+       lastimevalues = Lastimevalues;
     }
 }

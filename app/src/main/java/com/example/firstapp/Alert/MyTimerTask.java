@@ -75,7 +75,6 @@ public class MyTimerTask extends TimerTask {
 
     @Override
     public void run() {
-        Log.d("MyTimerTask","run");
         getJsonResponse(urlString);
         Log.d("URL",urlString);
     }
@@ -105,7 +104,6 @@ public class MyTimerTask extends TimerTask {
                             }
 
                             Double somma=0.0;
-
                             Double t = 0.0;
                             Double u = 0.0;
                             Double p = 0.0;
@@ -167,48 +165,65 @@ public class MyTimerTask extends TimerTask {
                             pe=Math.round(pe/somma * 100.0) / 100.0;
                             Log.d("SOMMA VALORI: ",somma.toString());
                             Log.d("MEDIA VALORI: ","t:"+t+" u:"+ u +" p:"+ p +" c:"+ c +" ir:"+ ir +" pe:"+ pe);
+                            if(channel.getNotification()) Log.d("NOTIFICHE","ATTIVE");
+                            else Log.d("NOTIFICHE","NON ATTIVE");
 
-                            try {
-                                if(temp!=null)    temp.setText(String.valueOf(t));
-                                if (channel.getTempMin() != null && t < channel.getTempMin()) printnotify("Channel("+channel.getId()+") temperatura bassa!", 1);
-                                if (channel.getTempMax() != null && t > channel.getTempMax()) printnotify("Channel ("+channel.getId()+") temperatura alta!", 2);
-                            }catch (Exception e){
-                                if(temp!=null)     temp.setText("- -");
-                            }
-                            try{
-                                if(umid!=null)    umid.setText(String.valueOf(u));
-                                if (channel.getUmidMin() != null && u < channel.getUmidMin()) printnotify("Channel("+channel.getId()+") umidità bassa!", 3);
-                                if (channel.getUmidMax()  != null && u > channel.getUmidMax()) printnotify("Channel("+channel.getId()+") umidità alta!", 4);
-                            }catch (Exception e){
-                                if(umid!=null)      umid.setText("- -");
-                            }
-                            try {
-                                if(ph!=null) ph.setText(String.valueOf(p));
-                                if (channel.getPhMin() != null && p < channel.getPhMin()) printnotify("Channel("+channel.getId()+") ph basso!", 7);
-                                if (channel.getPhMax() != null && p > channel.getPhMax()) printnotify("Channel("+channel.getId()+") ph alto!", 8);
-                            }catch (Exception e){
-                                if(ph!=null)         ph.setText("- -");
-                            }
-                            try {
-                                if(cond!=null) cond.setText(String.valueOf(c));
-                                if (channel.getCondMin() != null && c < channel.getCondMin()) printnotify("Channel("+channel.getId()+") conducibilità bassa!", 5);
-                                if (channel.getCondMax() != null && c > channel.getCondMax()) printnotify("Channel("+channel.getId()+") conducibilità alta!", 6);
-                            }catch (Exception e){
-                                if(cond!=null)  cond.setText("- -");
-                            }
-                            try {
-                                if(irra!=null) irra.setText(String.valueOf(ir));
-                                if (channel.getIrraMin() != null && ir < channel.getIrraMin()) printnotify("Channel("+channel.getId()+") irradianza bassa!", 9);
-                                if (channel.getIrraMax() != null && ir > channel.getIrraMax()) printnotify("Channel("+channel.getId()+") irradianza alta!", 10);
-                            }catch (Exception e){
-                                if(irra!=null) irra.setText("- -");
-                            }
-                            try {
-                                if(peso!=null) peso.setText(String.valueOf(pe).concat(" g"));
-                                if (channel.getPesMin() != null && pe < channel.getPesMin()) printnotify("Channel("+channel.getId()+") peso basso!", 11);
-                                if (channel.getPesMax() != null && pe > channel.getPesMax()) printnotify("Channel("+channel.getId()+") peso alto!", 12);
-                            }catch (Exception e){
-                                if(peso!=null) peso.setText("- -");
+                            //invio le notifiche se i valori non rispettano le soglie imposte
+                            if(channel.getNotification()) {
+                                try {
+                                    if (temp != null) temp.setText(String.valueOf(t));
+                                    if (channel.getTempMin() != null && t < channel.getTempMin())
+                                        printnotify("Channel(" + channel.getId() + ") temperatura bassa!", 1);
+                                    if (channel.getTempMax() != null && t > channel.getTempMax())
+                                        printnotify("Channel (" + channel.getId() + ") temperatura alta!", 2);
+                                } catch (Exception e) {
+                                    if (temp != null) temp.setText("- -");
+                                }
+                                try {
+                                    if (umid != null) umid.setText(String.valueOf(u));
+                                    if (channel.getUmidMin() != null && u < channel.getUmidMin())
+                                        printnotify("Channel(" + channel.getId() + ") umidità bassa!", 3);
+                                    if (channel.getUmidMax() != null && u > channel.getUmidMax())
+                                        printnotify("Channel(" + channel.getId() + ") umidità alta!", 4);
+                                } catch (Exception e) {
+                                    if (umid != null) umid.setText("- -");
+                                }
+                                try {
+                                    if (ph != null) ph.setText(String.valueOf(p));
+                                    if (channel.getPhMin() != null && p < channel.getPhMin())
+                                        printnotify("Channel(" + channel.getId() + ") ph basso!", 7);
+                                    if (channel.getPhMax() != null && p > channel.getPhMax())
+                                        printnotify("Channel(" + channel.getId() + ") ph alto!", 8);
+                                } catch (Exception e) {
+                                    if (ph != null) ph.setText("- -");
+                                }
+                                try {
+                                    if (cond != null) cond.setText(String.valueOf(c));
+                                    if (channel.getCondMin() != null && c < channel.getCondMin())
+                                        printnotify("Channel(" + channel.getId() + ") conducibilità bassa!", 5);
+                                    if (channel.getCondMax() != null && c > channel.getCondMax())
+                                        printnotify("Channel(" + channel.getId() + ") conducibilità alta!", 6);
+                                } catch (Exception e) {
+                                    if (cond != null) cond.setText("- -");
+                                }
+                                try {
+                                    if (irra != null) irra.setText(String.valueOf(ir));
+                                    if (channel.getIrraMin() != null && ir < channel.getIrraMin())
+                                        printnotify("Channel(" + channel.getId() + ") irradianza bassa!", 9);
+                                    if (channel.getIrraMax() != null && ir > channel.getIrraMax())
+                                        printnotify("Channel(" + channel.getId() + ") irradianza alta!", 10);
+                                } catch (Exception e) {
+                                    if (irra != null) irra.setText("- -");
+                                }
+                                try {
+                                    if (peso != null) peso.setText(String.valueOf(pe).concat(" g"));
+                                    if (channel.getPesMin() != null && pe < channel.getPesMin())
+                                        printnotify("Channel(" + channel.getId() + ") peso basso!", 11);
+                                    if (channel.getPesMax() != null && pe > channel.getPesMax())
+                                        printnotify("Channel(" + channel.getId() + ") peso alto!", 12);
+                                } catch (Exception e) {
+                                    if (peso != null) peso.setText("- -");
+                                }
                             }
 
                         } catch (JSONException e) {
@@ -223,7 +238,6 @@ public class MyTimerTask extends TimerTask {
             }
         });
         Volley.newRequestQueue(cont).add(jsonObjectRequest);
-        Log.d("MyTimerTask", "aggiunto alla coda");
     }
 
     public void printnotify(String text,int i){

@@ -71,26 +71,35 @@ public class ExampleService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("ExampleService","OnStartCommand");
-            //recupero la lista del channel attuale
-            String id = database.SavedDao().getAll().get(0).getId();
-            String key = database.SavedDao().getAll().get(0).getRead_key();
-            channel = database.ChannelDao().findByName(id, key);
-        if(channel.getNotification()) {
-            database.ChannelDao().delete(channel);
-            if(minutes==null) minutes="";
-            url = "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key=" + channel.getRead_key() +"&minutes="+minutes +"&offset=2";
-            channel.setTimerTask(new MyTimerTask(url, channel, temp, umid, ph, cond, irra, peso, context));
-            timer = new Timer();
-            timer.scheduleAtFixedRate(channel.getTimerTask(), 0, 3000);
-            channel.setTimer(timer);
-            database.ChannelDao().insert(channel);
-        }
-        else{
-            this.onDestroy();
-        }
+        //setto una variabile per capire se devo lanciare almeno un servizio oppure no
+        Boolean ok=false;
+
+            //recupero dalla lista tutti i channel e se hanno le notifiche attive li eseguo in background
+            List<Channel> allchannel= database.ChannelDao().getAll();
+
+            for(int i=0;i<allchannel.size();i++) {
+                Channel actualchannel = allchannel.get(i);
+                //se ho le notifiche abilitata lo avvio
+                if (actualchannel.getNotification()) {
+                    database.ChannelDao().delete(actualchannel);
+                    int minuti= actualchannel.getLastimevalues();
+                    if(minuti==0) minuti=60;
+                    url = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key() + "&minutes=" +
+                           minuti + "&offset=2";
+                    actualchannel.setTimerTask(new MyTimerTask(url, channel, temp, umid, ph, cond, irra, peso, context));
+                    timer = new Timer();
+                    timer.scheduleAtFixedRate(actualchannel.getTimerTask(), 0, 3000);
+                    actualchannel.setTimer(timer);
+                    database.ChannelDao().insert(actualchannel);
+                    ok=true;
+                }
+            }
+            //se non ho nessun channel con le notifiche abilitate interrompo il servizio
+            if(!ok) this.onDestroy();
         return START_STICKY;
     }
 
+    //setto i valori
     public static void setvalue(TextView temp1, TextView umid1, TextView ph1, TextView cond1, TextView irra1, TextView peso1, Channel chan, AppDatabase db, TextView notifiche, String minutes1){
         database=db;
         minutes=minutes1;
@@ -104,7 +113,10 @@ public class ExampleService extends Service {
         cond=cond1;
     }
 
+    //quando disattivo la ricezione delle notifiche
     public static void stoptimer(){
+
+        //recupero i dati del channel e disattivo
         if(channel!=null) {
             timer = channel.getTimer();
             timerTask = channel.getTimerTask();
