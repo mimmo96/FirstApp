@@ -7,8 +7,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
@@ -19,6 +22,7 @@ import androidx.room.Room;
 import com.example.firstapp.AppDatabase;
 import com.example.firstapp.Channel.Channel;
 import com.example.firstapp.Channel.savedValues;
+import com.example.firstapp.Irrigation.MyNewIntentService;
 import com.example.firstapp.MainActivity;
 import com.example.firstapp.R;
 
@@ -64,6 +68,7 @@ public class AlertActivity extends AppCompatActivity {
     private static Intent serviceIntent;
     private static Channel channel;             //channel usato
     private static AppDatabase database;
+    private static Switch aSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +97,7 @@ public class AlertActivity extends AppCompatActivity {
         peso=findViewById(R.id.textViewPes);
         notifiche=findViewById(R.id.textNotifiche);
         minutes=findViewById(R.id.editTextMinuti);
+        aSwitch=findViewById(R.id.switch2);
 
         //ripristino i valori relativi al channel precedentemente salvati
         if (channel.getTempMin()!= null ) tempMin.setText(String.format(channel.getTempMin().toString()));
@@ -106,14 +112,17 @@ public class AlertActivity extends AppCompatActivity {
         if (channel.getIrraMax()!=null) irraMax.setText(String.format(channel.getIrraMax().toString()));
         if (channel.getPesMin()!=null) pesMin.setText(String.format(channel.getPesMin().toString()));
         if (channel.getPesMax()!=null) pesMax.setText(String.format(channel.getPesMax().toString()));
-        if (channel.getNotification()) notifiche.setText("notifiche attive");
-        else notifiche.setText("notifiche non attive");
-      /*  if (channel.getTempMin()== null && channel.getTempMax()==null && channel.getUmidMin()==null && channel.getUmidMax()==null && channel.getCondMax()==null
-                && channel.getPhMin()==null  && channel.getPhMax()==null && channel.getIrraMin()==null && channel.getIrraMax()==null
-                && channel.getPesMin()==null && channel.getPesMax()==null){
-            canstart=false;
+        if (channel.getLastimevalues()!=0) minutes.setText(String.valueOf(channel.getLastimevalues()));
+        if (channel.getNotification()){
+            notifiche.setText("notifiche attive");
+            aSwitch.setChecked(true);
         }
-*/
+        else{
+            aSwitch.setChecked(false);
+            notifiche.setText("notifiche non attive");
+        }
+
+
         database = Room.databaseBuilder(this, AppDatabase.class, "prodiction")
                 //consente l'aggiunta di richieste nel thred principale
                 .allowMainThreadQueries()
@@ -122,6 +131,22 @@ public class AlertActivity extends AppCompatActivity {
                 .build();
 
         serviceIntent = new Intent(this, ExampleService.class);
+
+        aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //appena l'irrigazione è attiva
+                if (isChecked){
+                    Log.d("AlertActivity","attivo notifiche");
+                    startService();
+                }
+                else{
+                    Log.d("AlertActivity","fermo notifiche");
+                    stopService();
+                }
+            }
+        });
+
     }
 
     public static Intent getActivityintent(Context context){
@@ -129,14 +154,131 @@ public class AlertActivity extends AppCompatActivity {
         return intent;
     }
 
-    public void startButton(View v) {
-        startService();
+    //se premo il pulsante save
+    public void saveButton(View v) {
+        Channel x = database.ChannelDao().findByName(channel.getId(), channel.getRead_key());
+
+        if (x != null) {
+            database.ChannelDao().delete(x);
+            try {
+                x.setTempMin(Double.valueOf(tempMin.getText().toString()));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            try {
+                x.setTempMax(Double.valueOf(tempMax.getText().toString()));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            try {
+                x.setUmidMin(Double.valueOf(umidMin.getText().toString()));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            try {
+                x.setUmidMax(Double.valueOf(umidMax.getText().toString()));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            try {
+                x.setCondMin(Double.valueOf(condMin.getText().toString()));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            try {
+                x.setCondMax(Double.valueOf(condMax.getText().toString()));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            try {
+                x.setPhMin(Double.valueOf(phMin.getText().toString()));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            try {
+                x.setPhMax(Double.valueOf(phMax.getText().toString()));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            try {
+                x.setIrraMin(Double.valueOf(irraMin.getText().toString()));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            try {
+                x.setIrraMax(Double.valueOf(irraMax.getText().toString()));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            try {
+                x.setPesMin(Double.valueOf(pesMin.getText().toString()));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            try {
+                x.setPesMax(Double.valueOf(pesMax.getText().toString()));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            try {
+                x.setLastimevalues(Integer.valueOf(minutes.getText().toString()));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            database.ChannelDao().insert(x);
+        }
     }
 
-    public void stopButton(View v) {
-        stopService();
+    //se premo il pulsante reset
+    public void resetButton (View v) {
+            Channel x=database.ChannelDao().findByName(channel.getId(),channel.getRead_key());
+            database.ChannelDao().delete(x);
+            x.setTempMin(null);
+            x.setTempMax(null);
+            x.setUmidMin(null);
+            x.setUmidMax(null);
+            x.setCondMin(null);
+            x.setCondMax(null);
+            x.setPhMin(null);
+            x.setPhMax(null);
+            x.setIrraMin(null);
+            x.setIrraMax(null);
+            x.setPesMin(null);
+            x.setPesMax(null);
+            x.setLastimevalues(0);
+            database.ChannelDao().insert(x);
+
+            //resetto i valori anche nei text
+            tempMin.setText("");
+            tempMin.setHint("- -");
+            tempMax.setText("");
+            tempMax.setHint("- -");
+            umidMin.setText("");
+            umidMin.setHint("- -");
+            umidMax.setText("");
+            umidMax.setHint("- -");
+            condMin.setText("");
+            condMin.setHint("- -");
+            condMax.setText("");
+            condMax.setHint("- -");
+            phMin.setText("");
+            phMin.setHint("- -");
+            phMax.setText("");
+            phMax.setHint("- -");
+            irraMin.setText("");
+            irraMin.setHint("- -");
+            irraMax.setText("");
+            irraMax.setHint("- -");
+            pesMin.setText("");
+            pesMin.setHint("- -");
+            pesMax.setText("");
+            pesMax.setHint("- -");
+
+            if (channel.getLastimevalues()!=0) minutes.setText(String.valueOf(channel.getLastimevalues()));
+            Toast.makeText(cont,"VALORI RESETTATI CORRETTAMENTE",Toast.LENGTH_SHORT).show();
     }
 
+    //funzione eseguita quando attivo le notifiche
     public void startService() {
             //se era stata già avviata fermo la precedente
             if (channel.getTimer()!=null ) {
@@ -144,12 +286,11 @@ public class AlertActivity extends AppCompatActivity {
                 stopService();
             }
 
-            //converto i minuti in double;
+            //converto i minuti in Stringa;
             String min=minutes.getText().toString();
-            //se già non è stata avviata l'avvio ora
-            ExampleService.setvalue(tempMin, tempMax, umidMin, umidMax, condMin, condMax, phMin, phMax,
-                                    irraMin, irraMax, pesMin, pesMax, temp, umid, ph, cond, irra, peso,
-                                    url, channel, database, notifiche,min);
+
+            //setto i parametri da me impostati al service
+            ExampleService.setvalue(temp, umid, ph, cond, irra, peso, channel, database, notifiche,min);
             ContextCompat.startForegroundService(this, serviceIntent);
             notifiche.setText("notifiche attive");
     }
@@ -159,23 +300,12 @@ public class AlertActivity extends AppCompatActivity {
         ExampleService.stoptimer();
     }
 
-    public static void setUrl(Channel chan){
+    public static void setChannel(Channel chan){
         channel=chan;
-        url = "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key=" + channel.getRead_key() + "&results=1";
     }
 
     public static Context getContext(){
         return cont;
     }
-/*
-    public static void setvalues(String temp1,  String umid1, String ph1, String cond1, String irra1, String peso1){
-        temp.setText(temp1);
-        umid.setText(umid1);
-        ph.setText(ph1);
-        cond.setText(cond1);
-        irra.setText(irra1);
-        peso.setText(peso1);
-    }
-*/
 
 }

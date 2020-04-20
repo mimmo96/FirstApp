@@ -52,7 +52,7 @@ public class IrrigationActivity extends AppCompatActivity {
     private Double pesoAtt=0.0;
     private Double leaching=0.35;
     private Double flusso=160.0;
-    private Double numirra=1.0;
+    private int numirra=1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +133,7 @@ public class IrrigationActivity extends AppCompatActivity {
         }
 
         //numero di irrigazioni al giorno
-        if(channel.getNumirra()!=null){
+        if(channel.getNumirra()!=0){
             numirra=channel.getNumirra();
             irradayText.setText(String.valueOf(numirra));
         }
@@ -265,7 +265,7 @@ public class IrrigationActivity extends AppCompatActivity {
                 ok=false;
             }
             try {
-                numirra=Double.parseDouble(irradayText.getText().toString());
+                numirra=Integer.parseInt(irradayText.getText().toString());
                 x.setNumirra(numirra);
             }catch (Exception e){
                 e.printStackTrace();
@@ -285,7 +285,7 @@ public class IrrigationActivity extends AppCompatActivity {
 
         if(x!=null){
             db.ChannelDao().delete(x);
-            x.setNumirra(null);
+            x.setNumirra(0);
             x.setLeachingfactor(null);
             x.setFlussoAcqua(null);
             x.setIrrigationDuration(null);

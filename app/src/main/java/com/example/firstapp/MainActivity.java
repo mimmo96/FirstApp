@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
         //ripristino valori salvati precedentemente se ci sono
         BackupValues(savedInstanceState);
 
-       // database.ChannelDao().deleteAll();
-       // database.SavedDao().deleteAll();
+        //database.ChannelDao().deleteAll();
+        //database.SavedDao().deleteAll();
         textTemp = findViewById(R.id.textTemp);
         textUmidity = findViewById(R.id.textUmidity);
         textPh = findViewById(R.id.textPh);
@@ -264,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
          Toast.makeText(cont,"INSERISCI UN CHANNEL",Toast.LENGTH_SHORT).show();
         }
         else {
-            AlertActivity.setUrl(trovato);
+            AlertActivity.setChannel(trovato);
             startActivity(intent);
         }
     }

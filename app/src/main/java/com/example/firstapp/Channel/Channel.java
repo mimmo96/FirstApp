@@ -62,11 +62,12 @@ public class Channel {
     private Double IrrigationDuration=null;
     private Double FlussoAcqua=null;
     private Double Leachingfactor =null;
-    private Double Numirra =null;
+    private int Numirra =0;
     private static Timer timer=null;
     private static MyTimerTask timerTask=null;
     private static AlarmManager alarmManager=null;
     private static String TimeAlarm=null;
+    private static int lastimevalues=0;
 
     public Channel(String id, String read_key,String write_key) {
         this.id = id;
@@ -354,9 +355,9 @@ public class Channel {
 
     public void setLeachingfactor(Double leachingfactor) { Leachingfactor = leachingfactor; }
 
-    public Double getNumirra() { return Numirra; }
+    public int getNumirra() { return Numirra; }
 
-    public void setNumirra(Double numirra) { Numirra = numirra; }
+    public void setNumirra(int numirra) { Numirra = numirra; }
 
     public AlarmManager getAlarmManager() {
         return alarmManager;
@@ -372,5 +373,13 @@ public class Channel {
 
     public void setTimeAlarm(String timeAlarm) {
         TimeAlarm = timeAlarm;
+    }
+
+    public static int getLastimevalues() {
+        return lastimevalues;
+    }
+
+    public static void setLastimevalues(int lastimevalues) {
+        Channel.lastimevalues = lastimevalues;
     }
 }
