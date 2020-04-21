@@ -204,7 +204,15 @@ public class MyTimerTask extends TimerTask {
 
                                 }
                                if(ok) textPeso.setText(String.valueOf(Math.round((irrigazione-drainaggio) * 100.0) / 100.0).concat(" g/m²"));
-                               else textPeso.setText("- -");
+                               else{
+                                   try{
+                                       String field=value.getString(v.getImagepeso());
+                                       textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
+                                   }
+                                    catch (Exception e){
+                                        textPeso.setText("- -");
+                                    }
+                               }
 
                                 String cretime = value.getString("created_at");
                                 createdtime.add(cretime);

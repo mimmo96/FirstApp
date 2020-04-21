@@ -1,7 +1,5 @@
 package com.example.firstapp.Alert;
 
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,23 +10,21 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.room.Room;
-
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.firstapp.AppDatabase;
 import com.example.firstapp.Channel.Channel;
-import com.example.firstapp.Channel.savedValues;
-import com.example.firstapp.Irrigation.MyNewIntentService;
-import com.example.firstapp.MainActivity;
 import com.example.firstapp.R;
-
-import java.util.List;
-
-import static com.example.firstapp.Alert.App.CHANNEL_1_ID;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.util.ArrayList;
 
 /*
  * Progetto: svilluppo App Android per Tirocinio interno
@@ -131,20 +127,22 @@ public class AlertActivity extends AppCompatActivity {
 
         serviceIntent = new Intent(this, ExampleService.class);
 
+        //scarico la media dei valori e la rapresento a schermo
+        downloadMedia();
+
         aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //appena l'irrigazione è attiva
                 if (isChecked){
                     Log.d("AlertActivity","attivo notifiche");
-
+                    startService();
                     //abilito le notifiche
                     Channel x=database.ChannelDao().findByName(channel.getId(),channel.getRead_key());
                     database.ChannelDao().delete(x);
                     x.setNotification(true);
                     database.ChannelDao().insert(x);
                     channel=x;
-                    startService();
                     notifiche.setText("notifiche attive");
                 }
                 else{
@@ -163,6 +161,168 @@ public class AlertActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void downloadMedia() {
+        int minuti=0;
+        if(channel.getLastimevalues()==0) minuti=60;
+        else minuti=channel.getLastimevalues();
+        String url= "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key="
+                + channel.getRead_key() + "&minutes=" + minuti + "&offset=2";
+            final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                //recupero l'array feeds
+                                JSONArray jsonArray = response.getJSONArray("feeds");
+
+                                //recupero i fields associati al channel
+                                ArrayList<String> fields = new ArrayList<String>();
+                                int dim = response.getJSONObject("channel").length();
+                                Log.d("Thread background", "donwload eseguito");
+                                //salvo tutti i field nell'array
+                                try {
+                                    for (int i = 0; i < dim; i++) {
+                                        fields.add(String.valueOf(response.getJSONObject("channel").get("field" + (i + 1))));
+                                    }
+                                } catch (Exception e) {
+
+                                }
+
+                                Double somma = 0.0;
+                                Double t = 0.0;
+                                Double u = 0.0;
+                                Double p = 0.0;
+                                Double c = 0.0;
+                                Double ir = 0.0;
+                                Double pe = 0.0;
+
+                                //scorro tutto l'array
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    somma++;
+
+                                    //recupero il primo oggetto dell'array
+                                    final JSONObject value = jsonArray.getJSONObject(i);
+                                    try {
+                                        String temperature = value.getString("field1");
+                                        if (fields.get(0).equals("Temperature")) {
+                                            t = t + Double.parseDouble(String.format(temperature));
+                                        }
+                                    }catch (Exception e){  }
+                                    try{
+                                        String umidity = value.getString("field2");
+                                        if (fields.get(1).equals("Humidity")) {
+                                            u = u + Double.parseDouble(String.format(umidity));
+                                        }
+                                    }catch (Exception e){  }
+                                    try {
+                                        String ph1 = value.getString("field3");
+                                        if (fields.get(2).equals("pH_value")) {
+                                            p = p + Double.parseDouble(String.format(ph1));
+                                        }
+                                    }catch (Exception e){}
+                                    try {
+                                        String conducibilita = value.getString("field4");
+                                        if (fields.get(3).equals("electric_conductivity")) {
+                                            c = c + Double.parseDouble(String.format(conducibilita));
+                                        }
+                                    }catch (Exception e){ }
+                                    try {
+                                        String irradianza = value.getString("field5");
+                                        if (fields.get(4).equals("Irradiance")) {
+                                            ir = ir + Double.parseDouble(String.format(irradianza));
+                                        }
+                                    }catch (Exception e){ }
+                                    try {
+                                        String peso1 = value.getString("field6");
+                                        if (fields.get(5).equals("P0")) {
+                                            pe = pe + Double.parseDouble(String.format(peso1));
+                                        }
+                                    }catch (Exception e){ }
+
+                                }
+
+                                //calcolo la media di tutti i valori e la confronto con i miei valori,se la supera invio la notifica
+                                t = Math.round(t / somma * 100.0) / 100.0;
+                                u = Math.round(u / somma * 100.0) / 100.0;
+                                p = Math.round(p / somma * 100.0) / 100.0;
+                                c = Math.round(c / somma * 100.0) / 100.0;
+                                ir = Math.round(ir / somma * 100.0) / 100.0;
+                                pe = Math.round(pe / somma * 100.0) / 100.0;
+                                Log.d("SOMMA VALORI: ", somma.toString());
+                                Log.d("MEDIA VALORI: ", "t:" + t + " u:" + u + " p:" + p + " c:" + c + " ir:" + ir + " pe:" + pe);
+                                if (channel.getNotification()) Log.d("NOTIFICHE", "ATTIVE");
+                                else Log.d("NOTIFICHE", "NON ATTIVE");
+                                //invio le notifiche se i valori non rispettano le soglie imposte
+                                    try {
+                                        if (temp != null){
+                                            //se non ho scaricato valori
+                                            if(somma==0)  temp.setText("- -");
+                                            else temp.setText(String.valueOf(t));
+                                        }
+                                    } catch (Exception e) {
+                                       temp.setText("- -");
+                                    }
+                                    try {
+                                        if (umid != null){
+                                            //se non ho scaricato valori
+                                            if(somma==0)  umid.setText("- -");
+                                            else umid.setText(String.valueOf(u));
+                                        }
+                                    } catch (Exception e) {
+                                        umid.setText("- -");
+                                    }
+                                    try {
+                                        if (ph != null){
+                                            //se non ho scaricato valori
+                                            if(somma==0)  ph.setText("- -");
+                                            else  ph.setText(String.valueOf(p));
+                                        }
+                                    } catch (Exception e) {
+                                       ph.setText("- -");
+                                    }
+                                    try {
+                                        if (cond != null){
+                                            //se non ho scaricato valori
+                                            if(somma==0)  cond.setText("- -");
+                                            else cond.setText(String.valueOf(c));
+                                        }
+                                    } catch (Exception e) {
+                                       cond.setText("- -");
+                                    }
+                                    try {
+                                        if (irra != null){
+                                            //se non ho scaricato valori
+                                            if(somma==0)  irra.setText("- -");
+                                            else irra.setText(String.valueOf(ir));
+                                        }
+                                    } catch (Exception e) {
+                                      irra.setText("- -");
+                                    }
+                                    try {
+                                        if (peso != null){
+                                            //se non ho scaricato valori
+                                            if(somma==0)  peso.setText("- -");
+                                            else peso.setText(String.valueOf(pe).concat(" g"));
+                                        }
+                                    } catch (Exception e) {
+                                       peso.setText("- -");
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            Log.d("AlertActivity", "donwload eseguito correttamente");
+                        }
+
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("AlertActivity", "errore donwload");
+                }
+            });
+            Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
     }
 
     public static Intent getActivityintent(Context context){
@@ -242,8 +402,12 @@ public class AlertActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             database.ChannelDao().insert(x);
+            channel=x;
             Toast.makeText(cont,"VALORI SALVATI CORRETTAMENTE!",Toast.LENGTH_SHORT).show();
         }
+
+        //riscarico i dati e faccio un reset di tutto
+        downloadMedia();
     }
 
     //se premo il pulsante reset

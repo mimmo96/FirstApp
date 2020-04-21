@@ -44,7 +44,6 @@ public class ExampleService extends Service {
     private static TextView cond;
     private static TextView irra;
     private static TextView peso;
-    private static String url=null;
     private static MyTimerTask timerTask=null;
     private static Timer timer=null;
     private static Channel channel;
@@ -82,11 +81,7 @@ public class ExampleService extends Service {
                 //se ho le notifiche abilitata lo avvio
                 if (actualchannel.getNotification()) {
                     database.ChannelDao().delete(actualchannel);
-                    int minuti= actualchannel.getLastimevalues();
-                    if(minuti==0) minuti=60;
-                    url = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key() + "&minutes=" +
-                           minuti + "&offset=2";
-                    actualchannel.setTimerTask(new MyTimerTask(url, channel, temp, umid, ph, cond, irra, peso, context));
+                    actualchannel.setTimerTask(new MyTimerTask(channel, temp, umid, ph, cond, irra, peso, context,database));
                     timer = new Timer();
                     timer.scheduleAtFixedRate(actualchannel.getTimerTask(), 0, 3000);
                     actualchannel.setTimer(timer);

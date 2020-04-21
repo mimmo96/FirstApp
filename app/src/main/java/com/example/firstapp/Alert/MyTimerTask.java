@@ -1,6 +1,5 @@
 package com.example.firstapp.Alert;
 
-
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -48,7 +47,6 @@ import static com.example.firstapp.Alert.App.CHANNEL_1_ID;
  */
 
 public class MyTimerTask extends TimerTask {
-
     private Channel channel;
     private TextView temp;
     private TextView umid;
@@ -59,10 +57,11 @@ public class MyTimerTask extends TimerTask {
     private static Context cont;
     private static NotificationManagerCompat notificationManager;
     private static String urlString;
+    private static AppDatabase db;
 
-    public MyTimerTask(String url,Channel chan,TextView temp,  TextView umid, TextView ph, TextView cond, TextView irra, TextView peso,Context context) {
-        channel=chan;
-        urlString = url;
+    public MyTimerTask(Channel chan,TextView temp,  TextView umid, TextView ph, TextView cond, TextView irra, TextView peso,Context context,AppDatabase database) {
+        if(chan!=null) channel=chan;
+        db=database;
         this.temp = temp;
         this.umid = umid;
         this.irra = irra;
@@ -75,14 +74,32 @@ public class MyTimerTask extends TimerTask {
 
     @Override
     public void run() {
-        getJsonResponse(urlString);
-        Log.d("URL",urlString);
+        try {
+            //recupero le info aggiornate del channel
+            channel = db.ChannelDao().findByName(channel.getId(), channel.getRead_key());
+
+            //se i minuti sono 0 metto di default 60
+            int minuti;
+
+            try {
+                minuti = channel.getLastimevalues();
+                if (minuti == 0) minuti = 60;
+            } catch (Exception e) {
+                minuti = 60;
+            }
+
+            urlString = "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key=" + channel.getRead_key() + "&minutes=" +
+                    minuti + "&offset=2";
+            getJsonResponse(urlString);
+            Log.d("URL", urlString);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //metodo per reperire le risposte json
     private void getJsonResponse(String urlString) {
-
-        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlString, null,
+      final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlString, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

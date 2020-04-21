@@ -405,6 +405,7 @@ public class MainActivity extends AppCompatActivity {
         //nome del fileds selezionato
         final String[] name = new String[1];
 
+        //recupero il channel default con i relativi field
         final List<savedValues> allchannel = database.SavedDao().getAll();
         Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
         if (inUse.getFiled1() != null) {
