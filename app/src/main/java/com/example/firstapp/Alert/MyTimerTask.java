@@ -31,7 +31,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.TimeZone;
+import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.example.firstapp.Alert.App.CHANNEL_1_ID;
@@ -47,7 +51,7 @@ import static com.example.firstapp.Alert.App.CHANNEL_1_ID;
  */
 
 public class MyTimerTask extends TimerTask {
-    private Channel channel;
+    private static Channel channel1;
     private TextView temp;
     private TextView umid;
     private TextView ph;
@@ -60,7 +64,10 @@ public class MyTimerTask extends TimerTask {
     private static AppDatabase db;
 
     public MyTimerTask(Channel chan,TextView temp,  TextView umid, TextView ph, TextView cond, TextView irra, TextView peso,Context context,AppDatabase database) {
-        if(chan!=null) channel=chan;
+        if(chan!=null){
+            Log.d("CHAN",chan.getId());
+            channel1=chan;
+        }
         db=database;
         this.temp = temp;
         this.umid = umid;
@@ -74,31 +81,35 @@ public class MyTimerTask extends TimerTask {
 
     @Override
     public void run() {
-        try {
-            //recupero le info aggiornate del channel
-            channel = db.ChannelDao().findByName(channel.getId(), channel.getRead_key());
+        Boolean ok=false;
+        //recupero dalla lista tutti i channel e se hanno le notifiche attive li eseguo in background
+        List<Channel> allchannel= db.ChannelDao().getAll();
 
-            //se i minuti sono 0 metto di default 60
-            int minuti;
-
-            try {
-                minuti = channel.getLastimevalues();
-                if (minuti == 0) minuti = 60;
-            } catch (Exception e) {
-                minuti = 60;
+        for(int i=0;i<allchannel.size();i++) {
+            Channel actualchannel = allchannel.get(i);
+            //se ho le notifiche abilitata lo avvio
+            if (actualchannel.getNotification()) {
+                int minuti;
+                try {        //se i minuti sono 0 metto di default 60
+                    minuti = actualchannel.getLastimevalues();
+                    if (minuti == 0) minuti = 60;
+                } catch (Exception e) {
+                    minuti = 60;
+                }
+                String urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
+                        + "&minutes=" + minuti + "&offset="+getCurrentTimezoneOffset();
+                getJsonResponse(urlString,actualchannel);
+                Log.d("URL", urlString);
+                ok=true;
             }
-
-            urlString = "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key=" + channel.getRead_key() + "&minutes=" +
-                    minuti + "&offset=2";
-            getJsonResponse(urlString);
-            Log.d("URL", urlString);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        //se non ho nessun channel con le notifiche abilitate interrompo il servizio
+        if(!ok) ExampleService.stoptimer();
+
     }
 
     //metodo per reperire le risposte json
-    private void getJsonResponse(String urlString) {
+    private void getJsonResponse(String urlString,final Channel channel) {
       final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlString, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -182,8 +193,6 @@ public class MyTimerTask extends TimerTask {
                             pe=Math.round(pe/somma * 100.0) / 100.0;
                             Log.d("SOMMA VALORI: ",somma.toString());
                             Log.d("MEDIA VALORI: ","t:"+t+" u:"+ u +" p:"+ p +" c:"+ c +" ir:"+ ir +" pe:"+ pe);
-                            if(channel.getNotification()) Log.d("NOTIFICHE","ATTIVE");
-                            else Log.d("NOTIFICHE","NON ATTIVE");
 
                             //invio le notifiche se i valori non rispettano le soglie imposte
                             if(channel.getNotification()) {
@@ -271,6 +280,16 @@ public class MyTimerTask extends TimerTask {
 
         notification.flags = Notification.FLAG_INSISTENT | Notification.FLAG_AUTO_CANCEL;
         notificationManager.notify(i,notification);
+    }
+
+    public static String getCurrentTimezoneOffset() {
+
+        TimeZone tz = TimeZone.getDefault();
+        Calendar cal = GregorianCalendar.getInstance(tz);
+        int offsetInMillis = tz.getOffset(cal.getTimeInMillis());
+
+
+        return String.valueOf((offsetInMillis/(1000*3600))-1);
     }
 }
 

@@ -26,18 +26,6 @@ import java.util.Timer;
  *
  */
 public class ExampleService extends Service {
-    private static Double tempMin;
-    private static Double tempMax;
-    private static Double umidMin;
-    private static Double umidMax;
-    private static Double condMin;
-    private static Double condMax;
-    private static Double phMin;
-    private static Double phMax;
-    private static Double irraMin;
-    private static Double irraMax;
-    private static Double pesMin;
-    private static Double pesMax;
     private static TextView temp;
     private static TextView umid;
     private static TextView ph;
@@ -80,17 +68,21 @@ public class ExampleService extends Service {
                 Channel actualchannel = allchannel.get(i);
                 //se ho le notifiche abilitata lo avvio
                 if (actualchannel.getNotification()) {
-                    database.ChannelDao().delete(actualchannel);
-                    actualchannel.setTimerTask(new MyTimerTask(channel, temp, umid, ph, cond, irra, peso, context,database));
+                   timerTask=new MyTimerTask(channel, temp, umid, ph, cond, irra, peso, context,database);
                     timer = new Timer();
-                    timer.scheduleAtFixedRate(actualchannel.getTimerTask(), 0, 3000);
-                    actualchannel.setTimer(timer);
-                    database.ChannelDao().insert(actualchannel);
+                    timer.scheduleAtFixedRate(timerTask, 0, 3000);
                     ok=true;
                 }
             }
             //se non ho nessun channel con le notifiche abilitate interrompo il servizio
-            if(!ok) this.onDestroy();
+            if(!ok){
+              if(timerTask!=null)  timerTask.cancel();
+              if(timer!=null)   timer.cancel();
+                timerTask=null;
+                timer=null;
+                this.onDestroy();
+                stoptimer();
+            }
         return START_STICKY;
     }
 
@@ -110,7 +102,6 @@ public class ExampleService extends Service {
 
     //quando disattivo la ricezione delle notifiche
     public static void stoptimer(){
-
         //recupero i dati del channel e disattivo
         if(channel!=null) {
             timer = channel.getTimer();
@@ -129,6 +120,7 @@ public class ExampleService extends Service {
             }
         }
     }
+
 
     @Override
     public void onDestroy() { super.onDestroy(); stoptimer(); Log.d("ExampleServices","distruggo");}

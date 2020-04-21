@@ -94,6 +94,16 @@ public class AlertActivity extends AppCompatActivity {
         minutes=findViewById(R.id.editTextMinuti);
         aSwitch=findViewById(R.id.switch2);
 
+
+        database = Room.databaseBuilder(this, AppDatabase.class, "prodiction")
+                //consente l'aggiunta di richieste nel thred principale
+                .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
+                //build mi serve per costruire il tutto
+                .build();
+
+        serviceIntent = new Intent(this, ExampleService.class);
+
         //ripristino i valori relativi al channel precedentemente salvati
         if (channel.getTempMin()!= null ) tempMin.setText(String.format(channel.getTempMin().toString()));
         if (channel.getTempMax()!=null) tempMax.setText(String.format(channel.getTempMax().toString()));
@@ -108,24 +118,17 @@ public class AlertActivity extends AppCompatActivity {
         if (channel.getPesMin()!=null) pesMin.setText(String.format(channel.getPesMin().toString()));
         if (channel.getPesMax()!=null) pesMax.setText(String.format(channel.getPesMax().toString()));
         if (channel.getLastimevalues()!=0) minutes.setText(String.valueOf(channel.getLastimevalues()));
+
+        //se le notifiche erano attive avvio il servizio notifiche
         if (channel.getNotification()){
             notifiche.setText("notifiche attive");
             aSwitch.setChecked(true);
+            startService();
         }
         else{
             aSwitch.setChecked(false);
             notifiche.setText("notifiche non attive");
         }
-
-
-        database = Room.databaseBuilder(this, AppDatabase.class, "prodiction")
-                //consente l'aggiunta di richieste nel thred principale
-                .allowMainThreadQueries()
-                .fallbackToDestructiveMigration()
-                //build mi serve per costruire il tutto
-                .build();
-
-        serviceIntent = new Intent(this, ExampleService.class);
 
         //scarico la media dei valori e la rapresento a schermo
         downloadMedia();
@@ -464,7 +467,6 @@ public class AlertActivity extends AppCompatActivity {
             ContextCompat.startForegroundService(this, serviceIntent);
     }
 
-    //fatta quando richiamo il pulsante di stop
     public static void stopService() {
         ExampleService.stoptimer();
     }

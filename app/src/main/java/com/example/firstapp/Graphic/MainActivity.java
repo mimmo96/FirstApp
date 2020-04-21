@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         for(int i=0;i<channelPos.size();i++){
-            url="https://api.thingspeak.com/channels/"+channelPos.get(i).getId()+"/feeds.json?api_key="+channelPos.get(i).getRead_key()+"&results=8000"+"&offset=1";
+            url="https://api.thingspeak.com/channels/"+channelPos.get(i).getId()+"/feeds.json?api_key="+channelPos.get(i).getRead_key()+"&results=8000"+"&offset="+getCurrentTimezoneOffset();
             getJsonResponse(url,i);
         }
     }
@@ -334,7 +335,13 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("FINE");
     }
 
-    public static void aggiorna(){
+    public static String getCurrentTimezoneOffset() {
 
+        TimeZone tz = TimeZone.getDefault();
+        Calendar cal = GregorianCalendar.getInstance(tz);
+        int offsetInMillis = tz.getOffset(cal.getTimeInMillis());
+
+
+        return String.valueOf((offsetInMillis/(1000*3600))-1);
     }
 }
