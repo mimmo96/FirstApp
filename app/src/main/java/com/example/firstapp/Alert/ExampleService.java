@@ -36,7 +36,6 @@ public class ExampleService extends Service {
     private static Timer timer=null;
     private static Channel channel;
     private static AppDatabase database;
-    private static TextView notification;
     private static Context context;
     private static String minutes=null;
     private static boolean go=false;
@@ -87,11 +86,10 @@ public class ExampleService extends Service {
     }
 
     //setto i valori
-    public static void setvalue(TextView temp1, TextView umid1, TextView ph1, TextView cond1, TextView irra1, TextView peso1, Channel chan, AppDatabase db, TextView notifiche, String minutes1){
+    public static void setvalue(TextView temp1, TextView umid1, TextView ph1, TextView cond1, TextView irra1, TextView peso1, Channel chan, AppDatabase db, String minutes1){
         database=db;
         minutes=minutes1;
         channel=chan;
-        notification=notifiche;
         temp=temp1;
         umid=umid1;
         irra=irra1;
@@ -115,7 +113,6 @@ public class ExampleService extends Service {
                 x.setTimer(null);
                 x.setTimerTask(null);
                 database.ChannelDao().insert(x);
-                notification.setText("notifiche non attive");
                 Log.d("Background service", "Servizio interrotto!");
             }
         }

@@ -128,7 +128,6 @@ public class MyTimerTask extends TimerTask {
                                     fields.add(String.valueOf(response.getJSONObject("channel").get("field" + (i + 1))));
                                 }
                             } catch (Exception e) {
-
                             }
 
                             Double somma=0.0;
@@ -138,7 +137,8 @@ public class MyTimerTask extends TimerTask {
                             Double c = 0.0;
                             Double ir = 0.0;
                             Double pe = 0.0;
-
+                            //stringa che mi salva l'ultimo data di aggiornamento dei valori
+                            String cretime=null;
                             //scorro tutto l'array
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 somma++;
@@ -290,6 +290,41 @@ public class MyTimerTask extends TimerTask {
 
 
         return String.valueOf((offsetInMillis/(1000*3600))-1);
+    }
+
+    private void distanza(String data,int tempo) {
+        Calendar date_now= Calendar.getInstance ();
+        date_now.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Calendar date_value = Calendar.getInstance ();
+
+        //parsing della data
+        int giorno=Integer.valueOf(data.substring(8, 10));
+        int mese=Integer.valueOf(data.substring(5, 7));
+        int anno=Integer.valueOf(data.substring(0, 4));
+        int ore=Integer.valueOf(data.substring(11, 13));
+        int minuti=Integer.valueOf(data.substring(14, 16));
+        int secondi=Integer.valueOf(data.substring(17, 19));
+
+        //setto le impostazioni relative alla data
+        date_value.set (Calendar.YEAR,anno);
+        date_value.set (Calendar.MONTH,mese-1);
+        date_value.set (Calendar.DAY_OF_MONTH,giorno);
+        date_value.set (Calendar.HOUR_OF_DAY,ore);
+        date_value.set (Calendar.MINUTE,minuti);
+        date_value.set (Calendar.SECOND, secondi);
+
+        //converto la data del cloud alla mia zona gmt
+        date_value.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        //durata in secondi dall'ultimo aggiornamento
+        long durata= (date_now.getTimeInMillis()/1000 - date_value.getTimeInMillis()/1000);
+
+        //durata dal tempo che ho messo in secondi
+        long mytime=tempo*60;
+        System.out.println("la durata è:"+ durata);
+
+       // if (channel.getTempomax() != null && ir < channel.getIrraMin())
+       //     printnotify("Channel(" + channel.getId() + ") irradianza bassa!", 9);
     }
 }
 

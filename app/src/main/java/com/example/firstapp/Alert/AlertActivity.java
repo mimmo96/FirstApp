@@ -25,6 +25,8 @@ import com.example.firstapp.R;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /*
  * Progetto: svilluppo App Android per Tirocinio interno
@@ -52,18 +54,19 @@ public class AlertActivity extends AppCompatActivity {
     private EditText irraMax;
     private EditText pesMin;
     private EditText pesMax;
+    private EditText tempomax;
     private static TextView temp;
     private static TextView umid;
     private static TextView ph;
     private static TextView cond;
     private static TextView irra;
     private static TextView peso;
-    private static TextView notifiche;
     private static EditText minutes;
     private static Intent serviceIntent;
     private static Channel channel;             //channel usato
     private static AppDatabase database;
     private static Switch aSwitch;
+    private static String LastvaluesSTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +93,7 @@ public class AlertActivity extends AppCompatActivity {
         cond=findViewById(R.id.textViewcond);
         irra=findViewById(R.id.textViewirra);
         peso=findViewById(R.id.textViewPes);
-        notifiche=findViewById(R.id.textNotifiche);
+        tempomax=findViewById(R.id.Edittempomax);
         minutes=findViewById(R.id.editTextMinuti);
         aSwitch=findViewById(R.id.switch2);
 
@@ -118,18 +121,18 @@ public class AlertActivity extends AppCompatActivity {
         if (channel.getPesMin()!=null) pesMin.setText(String.format(channel.getPesMin().toString()));
         if (channel.getPesMax()!=null) pesMax.setText(String.format(channel.getPesMax().toString()));
         if (channel.getLastimevalues()!=0) minutes.setText(String.valueOf(channel.getLastimevalues()));
+        if (channel.getTempomax()!=0) tempomax.setText(String.valueOf(channel.getTempomax()));
 
         //se le notifiche erano attive avvio il servizio notifiche
         if (channel.getNotification()){
-            notifiche.setText("notifiche attive");
             aSwitch.setChecked(true);
             startService();
         }
         else{
             aSwitch.setChecked(false);
-            notifiche.setText("notifiche non attive");
         }
 
+        downloadLastvalues();
         //scarico la media dei valori e la rapresento a schermo
         downloadMedia();
 
@@ -146,7 +149,6 @@ public class AlertActivity extends AppCompatActivity {
                     x.setNotification(true);
                     database.ChannelDao().insert(x);
                     channel=x;
-                    notifiche.setText("notifiche attive");
                 }
                 else{
                     Log.d("AlertActivity","fermo notifiche");
@@ -156,9 +158,6 @@ public class AlertActivity extends AppCompatActivity {
                     database.ChannelDao().delete(x);
                     x.setNotification(false);
                     database.ChannelDao().insert(x);
-
-                    notifiche.setText("notifiche non attive");
-
                     stopService();
                 }
             }
@@ -166,10 +165,45 @@ public class AlertActivity extends AppCompatActivity {
 
     }
 
+    private void downloadLastvalues() {
+        String url = "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key="
+                + channel.getRead_key() + "&results=1";
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            //recupero l'array feeds
+                            JSONArray jsonArray = response.getJSONArray("feeds");
+
+                            //recupero il l'ultimo oggetto dell'array
+                            final JSONObject value = jsonArray.getJSONObject(0);
+                            try {
+                                LastvaluesSTime = value.getString("created_at");
+                                Log.d("DURATA:",LastvaluesSTime);
+                            } catch (Exception e) {
+                                LastvaluesSTime = null;
+                                Log.d("DURATA:","null");
+                            }
+                        } catch (Exception e) {
+
+                        }
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(),"NESSUN VALORE PRESENTE NEL CHANNEL!",Toast.LENGTH_SHORT).show();
+            }
+        });
+        Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
+    }
+
     private void downloadMedia() {
         int minuti=0;
-        if(channel.getLastimevalues()==0) minuti=60;
-        else minuti=channel.getLastimevalues();
+        int dist=(int)distanza(LastvaluesSTime);
+        if(channel.getLastimevalues()==0) minuti=dist;
+        else minuti=channel.getLastimevalues()+dist;
         String url= "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key="
                 + channel.getRead_key() + "&minutes=" + minuti + "&offset=2";
             final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -404,6 +438,11 @@ public class AlertActivity extends AppCompatActivity {
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
+            try {
+                x.setTempomax(Integer.valueOf(tempomax.getText().toString()));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
             database.ChannelDao().insert(x);
             channel=x;
             Toast.makeText(cont,"VALORI SALVATI CORRETTAMENTE!",Toast.LENGTH_SHORT).show();
@@ -430,6 +469,7 @@ public class AlertActivity extends AppCompatActivity {
             x.setPesMin(null);
             x.setPesMax(null);
             x.setLastimevalues(0);
+            x.setTempomax(0);
             database.ChannelDao().insert(x);
 
             //resetto i valori anche nei text
@@ -446,6 +486,7 @@ public class AlertActivity extends AppCompatActivity {
             pesMin.setText(" ");
             pesMax.setText(" ");
             minutes.setText(" ");
+            tempomax.setText(" ");
 
             if (channel.getLastimevalues()!=0) minutes.setText(String.valueOf(channel.getLastimevalues()));
             Toast.makeText(cont,"VALORI RESETTATI CORRETTAMENTE",Toast.LENGTH_SHORT).show();
@@ -463,7 +504,7 @@ public class AlertActivity extends AppCompatActivity {
             String min=minutes.getText().toString();
 
             //setto i parametri da me impostati al service
-            ExampleService.setvalue(temp, umid, ph, cond, irra, peso, channel, database, notifiche,min);
+            ExampleService.setvalue(temp, umid, ph, cond, irra, peso, channel, database,min);
             ContextCompat.startForegroundService(this, serviceIntent);
     }
 
@@ -477,6 +518,39 @@ public class AlertActivity extends AppCompatActivity {
 
     public static Context getContext(){
         return cont;
+    }
+
+    private long distanza(String data) {
+        if(data==null) return 0;
+        Calendar date_now= Calendar.getInstance ();
+        date_now.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Calendar date_value = Calendar.getInstance ();
+
+        //parsing della data
+        int giorno=Integer.valueOf(data.substring(8, 10));
+        int mese=Integer.valueOf(data.substring(5, 7));
+        int anno=Integer.valueOf(data.substring(0, 4));
+        int ore=Integer.valueOf(data.substring(11, 13));
+        int minuti=Integer.valueOf(data.substring(14, 16));
+        int secondi=Integer.valueOf(data.substring(17, 19));
+
+        //setto le impostazioni relative alla data
+        date_value.set (Calendar.YEAR,anno);
+        date_value.set (Calendar.MONTH,mese-1);
+        date_value.set (Calendar.DAY_OF_MONTH,giorno);
+        date_value.set (Calendar.HOUR_OF_DAY,ore);
+        date_value.set (Calendar.MINUTE,minuti);
+        date_value.set (Calendar.SECOND, secondi);
+
+        //converto la data del cloud alla mia zona gmt
+        date_value.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        //durata in secondi dall'ultimo aggiornamento
+        long durata= (date_now.getTimeInMillis()/1000 - date_value.getTimeInMillis()/1000);
+
+        System.out.println("la durata è:"+ durata);
+
+        return  durata;
     }
 
 }

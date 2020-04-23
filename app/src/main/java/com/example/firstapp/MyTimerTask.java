@@ -128,55 +128,52 @@ public class MyTimerTask extends TimerTask {
 
                                     try {
                                         String temperature = value.getString("field1");
-                                        if (fields.get(0).equals("Temperature"))
-                                            textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(temperature)) * 100.0) / 100.0).concat(" °C"));
-                                        else{
+                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico almenti non scrivo nullo
+                                        if(v.getImagetemp()!=null){
                                             String field=value.getString(v.getImagetemp());
                                             textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
                                         }
+                                        else if (fields.get(0).equals("Temperature")) textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(temperature)) * 100.0) / 100.0).concat(" °C"));
                                     }catch (Exception e){
                                         textTemp.setText("- -");
                                     }
                                     try{
                                         String umidity = value.getString("field2");
-                                        if(fields.get(1).equals("Humidity")) textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0));
-                                        else{
+                                        if(v.getImageumid()!=null){
                                             String field=value.getString(v.getImageumid());
                                             textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
                                         }
+                                        else if(fields.get(1).equals("Humidity")) textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0));
                                     }catch (Exception e){
                                         textUmidity.setText("- -");
                                     }
                                     try {
                                         String ph = value.getString("field3");
-                                        if (fields.get(2).equals("pH_value"))
-                                            textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(ph)) * 100.0) / 100.0));
-                                        else{
+                                        if(v.getImageph()!=null){
                                             String field=value.getString(v.getImageph());
                                             textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
                                         }
+                                       else if (fields.get(2).equals("pH_value")) textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(ph)) * 100.0) / 100.0));
                                     }catch (Exception e){
                                         textPh.setText("- -");
                                     }
                                     try {
                                         String conducibilita = value.getString("field4");
-                                        if (fields.get(3).equals("electric_conductivity"))
-                                            textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(conducibilita)) * 100.0) / 100.0).concat(" dS/m"));
-                                        else{
+                                        if(v.getImagecond()!=null){
                                             String field=value.getString(v.getImagecond());
                                             textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
                                         }
+                                        else if (fields.get(3).equals("electric_conductivity")) textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(conducibilita)) * 100.0) / 100.0).concat(" dS/m"));
                                     }catch (Exception e){
                                         textConducibilita.setText("- -");
                                     }
                                     try {
                                         String irradianza = value.getString("field5");
-                                        if (fields.get(4).equals("Irradiance"))
-                                            textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0).concat(" w/m²"));
-                                        else{
+                                        if(v.getImageirra()!=null){
                                             String field=value.getString(v.getImageirra());
                                             textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
                                         }
+                                        else if (fields.get(4).equals("Irradiance")) textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0).concat(" w/m²"));
                                     }catch (Exception e){
                                         textIrradianza.setText("- -");
                                     }
@@ -203,16 +200,15 @@ public class MyTimerTask extends TimerTask {
                                     }catch (Exception e){ }
 
                                 }
-                               if(ok) textPeso.setText(String.valueOf(Math.round((irrigazione-drainaggio) * 100.0) / 100.0).concat(" g/m²"));
-                               else{
-                                   try{
-                                       String field=value.getString(v.getImagepeso());
-                                       textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
-                                   }
-                                    catch (Exception e){
-                                        textPeso.setText("- -");
-                                    }
-                               }
+
+                                try {
+                                    if (v.getImagepeso() != null) {
+                                        String field = value.getString(v.getImagepeso());
+                                        textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
+                                    } else if (ok)
+                                        textPeso.setText(String.valueOf(Math.round((irrigazione - drainaggio) * 100.0) / 100.0).concat(" g/m²"));
+                                    else textPeso.setText("- -");
+                                } catch (Exception e){ textPeso.setText("- -"); }
 
                                 String cretime = value.getString("created_at");
                                 createdtime.add(cretime);

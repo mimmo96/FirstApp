@@ -53,6 +53,7 @@ public class Channel {
     private Double irraMax=null;
     private Double pesMin=null;
     private Double pesMax=null;
+    private int tempomax=0;
     private String imagetemp=null;
     private String imageumid=null;
     private String imageph=null;
@@ -73,6 +74,14 @@ public class Channel {
         this.id = id;
         this.read_key=read_key;
         this.write_key=write_key;
+    }
+
+    public int getTempomax() {
+        return tempomax;
+    }
+
+    public void setTempomax(int tempomax) {
+        this.tempomax = tempomax;
     }
 
     public boolean getNotification() {

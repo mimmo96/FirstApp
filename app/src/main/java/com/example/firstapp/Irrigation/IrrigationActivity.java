@@ -192,8 +192,8 @@ public class IrrigationActivity extends AppCompatActivity {
         //nel caso voglia attivarla con una data mia settata
         //Calendar calendar = Calendar.getInstance();
         //calendar.setTimeInMillis(System.currentTimeMillis());
-        //calendar.set(Calendar.HOUR_OF_DAY, 16);
-        //calendar.set(Calendar.MINUTE, 44);
+        //calendar.set(Calendar.HOUR_OF_DAY, 15);
+        //calendar.set(Calendar.MINUTE, 31);
         //calendar.set(Calendar.SECOND, 00);
         //alarmManager.setExact(AlarmManager.RTC_WAKEUP,  calendar.getTimeInMillis(),pendingIntent);
 
