@@ -11,6 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.firstapp.Alert.AlertActivity;
 import com.example.firstapp.Channel.Channel;
 import com.example.firstapp.Channel.SavedDao;
 import com.example.firstapp.Channel.savedValues;
@@ -213,6 +214,7 @@ public class MyTimerTask extends TimerTask {
                                 String cretime = value.getString("created_at");
                                 createdtime.add(cretime);
                                 distanza(cretime);
+                                AlertActivity.setminutes(cretime);
                                 stato.setText("ONLINE");
                                 stato.setTextColor(Color.GREEN);
                             } catch (JSONException e) {

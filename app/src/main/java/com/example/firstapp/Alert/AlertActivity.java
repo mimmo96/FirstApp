@@ -67,6 +67,7 @@ public class AlertActivity extends AppCompatActivity {
     private static AppDatabase database;
     private static Switch aSwitch;
     private static String LastvaluesSTime;
+    private static int minuti=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +133,6 @@ public class AlertActivity extends AppCompatActivity {
             aSwitch.setChecked(false);
         }
 
-        downloadLastvalues();
         //scarico la media dei valori e la rapresento a schermo
         downloadMedia();
 
@@ -165,47 +165,20 @@ public class AlertActivity extends AppCompatActivity {
 
     }
 
-    private void downloadLastvalues() {
-        String url = "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key="
-                + channel.getRead_key() + "&results=1";
-        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            //recupero l'array feeds
-                            JSONArray jsonArray = response.getJSONArray("feeds");
-
-                            //recupero il l'ultimo oggetto dell'array
-                            final JSONObject value = jsonArray.getJSONObject(0);
-                            try {
-                                LastvaluesSTime = value.getString("created_at");
-                                Log.d("DURATA:",LastvaluesSTime);
-                            } catch (Exception e) {
-                                LastvaluesSTime = null;
-                                Log.d("DURATA:","null");
-                            }
-                        } catch (Exception e) {
-
-                        }
-                    }
-
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(),"NESSUN VALORE PRESENTE NEL CHANNEL!",Toast.LENGTH_SHORT).show();
-            }
-        });
-        Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
-    }
-
     private void downloadMedia() {
-        int minuti=0;
-        int dist=(int)distanza(LastvaluesSTime);
-        if(channel.getLastimevalues()==0) minuti=dist;
-        else minuti=channel.getLastimevalues()+dist;
-        String url= "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key="
-                + channel.getRead_key() + "&minutes=" + minuti + "&offset=2";
+        String url=null;
+        if(minuti==0){
+            url= "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key="
+                    + channel.getRead_key() + "&results=1";
+        }
+        else{
+            int dist=0;
+            if(channel.getLastimevalues()==0) dist=minuti;
+            else dist=channel.getLastimevalues()+minuti;
+            Log.d("Distanza:",String.valueOf(minuti+channel.getLastimevalues()));
+            url= "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key="
+                    + channel.getRead_key() + "&minutes=" + dist + "&offset=2";
+        }
             final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                     new Response.Listener<JSONObject>() {
                         @Override
@@ -234,6 +207,7 @@ public class AlertActivity extends AppCompatActivity {
                                 Double c = 0.0;
                                 Double ir = 0.0;
                                 Double pe = 0.0;
+                                String cretime=null;
 
                                 //scorro tutto l'array
                                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -277,8 +251,14 @@ public class AlertActivity extends AppCompatActivity {
                                             pe = pe + Double.parseDouble(String.format(peso1));
                                         }
                                     }catch (Exception e){ }
-
+                                    try {
+                                        cretime = value.getString("created_at");
+                                        distanza(cretime);
+                                    }catch (Exception e){ }
                                 }
+
+                                //in cretime avrò il valore dell'ultimo dato
+                                minuti=(int) distanza(cretime);
 
                                 //calcolo la media di tutti i valori e la confronto con i miei valori,se la supera invio la notifica
                                 t = Math.round(t / somma * 100.0) / 100.0;
@@ -376,72 +356,58 @@ public class AlertActivity extends AppCompatActivity {
             try {
                 x.setTempMin(Double.valueOf(tempMin.getText().toString()));
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
             try {
                 x.setTempMax(Double.valueOf(tempMax.getText().toString()));
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
             try {
                 x.setUmidMin(Double.valueOf(umidMin.getText().toString()));
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
             try {
                 x.setUmidMax(Double.valueOf(umidMax.getText().toString()));
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
             try {
                 x.setCondMin(Double.valueOf(condMin.getText().toString()));
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
             try {
                 x.setCondMax(Double.valueOf(condMax.getText().toString()));
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
             try {
                 x.setPhMin(Double.valueOf(phMin.getText().toString()));
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
             try {
                 x.setPhMax(Double.valueOf(phMax.getText().toString()));
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
             try {
                 x.setIrraMin(Double.valueOf(irraMin.getText().toString()));
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
             try {
                 x.setIrraMax(Double.valueOf(irraMax.getText().toString()));
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
             try {
                 x.setPesMin(Double.valueOf(pesMin.getText().toString()));
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
             try {
                 x.setPesMax(Double.valueOf(pesMax.getText().toString()));
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
             try {
                 x.setLastimevalues(Integer.valueOf(minutes.getText().toString()));
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
             try {
                 x.setTempomax(Integer.valueOf(tempomax.getText().toString()));
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
             database.ChannelDao().insert(x);
             channel=x;
@@ -520,7 +486,7 @@ public class AlertActivity extends AppCompatActivity {
         return cont;
     }
 
-    private long distanza(String data) {
+    private static long distanza(String data) {
         if(data==null) return 0;
         Calendar date_now= Calendar.getInstance ();
         date_now.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -548,9 +514,12 @@ public class AlertActivity extends AppCompatActivity {
         //durata in secondi dall'ultimo aggiornamento
         long durata= (date_now.getTimeInMillis()/1000 - date_value.getTimeInMillis()/1000);
 
-        System.out.println("la durata è:"+ durata);
+        //restituisco la durata in minuti approssimata ad un minuto in piu per sicurezza
+        return  (durata/60)+1;
+    }
 
-        return  durata;
+    public static void setminutes(String minutes){
+        minuti=(int)distanza(minutes);
     }
 
 }
