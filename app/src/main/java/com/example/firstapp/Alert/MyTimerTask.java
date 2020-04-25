@@ -136,7 +136,6 @@ public class MyTimerTask extends TimerTask {
                             Double p = 0.0;
                             Double c = 0.0;
                             Double ir = 0.0;
-                            Double pe = 0.0;
                             //stringa che mi salva l'ultimo data di aggiornamento dei valori
                             String cretime=null;
                             //scorro tutto l'array
@@ -175,12 +174,6 @@ public class MyTimerTask extends TimerTask {
                                         ir = ir + Double.parseDouble(String.format(irradianza));
                                     }
                                 }catch (Exception e){ }
-                                try {
-                                    String peso1 = value.getString("field6");
-                                    if (fields.get(5).equals("P0")) {
-                                        pe = pe + Double.parseDouble(String.format(peso1));
-                                    }
-                                }catch (Exception e){ }
 
                                 try {
                                     cretime = value.getString("created_at");
@@ -193,9 +186,8 @@ public class MyTimerTask extends TimerTask {
                             p=Math.round(p/somma * 100.0) / 100.0;
                             c=Math.round(c/somma * 100.0) / 100.0;
                             ir=Math.round(ir/somma * 100.0) / 100.0;
-                            pe=Math.round(pe/somma * 100.0) / 100.0;
                             Log.d("SOMMA VALORI: ",somma.toString());
-                            Log.d("MEDIA VALORI: ","t:"+t+" u:"+ u +" p:"+ p +" c:"+ c +" ir:"+ ir +" pe:"+ pe);
+                            Log.d("MEDIA VALORI: ","t:"+t+" u:"+ u +" p:"+ p +" c:"+ c +" ir:"+ ir);
 
                             //invio le notifiche se i valori non rispettano le soglie imposte
                             if(channel.getNotification()) {
@@ -245,11 +237,11 @@ public class MyTimerTask extends TimerTask {
                                     if (irra != null) irra.setText("- -");
                                 }
                                 try {
-                                    if (peso != null) peso.setText(String.valueOf(pe).concat(" g"));
-                                    if (channel.getPesMin() != null && pe < channel.getPesMin())
-                                        printnotify("Channel(" + channel.getId() + ") peso basso!", 11*Integer.valueOf(channel.getId()));
-                                    if (channel.getPesMax() != null && pe > channel.getPesMax())
-                                        printnotify("Channel(" + channel.getId() + ") peso alto!", 12*Integer.valueOf(channel.getId()));
+                                    String evap=peso.getText().toString();
+                                    if (channel.getPesMin() != null && Integer.valueOf(evap.substring(0,evap.indexOf("g"))) < channel.getPesMin())
+                                        printnotify("Channel(" + channel.getId() + ") evapotraspirazione bassa!", 11*Integer.valueOf(channel.getId()));
+                                    if (channel.getPesMax() != null && Integer.valueOf(peso.getText().toString()) > channel.getPesMax())
+                                        printnotify("Channel(" + channel.getId() + ")  evapotraspirazione alta!", 12*Integer.valueOf(channel.getId()));
                                 } catch (Exception e) {
                                     if (peso != null) peso.setText("- -");
                                 }

@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import static com.example.firstapp.Graphic.MainActivity.getCurrentTimezoneOffset;
+
 /*
  * Progetto: svilluppo App Android per Tirocinio interno
  *
@@ -68,6 +70,7 @@ public class AlertActivity extends AppCompatActivity {
     private static Switch aSwitch;
     private static String LastvaluesSTime;
     private static int minuti=0;
+    private static String evapotraspirazione;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +138,8 @@ public class AlertActivity extends AppCompatActivity {
 
         //scarico la media dei valori e la rapresento a schermo
         downloadMedia();
+        //copio risultato evapotraspirazione precedente
+        peso.setText(evapotraspirazione);
 
         aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -175,16 +180,15 @@ public class AlertActivity extends AppCompatActivity {
             int dist=0;
             if(channel.getLastimevalues()==0) dist=minuti;
             else dist=channel.getLastimevalues()+minuti;
-            Log.d("Distanza:",String.valueOf(minuti+channel.getLastimevalues()));
+            Log.d("VALORI: ","distanza salvata: " + channel.getLastimevalues() + " ultimi minuti: " + minuti +" Distanza totale:"+ (minuti+channel.getLastimevalues()));
             url= "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key="
-                    + channel.getRead_key() + "&minutes=" + dist + "&offset=2";
+                    + channel.getRead_key() + "&minutes=" + dist + "&offset="+getCurrentTimezoneOffset();
         }
             final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-                                Log.d("MINUTI: ",String.valueOf(minuti));
                                 //recupero l'array feeds
                                 JSONArray jsonArray = response.getJSONArray("feeds");
 
@@ -318,15 +322,7 @@ public class AlertActivity extends AppCompatActivity {
                                     } catch (Exception e) {
                                       irra.setText("- -");
                                     }
-                                    try {
-                                        if (peso != null){
-                                            //se non ho scaricato valori
-                                            if(somma==0)  peso.setText("- -");
-                                            else peso.setText(String.valueOf(pe).concat(" g"));
-                                        }
-                                    } catch (Exception e) {
-                                       peso.setText("- -");
-                                }
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -509,9 +505,6 @@ public class AlertActivity extends AppCompatActivity {
         date_value.set (Calendar.MINUTE,minuti);
         date_value.set (Calendar.SECOND, secondi);
 
-        //converto la data del cloud alla mia zona gmt
-        date_value.setTimeZone(TimeZone.getTimeZone("GMT"));
-
         //durata in secondi dall'ultimo aggiornamento
         long durata= (date_now.getTimeInMillis()/1000 - date_value.getTimeInMillis()/1000);
 
@@ -519,8 +512,10 @@ public class AlertActivity extends AppCompatActivity {
         return  (durata/60)+1;
     }
 
-    public static void setminutes(String minutes){
+    public static void setminutes(String minutes, String evap){
         minuti=(int)distanza(minutes);
+        minuti=minuti-(Integer.valueOf(getCurrentTimezoneOffset())+1)*60;
+        evapotraspirazione=evap;
     }
 
 }

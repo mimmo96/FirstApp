@@ -214,7 +214,9 @@ public class MyTimerTask extends TimerTask {
                                 String cretime = value.getString("created_at");
                                 createdtime.add(cretime);
                                 distanza(cretime);
-                                AlertActivity.setminutes(cretime);
+                                String evap=textPeso.getText().toString();
+                                //nota:creatime è in gmt00
+                                AlertActivity.setminutes(cretime,evap);
                                 stato.setText("ONLINE");
                                 stato.setTextColor(Color.GREEN);
                             } catch (JSONException e) {
