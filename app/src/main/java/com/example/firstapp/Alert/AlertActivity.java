@@ -184,6 +184,7 @@ public class AlertActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
+                                Log.d("MINUTI: ",String.valueOf(minuti));
                                 //recupero l'array feeds
                                 JSONArray jsonArray = response.getJSONArray("feeds");
 
@@ -253,7 +254,7 @@ public class AlertActivity extends AppCompatActivity {
                                     }catch (Exception e){ }
                                     try {
                                         cretime = value.getString("created_at");
-                                        distanza(cretime);
+                                        minuti=(int)distanza(cretime)/60;
                                     }catch (Exception e){ }
                                 }
 

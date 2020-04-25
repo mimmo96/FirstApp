@@ -182,6 +182,9 @@ public class MyTimerTask extends TimerTask {
                                     }
                                 }catch (Exception e){ }
 
+                                try {
+                                    cretime = value.getString("created_at");
+                                }catch (Exception e){ }
                             }
 
                             //calcolo la media di tutti i valori e la confronto con i miei valori,se la supera invio la notifica
@@ -199,56 +202,62 @@ public class MyTimerTask extends TimerTask {
                                 try {
                                     if (temp != null) temp.setText(String.valueOf(t));
                                     if (channel.getTempMin() != null && t < channel.getTempMin())
-                                        printnotify("Channel(" + channel.getId() + ") temperatura bassa!", 1);
+                                        printnotify("Channel(" + channel.getId() + ") temperatura bassa!", Integer.valueOf(channel.getId()));
                                     if (channel.getTempMax() != null && t > channel.getTempMax())
-                                        printnotify("Channel (" + channel.getId() + ") temperatura alta!", 2);
+                                        printnotify("Channel (" + channel.getId() + ") temperatura alta!", 2*Integer.valueOf(channel.getId()));
                                 } catch (Exception e) {
                                     if (temp != null) temp.setText("- -");
                                 }
                                 try {
                                     if (umid != null) umid.setText(String.valueOf(u));
                                     if (channel.getUmidMin() != null && u < channel.getUmidMin())
-                                        printnotify("Channel(" + channel.getId() + ") umidità bassa!", 3);
+                                        printnotify("Channel(" + channel.getId() + ") umidità bassa!", 3*Integer.valueOf(channel.getId()));
                                     if (channel.getUmidMax() != null && u > channel.getUmidMax())
-                                        printnotify("Channel(" + channel.getId() + ") umidità alta!", 4);
+                                        printnotify("Channel(" + channel.getId() + ") umidità alta!", 4*Integer.valueOf(channel.getId()));
                                 } catch (Exception e) {
                                     if (umid != null) umid.setText("- -");
                                 }
                                 try {
                                     if (ph != null) ph.setText(String.valueOf(p));
                                     if (channel.getPhMin() != null && p < channel.getPhMin())
-                                        printnotify("Channel(" + channel.getId() + ") ph basso!", 7);
+                                        printnotify("Channel(" + channel.getId() + ") ph basso!", 7*Integer.valueOf(channel.getId()));
                                     if (channel.getPhMax() != null && p > channel.getPhMax())
-                                        printnotify("Channel(" + channel.getId() + ") ph alto!", 8);
+                                        printnotify("Channel(" + channel.getId() + ") ph alto!", 8*Integer.valueOf(channel.getId()));
                                 } catch (Exception e) {
                                     if (ph != null) ph.setText("- -");
                                 }
                                 try {
                                     if (cond != null) cond.setText(String.valueOf(c));
                                     if (channel.getCondMin() != null && c < channel.getCondMin())
-                                        printnotify("Channel(" + channel.getId() + ") conducibilità bassa!", 5);
+                                        printnotify("Channel(" + channel.getId() + ") conducibilità bassa!", 5*Integer.valueOf(channel.getId()));
                                     if (channel.getCondMax() != null && c > channel.getCondMax())
-                                        printnotify("Channel(" + channel.getId() + ") conducibilità alta!", 6);
+                                        printnotify("Channel(" + channel.getId() + ") conducibilità alta!", 6*Integer.valueOf(channel.getId()));
                                 } catch (Exception e) {
                                     if (cond != null) cond.setText("- -");
                                 }
                                 try {
                                     if (irra != null) irra.setText(String.valueOf(ir));
                                     if (channel.getIrraMin() != null && ir < channel.getIrraMin())
-                                        printnotify("Channel(" + channel.getId() + ") irradianza bassa!", 9);
+                                        printnotify("Channel(" + channel.getId() + ") irradianza bassa!", 9*Integer.valueOf(channel.getId()));
                                     if (channel.getIrraMax() != null && ir > channel.getIrraMax())
-                                        printnotify("Channel(" + channel.getId() + ") irradianza alta!", 10);
+                                        printnotify("Channel(" + channel.getId() + ") irradianza alta!", 10*Integer.valueOf(channel.getId()));
                                 } catch (Exception e) {
                                     if (irra != null) irra.setText("- -");
                                 }
                                 try {
                                     if (peso != null) peso.setText(String.valueOf(pe).concat(" g"));
                                     if (channel.getPesMin() != null && pe < channel.getPesMin())
-                                        printnotify("Channel(" + channel.getId() + ") peso basso!", 11);
+                                        printnotify("Channel(" + channel.getId() + ") peso basso!", 11*Integer.valueOf(channel.getId()));
                                     if (channel.getPesMax() != null && pe > channel.getPesMax())
-                                        printnotify("Channel(" + channel.getId() + ") peso alto!", 12);
+                                        printnotify("Channel(" + channel.getId() + ") peso alto!", 12*Integer.valueOf(channel.getId()));
                                 } catch (Exception e) {
                                     if (peso != null) peso.setText("- -");
+                                }
+                                try{
+                                    Log.d("TEMPO:","distanza settata: "+channel.getTempomax()*60+" distanza attuale: "+ distanza(cretime));
+                                    if (channel.getTempomax()!= 0 && distanza(cretime) > channel.getTempomax()*60)
+                                         printnotify("Channel(" + channel.getId() + ") tempo alto!", 13*Integer.valueOf(channel.getId()));
+                                }catch (Exception e) {
                                 }
                             }
 
@@ -291,8 +300,8 @@ public class MyTimerTask extends TimerTask {
 
         return String.valueOf((offsetInMillis/(1000*3600))-1);
     }
-
-    private void distanza(String data,int tempo) {
+    //restituisce la distanza in secondi dall'ultimo aggiornamento
+    private int distanza(String data) {
         Calendar date_now= Calendar.getInstance ();
         date_now.setTimeZone(TimeZone.getTimeZone("GMT"));
         Calendar date_value = Calendar.getInstance ();
@@ -313,18 +322,11 @@ public class MyTimerTask extends TimerTask {
         date_value.set (Calendar.MINUTE,minuti);
         date_value.set (Calendar.SECOND, secondi);
 
-        //converto la data del cloud alla mia zona gmt
-        date_value.setTimeZone(TimeZone.getTimeZone("GMT"));
-
+        Log.d("DATE","DATA ORA: "+ date_now.getTime().toString() +"DATA CLOUD: "+ date_value.getTime().toString());
         //durata in secondi dall'ultimo aggiornamento
         long durata= (date_now.getTimeInMillis()/1000 - date_value.getTimeInMillis()/1000);
 
-        //durata dal tempo che ho messo in secondi
-        long mytime=tempo*60;
-        System.out.println("la durata è:"+ durata);
-
-       // if (channel.getTempomax() != null && ir < channel.getIrraMin())
-       //     printnotify("Channel(" + channel.getId() + ") irradianza bassa!", 9);
+        return (int) durata;
     }
 }
 
