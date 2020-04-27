@@ -234,51 +234,13 @@ public class MyTimerTask extends TimerTask {
 
                             //invio le notifiche se i valori non rispettano le soglie imposte
                             if(channel.getNotification()) {
-                                try {
-                                    if (temp != null) temp.setText(String.valueOf(t));
-                                    if (channel.getTempMin() != null && t < channel.getTempMin())
-                                        printnotify("Channel(" + channel.getId() + ") "+channel.getFiled1() +" low!", Integer.valueOf(channel.getId()));
-                                    if (channel.getTempMax() != null && t > channel.getTempMax())
-                                        printnotify("Channel (" + channel.getId() + ") "+channel.getFiled1() +" high!", 2*Integer.valueOf(channel.getId()));
-                                } catch (Exception e) {
-                                    if (temp != null) temp.setText("- -");
-                                }
-                                try {
-                                    if (umid != null) umid.setText(String.valueOf(u));
-                                    if (channel.getUmidMin() != null && u < channel.getUmidMin())
-                                        printnotify("Channel(" + channel.getId() + ") "+channel.getFiled2() +" low!", 3*Integer.valueOf(channel.getId()));
-                                    if (channel.getUmidMax() != null && u > channel.getUmidMax())
-                                        printnotify("Channel(" + channel.getId() + ") "+channel.getFiled2() +" high!", 4*Integer.valueOf(channel.getId()));
-                                } catch (Exception e) {
-                                    if (umid != null) umid.setText("- -");
-                                }
-                                try {
-                                    if (ph != null) ph.setText(String.valueOf(p));
-                                    if (channel.getPhMin() != null && p < channel.getPhMin())
-                                        printnotify("Channel(" + channel.getId() + ") "+channel.getFiled3() +" low!", 7*Integer.valueOf(channel.getId()));
-                                    if (channel.getPhMax() != null && p > channel.getPhMax())
-                                        printnotify("Channel(" + channel.getId() + ") "+channel.getFiled3() +" high!", 8*Integer.valueOf(channel.getId()));
-                                } catch (Exception e) {
-                                    if (ph != null) ph.setText("- -");
-                                }
-                                try {
-                                    if (cond != null) cond.setText(String.valueOf(c));
-                                    if (channel.getCondMin() != null && c < channel.getCondMin())
-                                        printnotify("Channel(" + channel.getId() + ") "+channel.getFiled4() +" low!", 5*Integer.valueOf(channel.getId()));
-                                    if (channel.getCondMax() != null && c > channel.getCondMax())
-                                        printnotify("Channel(" + channel.getId() + ") "+channel.getFiled4() +" high!", 6*Integer.valueOf(channel.getId()));
-                                } catch (Exception e) {
-                                    if (cond != null) cond.setText("- -");
-                                }
-                                try {
-                                    if (irra != null) irra.setText(String.valueOf(ir));
-                                    if (channel.getIrraMin() != null && ir < channel.getIrraMin())
-                                        printnotify("Channel(" + channel.getId() + ") "+channel.getFiled5() +" low!", 9*Integer.valueOf(channel.getId()));
-                                    if (channel.getIrraMax() != null && ir > channel.getIrraMax())
-                                        printnotify("Channel(" + channel.getId() + ") "+channel.getFiled5() +" high!", 10*Integer.valueOf(channel.getId()));
-                                } catch (Exception e) {
-                                    if (irra != null) irra.setText("- -");
-                                }
+                                notification(temp,t,channel.getImagetemp(),channel.getTempMin(),channel.getTempMax(),channel,1,"temperatura");
+                                notification(umid,u,channel.getImageumid(),channel.getUmidMin(),channel.getUmidMax(),channel,2,"umidità");
+                                notification(ph,p,channel.getImageph(),channel.getPhMin(),channel.getPhMax(),channel,3,"ph");
+                                notification(cond,c,channel.getImagecond(),channel.getCondMin(),channel.getCondMax(),channel,4,"conducibilità");
+                                notification(irra,ir,channel.getImageirra(),channel.getIrraMin(),channel.getIrraMax(),channel,5,"irradianza");
+                              //notification(peso, Double.valueOf(peso.getText().toString().substring(0,peso.getText().toString().indexOf("g"))),channel.getImagepeso(),channel.getPesMin(),channel.getPesMax(),channel,6,"evapotraspirazione");
+
                                 try {
                                     String evap=peso.getText().toString();
                                     if (channel.getPesMin() != null && Integer.valueOf(evap.substring(0,evap.indexOf("g"))) < channel.getPesMin())
@@ -363,6 +325,52 @@ public class MyTimerTask extends TimerTask {
         long durata= (date_now.getTimeInMillis()/1000 - date_value.getTimeInMillis()/1000);
 
         return (int) durata;
+    }
+
+    private void notification(TextView text,Double t, String getimage,Double getmin,Double getmacx,Channel channel,int i,String defaultvalue) {
+        try {
+            //controllo che temp esiste ancora (nel caso dovessi rappresentarlo a schermo)
+            if (text != null) text.setText(String.valueOf(t));
+            //controllo che ho inserito un valore nella temperatura minima
+            if (getmin != null){
+                String value = null;
+                //controllo se ho settato un valore manualmete
+                if (getimage!=null) {
+                    //associo il valore settato al relativo nome del campo field
+                    if (getimage.equals("field1")) value = channel.getFiled1();
+                    if (getimage.equals("field2")) value = channel.getFiled2();
+                    if (getimage.equals("field3")) value = channel.getFiled3();
+                    if (getimage.equals("field4")) value = channel.getFiled4();
+                    if (getimage.equals("field5")) value = channel.getFiled5();
+                    if (getimage.equals("field6")) value = channel.getFiled6();
+                    if (getimage.equals("field7")) value = channel.getFiled7();
+                    if (getimage.equals("field8")) value = channel.getFiled8();
+                }
+                if(t < getmin)
+                    if(value==null) printnotify("Channel(" + channel.getId() + ") " + defaultvalue + " low!", i+Integer.valueOf(channel.getId()));
+                    else  printnotify("Channel(" + channel.getId() + ") " + value + " low!", i+Integer.valueOf(channel.getId()));
+            }
+            if (getmacx != null){
+                String value = null;
+                //controllo se ho settato un valore manualmete
+                if (getimage!=null) {
+                    //associo il valore settato al relativo nome del campo field
+                    if (getimage.equals("field1")) value = channel.getFiled1();
+                    if (getimage.equals("field2")) value = channel.getFiled2();
+                    if (getimage.equals("field3")) value = channel.getFiled3();
+                    if (getimage.equals("field4")) value = channel.getFiled4();
+                    if (getimage.equals("field5")) value = channel.getFiled5();
+                    if (getimage.equals("field6")) value = channel.getFiled6();
+                    if (getimage.equals("field7")) value = channel.getFiled7();
+                    if (getimage.equals("field8")) value = channel.getFiled8();
+                }
+                if(t < getmacx)
+                    if(value==null) printnotify("Channel(" + channel.getId() + ") " + defaultvalue+ " high!", (i+10)+Integer.valueOf(channel.getId()));
+                    else  printnotify("Channel (" + channel.getId() + ") "+value +" high!", (i+10)+Integer.valueOf(channel.getId()));
+            }
+        } catch (Exception e) {
+            if (text != null) text.setText("- -");
+        }
     }
 }
 

@@ -233,7 +233,6 @@ public class MainActivity extends AppCompatActivity {
                         checkedItems[i] = false;
                         mUserItems.clear();
                         name.clear();
-
                     }
                 }
             });
