@@ -205,15 +205,20 @@ public class AlertActivity extends AppCompatActivity {
 
                                 }
 
-                                Double somma = 0.0;
+                                Double somma=0.0;
                                 Double t = 0.0;
+                                Double somt=0.0;
                                 Double u = 0.0;
+                                Double somu=0.0;
                                 Double p = 0.0;
+                                Double somp=0.0;
                                 Double c = 0.0;
+                                Double somc=0.0;
                                 Double ir = 0.0;
-                                Double pe = 0.0;
+                                Double somir=0.0;
+                                //stringa che mi salva l'ultimo data di aggiornamento dei valori
                                 String cretime=null;
-
+                                Channel v=channel;
                                 //scorro tutto l'array
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     somma++;
@@ -222,40 +227,74 @@ public class AlertActivity extends AppCompatActivity {
                                     final JSONObject value = jsonArray.getJSONObject(i);
                                     try {
                                         String temperature = value.getString("field1");
-                                        if (fields.get(0).equals("Temperature")) {
-                                            t = t + Double.parseDouble(String.format(temperature));
+                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
+                                        if(v.getImagetemp()!=null){
+                                            String field=value.getString(v.getImagetemp());
+                                            t=t+(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0);
+                                            somt++;
                                         }
-                                    }catch (Exception e){  }
-                                    try{
+                                        else if (fields.get(0).equals("Temperature")){
+                                            t = t + (Math.round(Double.parseDouble(String.format(temperature)) * 100.0) / 100.0);
+                                            somt++;
+                                        }
+                                    }catch (Exception e){
+                                    }
+                                    try {
                                         String umidity = value.getString("field2");
-                                        if (fields.get(1).equals("Humidity")) {
-                                            u = u + Double.parseDouble(String.format(umidity));
+                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
+                                        if(v.getImageumid()!=null){
+                                            String field=value.getString(v.getImageumid());
+                                            u=u+(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0);
+                                            somu++;
                                         }
-                                    }catch (Exception e){  }
+                                        else if (fields.get(1).equals("Humidity")){
+                                            u = u + (Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0);
+                                            somu++;
+                                        }
+                                    }catch (Exception e){
+                                    }
                                     try {
                                         String ph1 = value.getString("field3");
-                                        if (fields.get(2).equals("pH_value")) {
-                                            p = p + Double.parseDouble(String.format(ph1));
+                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
+                                        if(v.getImageph()!=null){
+                                            String field=value.getString(v.getImageph());
+                                            p=p+(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0);
+                                            somp++;
                                         }
-                                    }catch (Exception e){}
+                                        else if (fields.get(2).equals("pH_value")){
+                                            p = p + (Math.round(Double.parseDouble(String.format(ph1)) * 100.0) / 100.0);
+                                            somp++;
+                                        }
+                                    }catch (Exception e){
+                                    }
                                     try {
                                         String conducibilita = value.getString("field4");
-                                        if (fields.get(3).equals("electric_conductivity")) {
-                                            c = c + Double.parseDouble(String.format(conducibilita));
+                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
+                                        if(v.getImageph()!=null){
+                                            String field=value.getString(v.getImageph());
+                                            c=c+(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0);
+                                            somc++;
                                         }
-                                    }catch (Exception e){ }
+                                        else if (fields.get(3).equals("electric_conductivity")) {
+                                            c=c+(Math.round(Double.parseDouble(String.format(conducibilita)) * 100.0) / 100.0);
+                                            somc++;
+                                        }
+                                    }catch (Exception e){
+                                    }
                                     try {
                                         String irradianza = value.getString("field5");
-                                        if (fields.get(4).equals("Irradiance")) {
-                                            ir = ir + Double.parseDouble(String.format(irradianza));
+                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
+                                        if(v.getImageph()!=null){
+                                            String field=value.getString(v.getImageph());
+                                            ir=ir+(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0);
+                                            somc++;
                                         }
-                                    }catch (Exception e){ }
-                                    try {
-                                        String peso1 = value.getString("field6");
-                                        if (fields.get(5).equals("P0")) {
-                                            pe = pe + Double.parseDouble(String.format(peso1));
+                                        else  if (fields.get(4).equals("Irradiance")) {
+                                            ir=ir+(Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0);
+                                            somir++;
                                         }
-                                    }catch (Exception e){ }
+                                    }catch (Exception e){
+                                    }
                                     try {
                                         cretime = value.getString("created_at");
                                         minuti=(int)distanza(cretime)/60;
@@ -266,14 +305,14 @@ public class AlertActivity extends AppCompatActivity {
                                 minuti=(int) distanza(cretime);
 
                                 //calcolo la media di tutti i valori e la confronto con i miei valori,se la supera invio la notifica
-                                t = Math.round(t / somma * 100.0) / 100.0;
-                                u = Math.round(u / somma * 100.0) / 100.0;
-                                p = Math.round(p / somma * 100.0) / 100.0;
-                                c = Math.round(c / somma * 100.0) / 100.0;
-                                ir = Math.round(ir / somma * 100.0) / 100.0;
-                                pe = Math.round(pe / somma * 100.0) / 100.0;
-                                Log.d("SOMMA VALORI: ", somma.toString());
-                                Log.d("MEDIA VALORI: ", "t:" + t + " u:" + u + " p:" + p + " c:" + c + " ir:" + ir + " pe:" + pe);
+                                t=Math.round(t/somt * 100.0) / 100.0;
+                                u=Math.round(u/somu * 100.0) / 100.0;
+                                p=Math.round(p/somp * 100.0) / 100.0;
+                                c=Math.round(c/somc * 100.0) / 100.0;
+                                ir=Math.round(ir/somir * 100.0) / 100.0;
+                                Log.d("SOMMA VALORI: ","t:"+somt+" u:"+ somu +" p:"+ somp +" c:"+ somc +" ir:"+ somir);
+                                Log.d("MEDIA VALORI: ","t:"+t+" u:"+ u +" p:"+ p +" c:"+ c +" ir:"+ ir);
+
                                 if (channel.getNotification()) Log.d("NOTIFICHE", "ATTIVE");
                                 else Log.d("NOTIFICHE", "NON ATTIVE");
                                 //invio le notifiche se i valori non rispettano le soglie imposte

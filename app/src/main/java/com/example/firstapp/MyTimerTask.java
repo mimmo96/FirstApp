@@ -129,7 +129,7 @@ public class MyTimerTask extends TimerTask {
 
                                     try {
                                         String temperature = value.getString("field1");
-                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico almenti non scrivo nullo
+                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
                                         if(v.getImagetemp()!=null){
                                             String field=value.getString(v.getImagetemp());
                                             textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
@@ -199,7 +199,6 @@ public class MyTimerTask extends TimerTask {
                                             drainaggio=Double.parseDouble(valori.getString("field8"));
                                         }
                                     }catch (Exception e){ }
-
                                 }
 
                                 try {
