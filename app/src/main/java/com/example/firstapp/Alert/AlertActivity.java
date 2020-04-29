@@ -68,9 +68,7 @@ public class AlertActivity extends AppCompatActivity {
     private static Channel channel;             //channel usato
     private static AppDatabase database;
     private static Switch aSwitch;
-    private static String LastvaluesSTime;
     private static int minuti=0;
-    private static String evapotraspirazione;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +124,13 @@ public class AlertActivity extends AppCompatActivity {
         if (channel.getPesMax()!=null) pesMax.setText(String.format(channel.getPesMax().toString()));
         if (channel.getLastimevalues()!=0) minutes.setText(String.valueOf(channel.getLastimevalues()));
         if (channel.getTempomax()!=0) tempomax.setText(String.valueOf(channel.getTempomax()));
+        if (channel.getEvapotraspirazione()!=null) peso.setText(String.valueOf(channel.getEvapotraspirazione()));
+        else  peso.setText("- -");
+        if(channel.getMinutes()!=null) {
+            Double x = channel.getMinutes();
+            minuti=x.intValue();
+            Log.d("MINUTI SETATTI",String.valueOf(minuti));
+        }
 
         //se le notifiche erano attive avvio il servizio notifiche
         if (channel.getNotification()){
@@ -138,8 +143,6 @@ public class AlertActivity extends AppCompatActivity {
 
         //scarico la media dei valori e la rapresento a schermo
         downloadMedia();
-        //copio risultato evapotraspirazione precedente
-        peso.setText(evapotraspirazione);
 
         aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -178,6 +181,7 @@ public class AlertActivity extends AppCompatActivity {
         }
         else{
             int dist=0;
+            //se l'utente non ha settato il rnge di tempo per la media conto come distanza il tempo dall'ultimo valore
             if(channel.getLastimevalues()==0) dist=minuti;
             else dist=channel.getLastimevalues()+minuti;
             Log.d("VALORI: ","distanza salvata: " + channel.getLastimevalues() + " ultimi minuti: " + minuti +" Distanza totale:"+ (minuti+channel.getLastimevalues()));
@@ -205,7 +209,6 @@ public class AlertActivity extends AppCompatActivity {
 
                                 }
 
-                                Double somma=0.0;
                                 Double t = 0.0;
                                 Double somt=0.0;
                                 Double u = 0.0;
@@ -221,7 +224,6 @@ public class AlertActivity extends AppCompatActivity {
                                 Channel v=channel;
                                 //scorro tutto l'array
                                 for (int i = 0; i < jsonArray.length(); i++) {
-                                    somma++;
 
                                     //recupero il primo oggetto dell'array
                                     final JSONObject value = jsonArray.getJSONObject(i);
@@ -297,12 +299,17 @@ public class AlertActivity extends AppCompatActivity {
                                     }
                                     try {
                                         cretime = value.getString("created_at");
-                                        minuti=(int)distanza(cretime)/60;
+                                        Log.d("DISTANZA ", cretime);
+                                        minuti=(int)distanza(cretime);
+                                        Log.d("minuti ", String.valueOf(minuti));
                                     }catch (Exception e){ }
                                 }
 
-                                //in cretime avrò il valore dell'ultimo dato
-                                minuti=(int) distanza(cretime);
+                                //lo salvo nel server
+                                database.ChannelDao().delete(v);
+                                Log.d("ALERTACTIVITY/MINUTES:",String.valueOf((double) minuti));
+                                v.setMinutes((double) minuti);
+                                database.ChannelDao().insert(v);
 
                                 //calcolo la media di tutti i valori e la confronto con i miei valori,se la supera invio la notifica
                                 t=Math.round(t/somt * 100.0) / 100.0;
@@ -319,7 +326,7 @@ public class AlertActivity extends AppCompatActivity {
                                     try {
                                         if (temp != null){
                                             //se non ho scaricato valori
-                                            if(somma==0)  temp.setText("- -");
+                                            if(somt==0 )  temp.setText("- -");
                                             else temp.setText(String.valueOf(t));
                                         }
                                     } catch (Exception e) {
@@ -328,7 +335,7 @@ public class AlertActivity extends AppCompatActivity {
                                     try {
                                         if (umid != null){
                                             //se non ho scaricato valori
-                                            if(somma==0)  umid.setText("- -");
+                                            if(somu==0)  umid.setText("- -");
                                             else umid.setText(String.valueOf(u));
                                         }
                                     } catch (Exception e) {
@@ -337,7 +344,7 @@ public class AlertActivity extends AppCompatActivity {
                                     try {
                                         if (ph != null){
                                             //se non ho scaricato valori
-                                            if(somma==0)  ph.setText("- -");
+                                            if(somp==0)  ph.setText("- -");
                                             else  ph.setText(String.valueOf(p));
                                         }
                                     } catch (Exception e) {
@@ -346,7 +353,7 @@ public class AlertActivity extends AppCompatActivity {
                                     try {
                                         if (cond != null){
                                             //se non ho scaricato valori
-                                            if(somma==0)  cond.setText("- -");
+                                            if(somc==0)  cond.setText("- -");
                                             else cond.setText(String.valueOf(c));
                                         }
                                     } catch (Exception e) {
@@ -355,7 +362,7 @@ public class AlertActivity extends AppCompatActivity {
                                     try {
                                         if (irra != null){
                                             //se non ho scaricato valori
-                                            if(somma==0)  irra.setText("- -");
+                                            if(somir==0)  irra.setText("- -");
                                             else irra.setText(String.valueOf(ir));
                                         }
                                     } catch (Exception e) {
@@ -548,13 +555,7 @@ public class AlertActivity extends AppCompatActivity {
         long durata= (date_now.getTimeInMillis()/1000 - date_value.getTimeInMillis()/1000);
 
         //restituisco la durata in minuti approssimata ad un minuto in piu per sicurezza
-        return  (durata/60)+1;
-    }
-
-    public static void setminutes(String minutes, String evap){
-        minuti=(int)distanza(minutes);
-        minuti=minuti-(Integer.valueOf(getCurrentTimezoneOffset())+1)*60;
-        evapotraspirazione=evap;
+        return  (durata/60)+2;
     }
 
 }

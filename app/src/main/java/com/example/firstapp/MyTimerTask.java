@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.TimerTask;
 
+import static com.example.firstapp.Graphic.MainActivity.getCurrentTimezoneOffset;
+
 /*
  * Progetto: svilluppo App Android per Tirocinio interno
  *
@@ -76,8 +78,6 @@ public class MyTimerTask extends TimerTask {
     //metodo per reperire le risposte json
      private void getJsonResponse (final String url){
         //se non ho nessun url inserita setto i valori a 0
-
-            final List<String> createdtime = new ArrayList<>();
 
             final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                     new Response.Listener<JSONObject>() {
@@ -201,21 +201,29 @@ public class MyTimerTask extends TimerTask {
                                     }catch (Exception e){ }
                                 }
 
+                                Double evapotraspirazione=null;
                                 try {
                                     if (v.getImagepeso() != null) {
                                         String field = value.getString(v.getImagepeso());
                                         textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
-                                    } else if (ok)
-                                        textPeso.setText(String.valueOf(Math.round((irrigazione - drainaggio) * 100.0) / 100.0).concat(" g/m²"));
+                                    } else if (ok) {
+                                        evapotraspirazione=Math.round((irrigazione - drainaggio) * 100.0) / 100.0;
+                                        textPeso.setText(String.valueOf(evapotraspirazione).concat(" g/m²"));
+                                    }
                                     else textPeso.setText("- -");
                                 } catch (Exception e){ textPeso.setText("- -"); }
 
                                 String cretime = value.getString("created_at");
-                                createdtime.add(cretime);
                                 distanza(cretime);
-                                String evap=textPeso.getText().toString();
-                                //nota:creatime è in gmt00
-                                AlertActivity.setminutes(cretime,evap);
+
+                                //salvo i valori sul database
+                                database.ChannelDao().delete(v);
+                                int minuti=(int)distanza1(cretime);
+                                minuti=minuti-(Integer.valueOf(getCurrentTimezoneOffset())+1)*60;
+                                v.setEvapotraspirazione(evapotraspirazione);
+                                v.setMinutes((double)minuti);
+                                database.ChannelDao().insert(v);
+
                                 stato.setText("ONLINE");
                                 stato.setTextColor(Color.GREEN);
                             } catch (JSONException e) {
@@ -276,25 +284,34 @@ public class MyTimerTask extends TimerTask {
         database=db;
     }
 
-    public static void stampa() {
 
-        List<Channel> arrayList = database.ChannelDao().getAll();
-        System.out.println("stampo il database cannel");
-        for(int i=0;i<arrayList.size();i++) System.out.println(arrayList.get(i).getId() +" --" + arrayList.get(i).getFiled1() +" --" + arrayList.get(i).getFiled2()
-                +" --" + arrayList.get(i).getFiled3() +" --" + arrayList.get(i).getFiled4() +" --" + arrayList.get(i).getFiled5()
-                +" --" + arrayList.get(i).getFiled6()+" --" + arrayList.get(i).getFiled7()
-                +" --" + arrayList.get(i).getFiled8() +"--" + arrayList.get(i).getRead_key() );
+    private static long distanza1(String data) {
+        if(data==null) return 0;
+        Calendar date_now= Calendar.getInstance ();
+        date_now.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Calendar date_value = Calendar.getInstance ();
 
-        System.out.println("FINE");
+        //parsing della data
+        int giorno=Integer.valueOf(data.substring(8, 10));
+        int mese=Integer.valueOf(data.substring(5, 7));
+        int anno=Integer.valueOf(data.substring(0, 4));
+        int ore=Integer.valueOf(data.substring(11, 13));
+        int minuti=Integer.valueOf(data.substring(14, 16));
+        int secondi=Integer.valueOf(data.substring(17, 19));
 
-        List <savedValues> arrayList1 = database.SavedDao().getAll();
-        System.out.println("stampo il database saved");
-        for(int i=0;i<arrayList1.size();i++) System.out.println(arrayList1.get(i).getId() +" --" + arrayList1.get(i).getPosition() +" --" + arrayList1.get(i).getRead_key() );
+        //setto le impostazioni relative alla data
+        date_value.set (Calendar.YEAR,anno);
+        date_value.set (Calendar.MONTH,mese-1);
+        date_value.set (Calendar.DAY_OF_MONTH,giorno);
+        date_value.set (Calendar.HOUR_OF_DAY,ore);
+        date_value.set (Calendar.MINUTE,minuti);
+        date_value.set (Calendar.SECOND, secondi);
 
-        System.out.println("FINE");
+        //durata in secondi dall'ultimo aggiornamento
+        long durata= (date_now.getTimeInMillis()/1000 - date_value.getTimeInMillis()/1000);
 
-
-
+        //restituisco la durata in minuti approssimata ad un minuto in piu per sicurezza
+        return  (durata/60)+1;
     }
 
     }

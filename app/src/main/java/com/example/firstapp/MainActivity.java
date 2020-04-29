@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 channelID = channeldefault.get(0).getId();
                 READ_KEY = channeldefault.get(0).getRead_key();
                 WRITE_KEY=channeldefault.get(0).getWrite_key();
-                url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=100";
+                url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=150";
                 ChannelActivity.setPosition(channeldefault.get(0).getPosition());
             }
             //se non ho nessun elemento inserito setto a null i valori dei channel
@@ -308,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
                 channelID = id;
                 READ_KEY = key_read;
                 WRITE_KEY=key_write;
-                url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=100";
+                url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=150";
                 restartTimer(cont);
 
             }

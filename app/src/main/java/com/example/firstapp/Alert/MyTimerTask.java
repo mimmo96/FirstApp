@@ -39,6 +39,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.example.firstapp.Alert.App.CHANNEL_1_ID;
+import static com.example.firstapp.Graphic.MainActivity.getCurrentTimezoneOffset;
 
 /*
  * Progetto: svilluppo App Android per Tirocinio interno
@@ -61,6 +62,7 @@ public class MyTimerTask extends TimerTask {
     private static Context cont;
     private static NotificationManagerCompat notificationManager;
     private static AppDatabase db;
+    private int minuti=0;
 
     public MyTimerTask(Channel chan,TextView temp,  TextView umid, TextView ph, TextView cond, TextView irra, TextView peso,Context context,AppDatabase database) {
         if(chan!=null){
@@ -88,15 +90,21 @@ public class MyTimerTask extends TimerTask {
             Channel actualchannel = allchannel.get(i);
             //se ho le notifiche abilitata lo avvio
             if (actualchannel.getNotification()) {
-                int minuti;
-                try {        //se i minuti sono 0 metto di default 60
-                    minuti = actualchannel.getLastimevalues();
-                    if (minuti == 0) minuti = 60;
-                } catch (Exception e) {
-                    minuti = 60;
+                int dist=0;
+                //se l'utente non ha settato il rnge di tempo per la media conto come distanza il tempo dall'ultimo valore
+                if(actualchannel.getMinutes()!=0) minuti=actualchannel.getMinutes().intValue();
+                if(actualchannel.getLastimevalues()==0) dist=minuti;
+                else dist=actualchannel.getLastimevalues()+minuti;
+                Log.d("minuti è:", String.valueOf(actualchannel.getMinutes()));
+                Log.d("lasttime è:", String.valueOf(actualchannel.getLastimevalues()));
+                Log.d("Distanza è:", String.valueOf(dist));
+                String urlString;
+                if(dist==0){
+                    urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
+                            + "&results=1" + "&offset="+getCurrentTimezoneOffset();
                 }
-                String urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
-                        + "&minutes=" + minuti + "&offset="+getCurrentTimezoneOffset();
+                else urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
+                        + "&minutes=" + dist + "&offset="+getCurrentTimezoneOffset();
                 getJsonResponse(urlString,actualchannel);
                 Log.d("URL", urlString);
                 ok=true;
@@ -220,8 +228,40 @@ public class MyTimerTask extends TimerTask {
 
                                 try {
                                     cretime = value.getString("created_at");
+                                    minuti=(distanza(cretime)/60)+2;
+                                    Log.d("AlertTimerTask",String.valueOf(minuti));
                                 }catch (Exception e){ }
                             }
+
+                            //controllo se i valori dell'evapotraspirazione rientrano nel range da me settato
+
+                            Boolean ok=false;
+                            Double irrigazione =0.0;
+                            Double drainaggio = 0.0;
+
+                            //scandisco tutti i 100 valori per trovare i valodi di irrigazione e il drenaggio
+                            for (int k = 0; k < jsonArray.length(); k++) {
+                                JSONObject valori = jsonArray.getJSONObject(k);
+                                try {
+                                    if (!valori.getString("field7").equals("") && !valori.getString("field7").equals("null")) {
+                                        ok=true;
+                                        irrigazione=Double.parseDouble(valori.getString("field7"));
+                                    }
+                                }catch (Exception e){ }
+
+                                try {
+                                    if (!valori.getString("field8").equals("") && !valori.getString("field8").equals("null")) {
+                                        ok=true;
+                                        drainaggio=Double.parseDouble(valori.getString("field8"));
+                                    }
+                                }catch (Exception e){ }
+                            }
+
+                            //setto la distanza in minuti approssimata ad un minuto in più nel database del channel utilizzato
+                            db.ChannelDao().delete(v);
+                            v.setMinutes((double)minuti);
+                            db.ChannelDao().insert(v);
+                            Log.d("ALERTACTIVITY/MINUTES:",String.valueOf((double) minuti));
 
                             //calcolo la media di tutti i valori e la confronto con i miei valori,se la supera invio la notifica
                             t=Math.round(t/somt * 100.0) / 100.0;
@@ -229,27 +269,22 @@ public class MyTimerTask extends TimerTask {
                             p=Math.round(p/somp * 100.0) / 100.0;
                             c=Math.round(c/somc * 100.0) / 100.0;
                             ir=Math.round(ir/somir * 100.0) / 100.0;
+                            Double ev=null;
+                            if(ok) ev=Math.round((irrigazione - drainaggio) * 100.0) / 100.0;
                             Log.d("SOMMA VALORI: ","t:"+somt+" u:"+ somu +" p:"+ somp +" c:"+ somc +" ir:"+ somir);
                             Log.d("MEDIA VALORI: ","t:"+t+" u:"+ u +" p:"+ p +" c:"+ c +" ir:"+ ir);
 
                             //invio le notifiche se i valori non rispettano le soglie imposte
                             if(channel.getNotification()) {
-                                notification(temp,t,channel.getImagetemp(),channel.getTempMin(),channel.getTempMax(),channel,1,"temperatura");
-                                notification(umid,u,channel.getImageumid(),channel.getUmidMin(),channel.getUmidMax(),channel,2,"umidità");
-                                notification(ph,p,channel.getImageph(),channel.getPhMin(),channel.getPhMax(),channel,3,"ph");
-                                notification(cond,c,channel.getImagecond(),channel.getCondMin(),channel.getCondMax(),channel,4,"conducibilità");
-                                notification(irra,ir,channel.getImageirra(),channel.getIrraMin(),channel.getIrraMax(),channel,5,"irradianza");
-                              //notification(peso, Double.valueOf(peso.getText().toString().substring(0,peso.getText().toString().indexOf("g"))),channel.getImagepeso(),channel.getPesMin(),channel.getPesMax(),channel,6,"evapotraspirazione");
+                                //controllo se ho letto effettivamente dei valori
+                                if(somt!=0) notification(temp,t,channel.getImagetemp(),channel.getTempMin(),channel.getTempMax(),channel,1,"temperatura");
+                                if(somu!=0) notification(umid,u,channel.getImageumid(),channel.getUmidMin(),channel.getUmidMax(),channel,2,"umidità");
+                                if(somp!=0) notification(ph,p,channel.getImageph(),channel.getPhMin(),channel.getPhMax(),channel,3,"ph");
+                                if(somc!=0) notification(cond,c,channel.getImagecond(),channel.getCondMin(),channel.getCondMax(),channel,4,"conducibilità");
+                                if(somir!=0) notification(irra,ir,channel.getImageirra(),channel.getIrraMin(),channel.getIrraMax(),channel,5,"irradianza");
+                                if(ok) notification(peso, ev,channel.getImagepeso(),channel.getPesMin(),channel.getPesMax(),channel,6,"evapotraspirazione");
 
-                                try {
-                                    String evap=peso.getText().toString();
-                                    if (channel.getPesMin() != null && Integer.valueOf(evap.substring(0,evap.indexOf("g"))) < channel.getPesMin())
-                                        printnotify("Channel(" + channel.getId() + ") evapotraspirazione bassa!", 11*Integer.valueOf(channel.getId()));
-                                    if (channel.getPesMax() != null && Integer.valueOf(peso.getText().toString()) > channel.getPesMax())
-                                        printnotify("Channel(" + channel.getId() + ")  evapotraspirazione alta!", 12*Integer.valueOf(channel.getId()));
-                                } catch (Exception e) {
-                                    if (peso != null) peso.setText("- -");
-                                }
+
                                 try{
                                     Log.d("TEMPO:","distanza settata: "+channel.getTempomax()*60+" distanza attuale: "+ distanza(cretime));
                                     if (channel.getTempomax()!= 0 && distanza(cretime) > channel.getTempomax()*60)

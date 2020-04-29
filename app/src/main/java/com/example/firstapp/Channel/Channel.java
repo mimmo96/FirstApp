@@ -60,6 +60,7 @@ public class Channel {
     private String imagecond=null;
     private String imageirra=null;
     private String imagepeso=null;
+    private Double evapotraspirazione=null;
     private Double IrrigationDuration=null;
     private Double FlussoAcqua=null;
     private Double Leachingfactor =null;
@@ -68,7 +69,10 @@ public class Channel {
     private static MyTimerTask timerTask=null;
     private static AlarmManager alarmManager=null;
     private static String TimeAlarm=null;
+    //valori settati dall'utente
     private int lastimevalues=0;
+    //ultimo valore dato server in tempo
+    private Double minutes=null;
 
     public Channel(String id, String read_key,String write_key) {
         this.id = id;
@@ -390,5 +394,21 @@ public class Channel {
 
     public void setLastimevalues(int Lastimevalues) {
        lastimevalues = Lastimevalues;
+    }
+
+    public Double getEvapotraspirazione() {
+        return evapotraspirazione;
+    }
+
+    public void setEvapotraspirazione(Double evapotraspirazione) {
+        this.evapotraspirazione = evapotraspirazione;
+    }
+
+    public Double getMinutes() {
+        return minutes;
+    }
+
+    public void setMinutes(Double minutes) {
+        this.minutes = minutes;
     }
 }
