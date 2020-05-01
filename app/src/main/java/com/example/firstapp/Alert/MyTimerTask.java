@@ -206,7 +206,6 @@ public class MyTimerTask extends TimerTask {
                                 try {
                                     cretime = value.getString("created_at");
                                     minuti=(distanza(cretime)/60)+2;
-                                    Log.d("AlertTimerTask",String.valueOf(minuti));
                                 }catch (Exception e){ }
                             }
 
@@ -288,7 +287,6 @@ public class MyTimerTask extends TimerTask {
     public void printnotify(String text,int i){
         Intent notificationIntent = new Intent(cont, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(cont,0, notificationIntent, 0);
-
         Notification notification = new NotificationCompat.Builder(cont, CHANNEL_1_ID)
                 .setContentTitle("Green App")
                 .setContentText(text)
@@ -332,7 +330,7 @@ public class MyTimerTask extends TimerTask {
         date_value.set (Calendar.MINUTE,minuti);
         date_value.set (Calendar.SECOND, secondi);
 
-        Log.d("DATE","DATA ORA: "+ date_now.getTime().toString() +"DATA CLOUD: "+ date_value.getTime().toString());
+       // Log.d("DATE","DATA ORA: "+ date_now.getTime().toString() +"DATA CLOUD: "+ date_value.getTime().toString());
         //durata in secondi dall'ultimo aggiornamento
         long durata= (date_now.getTimeInMillis()/1000 - date_value.getTimeInMillis()/1000);
 
@@ -374,11 +372,12 @@ public class MyTimerTask extends TimerTask {
                     if (getimage.equals("field7")) value = channel.getFiled7();
                     if (getimage.equals("field8")) value = channel.getFiled8();
                 }
-                if(t < getmacx)
+                if(t > getmacx)
                     if(value==null) printnotify("Channel(" + channel.getId() + ") " + defaultvalue+ " high!", (i+10)+Integer.valueOf(channel.getId()));
                     else  printnotify("Channel (" + channel.getId() + ") "+value +" high!", (i+10)+Integer.valueOf(channel.getId()));
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

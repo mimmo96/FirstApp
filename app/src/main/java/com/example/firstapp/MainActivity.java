@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             startTimer(cont);
             //avvio il service in background
-            startService();
+           // startService();
         }
     }
 

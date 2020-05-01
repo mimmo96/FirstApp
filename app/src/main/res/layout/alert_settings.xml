@@ -30,9 +30,9 @@
         android:layout_height="wrap_content"
         android:text="--.--"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.284"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageConducibility"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageIrradiance"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.206" />
 
@@ -54,9 +54,9 @@
         android:layout_height="wrap_content"
         android:text="--.--"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.577"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewPeso"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageConducibility"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.206" />
 
@@ -67,10 +67,10 @@
         android:text="--.--"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.848"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imagePh"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.122" />
+        app:layout_constraintVertical_bias="0.116" />
 
     <TextView
         android:id="@+id/textViewUmid"
@@ -78,11 +78,11 @@
         android:layout_height="wrap_content"
         android:text="--.--"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.571"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imagePh"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageUminidy"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.114" />
+        app:layout_constraintVertical_bias="0.116" />
 
     <ImageView
         android:id="@+id/imagePh"
@@ -487,11 +487,11 @@
         android:layout_height="wrap_content"
         android:text="--.--"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.284"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageUminidy"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageTemperature"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.107" />
+        app:layout_constraintVertical_bias="0.116" />
 
     <TextView
         android:id="@+id/textView14"

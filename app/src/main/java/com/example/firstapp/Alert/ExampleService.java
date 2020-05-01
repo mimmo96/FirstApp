@@ -37,8 +37,10 @@ public class ExampleService extends Service {
 
     @Override
     public void onCreate() {
+        if(isactive) return;
         super.onCreate();
         context=getApplicationContext();
+
         Log.d("ExampleService","servizio background creato");
         //recupero il database dei channel
         database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "prodiction")
@@ -47,6 +49,7 @@ public class ExampleService extends Service {
                 .fallbackToDestructiveMigration()
                 //build mi serve per costruire il tutto
                 .build();
+        isactive=true;
     }
 
     //funzione che devo fare all'avvio
@@ -117,6 +120,7 @@ public class ExampleService extends Service {
         //elimito tutte le strutture precedentemente create
         stoptimer();
         Log.d("ExampleServices","distruggo");
+        isactive=false;
     }
 
     @Nullable

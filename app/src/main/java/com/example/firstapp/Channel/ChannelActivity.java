@@ -128,7 +128,6 @@ public class ChannelActivity  extends AppCompatActivity {
                                                                         //comunico il database aggiornato al thread
                                                                         MyTimerTask.updateDatabase(db);
                                                                         Toast.makeText(BasicContext, "operazione eseguita correttamente!", Toast.LENGTH_SHORT).show();
-                                                                        AlertActivity.stopService();
                                                                         //segnalo al thread principale i nuovi id,key
                                                                         if (pos == -1) pos = 0;
                                                                         MainActivity.setDefaultSetting(DEFAULT_ID, DEFAULT_READ_KEY, DEFAULT_WRITE_KEY, pos);

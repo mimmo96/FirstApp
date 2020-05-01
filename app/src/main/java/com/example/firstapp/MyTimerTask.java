@@ -97,7 +97,6 @@ public class MyTimerTask extends TimerTask {
                                         fields.add(String.valueOf(response.getJSONObject("channel").get("field" + (i+1))));
                                     }
                                 }catch(Exception e) {
-
                                 }
 
                                 //recupero il canale e lo cancello, dopo aver settato i valori lo reinserisco
@@ -134,7 +133,10 @@ public class MyTimerTask extends TimerTask {
                                             String field=value.getString(v.getImagetemp());
                                             textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
                                         }
-                                        else if (fields.get(0).equals("Temperature")) textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(temperature)) * 100.0) / 100.0).concat(" °C"));
+                                        else if (fields.get(0).equals("Temperature")){
+                                            textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(temperature)) * 100.0) / 100.0).concat(" °C"));
+                                        }
+                                        else  textTemp.setText("- -");
                                     }catch (Exception e){
                                         textTemp.setText("- -");
                                     }
@@ -145,6 +147,7 @@ public class MyTimerTask extends TimerTask {
                                             textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
                                         }
                                         else if(fields.get(1).equals("Humidity")) textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0));
+                                        else textUmidity.setText("- -");
                                     }catch (Exception e){
                                         textUmidity.setText("- -");
                                     }
@@ -155,6 +158,7 @@ public class MyTimerTask extends TimerTask {
                                             textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
                                         }
                                        else if (fields.get(2).equals("pH_value")) textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(ph)) * 100.0) / 100.0));
+                                       else textPh.setText("- -");
                                     }catch (Exception e){
                                         textPh.setText("- -");
                                     }
@@ -165,6 +169,7 @@ public class MyTimerTask extends TimerTask {
                                             textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
                                         }
                                         else if (fields.get(3).equals("electric_conductivity")) textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(conducibilita)) * 100.0) / 100.0).concat(" dS/m"));
+                                        else textConducibilita.setText("- -");
                                     }catch (Exception e){
                                         textConducibilita.setText("- -");
                                     }
@@ -175,6 +180,7 @@ public class MyTimerTask extends TimerTask {
                                             textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
                                         }
                                         else if (fields.get(4).equals("Irradiance")) textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0).concat(" w/m²"));
+                                        else  textIrradianza.setText("- -");
                                     }catch (Exception e){
                                         textIrradianza.setText("- -");
                                     }
