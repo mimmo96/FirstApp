@@ -2,6 +2,7 @@ package com.example.firstapp;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,6 +19,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.example.firstapp.Alert.AlertActivity;
+import com.example.firstapp.Alert.ExampleService;
 import com.example.firstapp.Channel.Channel;
 import com.example.firstapp.Channel.ChannelActivity;
 import com.example.firstapp.Channel.savedValues;
@@ -50,11 +52,15 @@ public class MainActivity extends AppCompatActivity {
     private static TimerTask timerTask;
     private static Timer timer;
     private static Context cont;
+    private static Intent serviceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //inizializzo l'intent per il service da lanciare in background
+        serviceIntent = new Intent(this, ExampleService.class);
 
         //ripristino valori salvati precedentemente se ci sono
         BackupValues(savedInstanceState);
@@ -82,11 +88,12 @@ public class MainActivity extends AppCompatActivity {
             testo1.setText("INSERISCI UN NUOVO CHANNEL");
         } else {
             startTimer(cont);
+            //avvio il service in background
+            startService();
         }
-
-       // stampa();
     }
 
+    //funzione per ripristinare i dati precedentemente impostati
     private void BackupValues(Bundle savedInstanceState) {
         //creo il database
 
@@ -104,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
                 channelID = channeldefault.get(0).getId();
                 READ_KEY = channeldefault.get(0).getRead_key();
                 WRITE_KEY=channeldefault.get(0).getWrite_key();
-                url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=150";
+                url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=100";
                 ChannelActivity.setPosition(channeldefault.get(0).getPosition());
             }
             //se non ho nessun elemento inserito setto a null i valori dei channel
@@ -118,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //settting Graph
+    //funzione eseguita quando vado a cliccare sul pulsate dei grafici
     public void doAdd(View v) {
         final boolean[] checkedItems;
         final String[] listItems;
@@ -248,12 +255,13 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    //azione che devo eseguirequando premo il puksante attenzione
+    //azione che devo eseguire quando premo il pulsante attenzione
     public void notifiche(View v) {
         Intent intent = AlertActivity.getActivityintent(MainActivity.this);
 
         List<Channel> channeList=database.ChannelDao().getAll();
         Channel trovato=null;
+        //controllo che esiste almeno un channel
         for(int i=0;i<channeList.size();i++){
             if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
                 trovato=channeList.get(i);
@@ -308,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
                 channelID = id;
                 READ_KEY = key_read;
                 WRITE_KEY=key_write;
-                url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=150";
+                url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=100";
                 restartTimer(cont);
 
             }
@@ -330,26 +338,19 @@ public class MainActivity extends AppCompatActivity {
         timer.scheduleAtFixedRate(timerTask, 0, 60000);
     }
 
-    public static void stampa() {
-
-        List<Channel> arrayList = database.ChannelDao().getAll();
-        System.out.println("stampo il database cannel");
-        for (int i = 0; i < arrayList.size(); i++)
-            System.out.println(arrayList.get(i).getId() + " --" + arrayList.get(i).getFiled1() + " --" + arrayList.get(i).getRead_key());
-
-        System.out.println("FINE");
-
-        List<savedValues> arrayList1 = database.SavedDao().getAll();
-        System.out.println("stampo channel default");
-        for (int i = 0; i < arrayList1.size(); i++)
-            System.out.println(arrayList1.get(i).getId() + " --" + arrayList1.get(i).getPosition() + " --" + arrayList1.get(i).getRead_key());
-
-        System.out.println("FINE");
-
-
+    //per avviare ExampleServices
+    public void startService() {
+        ContextCompat.startForegroundService(this, serviceIntent);
+        Log.d("MAINACTIVITY","STARTSERVICE");
     }
-    //funzioni per settare i vari valori dei singoli fields non appena li premo
 
+    //per fermare ExampleServices
+    public static void stopService() {
+        ExampleService.stoptimer();
+        Log.d("MAINACTIVITY","STOPSERVICE");
+    }
+
+    //funzioni per settare i vari valori dei singoli fields non appena li premo
     public void tempSettings(View v) {
         //reperisco il channel utilizzato di default e faccio il parsing per scoprire quale fields è stato settato(posizione)
         final List<savedValues> allchannel = database.SavedDao().getAll();

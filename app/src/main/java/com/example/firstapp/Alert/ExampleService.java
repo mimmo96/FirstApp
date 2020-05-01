@@ -13,8 +13,10 @@ import androidx.room.Room;
 import com.example.firstapp.AppDatabase;
 import com.example.firstapp.Channel.Channel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
+import java.util.TimerTask;
 
 /*
  * Progetto: svilluppo App Android per Tirocinio interno
@@ -26,25 +28,19 @@ import java.util.Timer;
  *
  */
 public class ExampleService extends Service {
-    private static TextView temp;
-    private static TextView umid;
-    private static TextView ph;
-    private static TextView cond;
-    private static TextView irra;
-    private static TextView peso;
-    private static MyTimerTask timerTask=null;
-    private static Timer timer=null;
-    private static Channel channel;
     private static AppDatabase database;
+    private static ArrayList<MyTimerTask> timerTasks=new ArrayList<>();
+    private static ArrayList<Timer> timer=new ArrayList<>();
+    private static ArrayList<Channel> channelArrayList=new ArrayList<>();
     private static Context context;
-    private static String minutes=null;
-    private static boolean go=false;
+    private static boolean isactive=false;
 
     @Override
     public void onCreate() {
         super.onCreate();
         context=getApplicationContext();
         Log.d("ExampleService","servizio background creato");
+        //recupero il database dei channel
         database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "prodiction")
                 //consente l'aggiunta di richieste nel thred principale
                 .allowMainThreadQueries()
@@ -58,69 +54,70 @@ public class ExampleService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("ExampleService","OnStartCommand");
         //setto una variabile per capire se devo lanciare almeno un servizio oppure no
-        Boolean ok=false;
-
-            //recupero dalla lista tutti i channel e se hanno le notifiche attive li eseguo in background
+        int k=0;
+            //recupero dalla lista tutti i channel e se ne esiste almeno uno con le notifiche attive lo eseguo in background
             List<Channel> allchannel= database.ChannelDao().getAll();
-
             for(int i=0;i<allchannel.size();i++) {
                 Channel actualchannel = allchannel.get(i);
                 //se ho le notifiche abilitata lo avvio
                 if (actualchannel.getNotification()) {
-                   timerTask=new MyTimerTask(channel, temp, umid, ph, cond, irra, peso, context,database);
-                    timer = new Timer();
-                    timer.scheduleAtFixedRate(timerTask, 0, 3000);
-                    ok=true;
+                    isactive=true;
+                    MyTimerTask myTimerTask1=new MyTimerTask(actualchannel,context,database);
+                    timerTasks.add(myTimerTask1);
+                    Timer timer1 = new Timer();
+                    timer1.scheduleAtFixedRate(myTimerTask1, 0, 3000);
+                    timer.add(timer1);
+                    channelArrayList.add(actualchannel);
                 }
+                k++;
             }
-            //se non ho nessun channel con le notifiche abilitate interrompo il servizio
-            if(!ok){
-              if(timerTask!=null)  timerTask.cancel();
-              if(timer!=null)   timer.cancel();
-                timerTask=null;
-                timer=null;
-                this.onDestroy();
-                stoptimer();
+
+            //se non ho nessun channel con le notifiche attive interrompo il servizo
+            if(!isactive){
+                Log.d("ExampleServices","nessun channel da avviare");
+                return START_NOT_STICKY;
             }
+            else Log.d("ExampleServices"," ho avviato: " +k +" notifiche");
+
         return START_STICKY;
     }
 
-    //setto i valori
-    public static void setvalue(TextView temp1, TextView umid1, TextView ph1, TextView cond1, TextView irra1, TextView peso1, Channel chan, AppDatabase db, String minutes1){
-        database=db;
-        minutes=minutes1;
-        channel=chan;
-        temp=temp1;
-        umid=umid1;
-        irra=irra1;
-        peso=peso1;
-        ph=ph1;
-        cond=cond1;
-    }
 
-    //quando disattivo la ricezione delle notifiche
+    //quando devo distruggere il servizio
     public static void stoptimer(){
-        //recupero i dati del channel e disattivo
-        if(channel!=null) {
-            timer = channel.getTimer();
-            timerTask = channel.getTimerTask();
-            if (timer != null) {
-                timer.cancel();
-                timerTask.cancel();
-                Channel x = database.ChannelDao().findByName(channel.getId(), channel.getRead_key());
-                database.ChannelDao().delete(x);
-                x.setNotification(false);
-                x.setTimer(null);
-                x.setTimerTask(null);
-                database.ChannelDao().insert(x);
-                Log.d("Background service", "Servizio interrotto!");
-            }
+        //recupero il thread avviato precdentemente e li cancello
+        for(int i=0;i<timerTasks.size();i++){
+            if(timerTasks.get(i)!=null) timerTasks.get(i).cancel();
+            if(timer.get(i)!=null)   timer.get(i).cancel();
+            timerTasks=null;
+            timer=null;
+            channelArrayList.remove(i);
         }
     }
 
+    public static void stopNotification(Channel x){
+        int k=-1;
+        for(int i=0;i<channelArrayList.size();i++){
+            if(x.getId().equals(channelArrayList.get(i).getId())){
+                timerTasks.get(i).cancel();
+                timer.get(i).cancel();
+                k=i;
+            }
+        }
+        //se ho rimosso il channel libero le strutture
+        if(k!=-1){
+            Log.d("ExampleService","notifiche disativate correttamente");
+        }
+    }
 
+    //nel caso in cui il service viene distrutto per cause di "forze maggiori"
     @Override
-    public void onDestroy() { super.onDestroy(); stoptimer(); Log.d("ExampleServices","distruggo");}
+    public void onDestroy() {
+        super.onDestroy();
+        //elimito tutte le strutture precedentemente create
+        stoptimer();
+        Log.d("ExampleServices","distruggo");
+    }
 
     @Nullable
     @Override

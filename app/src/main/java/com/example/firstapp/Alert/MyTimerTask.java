@@ -52,66 +52,43 @@ import static com.example.firstapp.Graphic.MainActivity.getCurrentTimezoneOffset
  */
 
 public class MyTimerTask extends TimerTask {
-    private static Channel channel1;
-    private TextView temp;
-    private TextView umid;
-    private TextView ph;
-    private TextView cond;
-    private TextView irra;
-    private TextView peso;
+    private static Channel channel;
     private static Context cont;
     private static NotificationManagerCompat notificationManager;
     private static AppDatabase db;
     private int minuti=0;
 
-    public MyTimerTask(Channel chan,TextView temp,  TextView umid, TextView ph, TextView cond, TextView irra, TextView peso,Context context,AppDatabase database) {
+    public MyTimerTask(Channel chan,Context context,AppDatabase database) {
         if(chan!=null){
             Log.d("CHAN",chan.getId());
-            channel1=chan;
+            channel=chan;
         }
         db=database;
-        this.temp = temp;
-        this.umid = umid;
-        this.irra = irra;
-        this.peso = peso;
-        this.ph = ph;
-        this.cond = cond;
         cont=context;
         notificationManager=NotificationManagerCompat.from(cont);
     }
 
     @Override
     public void run() {
-        Boolean ok=false;
-        //recupero dalla lista tutti i channel e se hanno le notifiche attive li eseguo in background
-        List<Channel> allchannel= db.ChannelDao().getAll();
-
-        for(int i=0;i<allchannel.size();i++) {
-            Channel actualchannel = allchannel.get(i);
-            //se ho le notifiche abilitata lo avvio
-            if (actualchannel.getNotification()) {
-                int dist=0;
-                //se l'utente non ha settato il rnge di tempo per la media conto come distanza il tempo dall'ultimo valore
-                if(actualchannel.getMinutes()!=0) minuti=actualchannel.getMinutes().intValue();
-                if(actualchannel.getLastimevalues()==0) dist=minuti;
-                else dist=actualchannel.getLastimevalues()+minuti;
-                Log.d("minuti è:", String.valueOf(actualchannel.getMinutes()));
-                Log.d("lasttime è:", String.valueOf(actualchannel.getLastimevalues()));
-                Log.d("Distanza è:", String.valueOf(dist));
-                String urlString;
-                if(dist==0){
-                    urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
-                            + "&results=1" + "&offset="+getCurrentTimezoneOffset();
-                }
-                else urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
-                        + "&minutes=" + dist + "&offset="+getCurrentTimezoneOffset();
-                getJsonResponse(urlString,actualchannel);
-                Log.d("URL", urlString);
-                ok=true;
-            }
+        Channel actualchannel = db.ChannelDao().findByName(channel.getId(),channel.getRead_key());
+        int dist=0;
+        //se l'utente non ha settato il range di tempo per la media conto come distanza il tempo dall'ultimo valore
+        if(actualchannel.getMinutes()!=0) minuti=actualchannel.getMinutes().intValue();
+        if(actualchannel.getLastimevalues()==0) dist=minuti;
+        else dist=actualchannel.getLastimevalues()+minuti;
+        Log.d("MyTimerTask", "minuti : " + actualchannel.getMinutes());
+        Log.d("MyTimerTask", "lasttime è: " + actualchannel.getLastimevalues());
+        Log.d("MyTimerTask", "Distanza è:" + dist);
+        String urlString;
+        //se la distanza è 0 recupero solo l'ultimo valore
+        if(dist==0){
+            urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
+                    + "&results=1" + "&offset="+getCurrentTimezoneOffset();
         }
-        //se non ho nessun channel con le notifiche abilitate interrompo il servizio
-        if(!ok) ExampleService.stoptimer();
+        else urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
+                + "&minutes=" + dist + "&offset="+getCurrentTimezoneOffset();
+        getJsonResponse(urlString,actualchannel);
+        Log.d("URL", urlString);
     }
 
     //metodo per reperire le risposte json
@@ -277,12 +254,12 @@ public class MyTimerTask extends TimerTask {
                             //invio le notifiche se i valori non rispettano le soglie imposte
                             if(channel.getNotification()) {
                                 //controllo se ho letto effettivamente dei valori
-                                if(somt!=0) notification(temp,t,channel.getImagetemp(),channel.getTempMin(),channel.getTempMax(),channel,1,"temperatura");
-                                if(somu!=0) notification(umid,u,channel.getImageumid(),channel.getUmidMin(),channel.getUmidMax(),channel,2,"umidità");
-                                if(somp!=0) notification(ph,p,channel.getImageph(),channel.getPhMin(),channel.getPhMax(),channel,3,"ph");
-                                if(somc!=0) notification(cond,c,channel.getImagecond(),channel.getCondMin(),channel.getCondMax(),channel,4,"conducibilità");
-                                if(somir!=0) notification(irra,ir,channel.getImageirra(),channel.getIrraMin(),channel.getIrraMax(),channel,5,"irradianza");
-                                if(ok) notification(peso, ev,channel.getImagepeso(),channel.getPesMin(),channel.getPesMax(),channel,6,"evapotraspirazione");
+                                if(somt!=0) notification(t,channel.getImagetemp(),channel.getTempMin(),channel.getTempMax(),channel,1,"temperatura");
+                                if(somu!=0) notification(u,channel.getImageumid(),channel.getUmidMin(),channel.getUmidMax(),channel,2,"umidità");
+                                if(somp!=0) notification(p,channel.getImageph(),channel.getPhMin(),channel.getPhMax(),channel,3,"ph");
+                                if(somc!=0) notification(c,channel.getImagecond(),channel.getCondMin(),channel.getCondMax(),channel,4,"conducibilità");
+                                if(somir!=0) notification(ir,channel.getImageirra(),channel.getIrraMin(),channel.getIrraMax(),channel,5,"irradianza");
+                                if(ok) notification(ev,channel.getImagepeso(),channel.getPesMin(),channel.getPesMax(),channel,6,"evapotraspirazione");
 
 
                                 try{
@@ -362,10 +339,8 @@ public class MyTimerTask extends TimerTask {
         return (int) durata;
     }
 
-    private void notification(TextView text,Double t, String getimage,Double getmin,Double getmacx,Channel channel,int i,String defaultvalue) {
+    private void notification(Double t, String getimage,Double getmin,Double getmacx,Channel channel,int i,String defaultvalue) {
         try {
-            //controllo che temp esiste ancora (nel caso dovessi rappresentarlo a schermo)
-            if (text != null) text.setText(String.valueOf(t));
             //controllo che ho inserito un valore nella temperatura minima
             if (getmin != null){
                 String value = null;
@@ -404,7 +379,6 @@ public class MyTimerTask extends TimerTask {
                     else  printnotify("Channel (" + channel.getId() + ") "+value +" high!", (i+10)+Integer.valueOf(channel.getId()));
             }
         } catch (Exception e) {
-            if (text != null) text.setText("- -");
         }
     }
 }

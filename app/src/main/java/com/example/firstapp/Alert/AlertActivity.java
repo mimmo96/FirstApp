@@ -64,16 +64,19 @@ public class AlertActivity extends AppCompatActivity {
     private static TextView irra;
     private static TextView peso;
     private static EditText minutes;
-    private static Intent serviceIntent;
     private static Channel channel;             //channel usato
     private static AppDatabase database;
     private static Switch aSwitch;
     private static int minuti=0;
+    private static Intent serviceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alert_settings);
+
+        //inizializzo l'intent per il service da lanciare in background
+        serviceIntent = new Intent(this, ExampleService.class);
 
         cont=getApplication();
         notificationManager=NotificationManagerCompat.from(this);
@@ -107,8 +110,6 @@ public class AlertActivity extends AppCompatActivity {
                 //build mi serve per costruire il tutto
                 .build();
 
-        serviceIntent = new Intent(this, ExampleService.class);
-
         //ripristino i valori relativi al channel precedentemente salvati
         if (channel.getTempMin()!= null ) tempMin.setText(String.format(channel.getTempMin().toString()));
         if (channel.getTempMax()!=null) tempMax.setText(String.format(channel.getTempMax().toString()));
@@ -135,13 +136,13 @@ public class AlertActivity extends AppCompatActivity {
         //se le notifiche erano attive avvio il servizio notifiche
         if (channel.getNotification()){
             aSwitch.setChecked(true);
-            startService();
+            //devo attivare il service se le notifiche erano attive
         }
         else{
             aSwitch.setChecked(false);
         }
 
-        //scarico la media dei valori e la rapresento a schermo
+        //scarico la media dei valori e la rappresento a schermo
         downloadMedia();
 
         aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -150,23 +151,24 @@ public class AlertActivity extends AppCompatActivity {
                 //appena l'irrigazione è attiva
                 if (isChecked){
                     Log.d("AlertActivity","attivo notifiche");
-                    startService();
                     //abilito le notifiche
                     Channel x=database.ChannelDao().findByName(channel.getId(),channel.getRead_key());
                     database.ChannelDao().delete(x);
                     x.setNotification(true);
                     database.ChannelDao().insert(x);
+                    //comunico al service che devo attivare le notifiche
+                    startService(serviceIntent);
                     channel=x;
                 }
                 else{
                     Log.d("AlertActivity","fermo notifiche");
-
                     //disabilito le notifiche
                     Channel x=database.ChannelDao().findByName(channel.getId(),channel.getRead_key());
                     database.ChannelDao().delete(x);
                     x.setNotification(false);
                     database.ChannelDao().insert(x);
-                    stopService();
+                    //devo interrompere il servizio delle notifiche
+                    ExampleService.stopNotification(x);
                 }
             }
         });
@@ -174,21 +176,24 @@ public class AlertActivity extends AppCompatActivity {
     }
 
     private void downloadMedia() {
-        String url=null;
-        if(minuti==0){
-            url= "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key="
-                    + channel.getRead_key() + "&results=1";
+        Channel actualchannel = database.ChannelDao().findByName(channel.getId(),channel.getRead_key());
+        int dist=0;
+        //se l'utente non ha settato il range di tempo per la media conto come distanza il tempo dall'ultimo valore
+        if(actualchannel.getMinutes()!=0) minuti=actualchannel.getMinutes().intValue();
+        if(actualchannel.getLastimevalues()==0) dist=minuti;
+        else dist=actualchannel.getLastimevalues()+minuti;
+        Log.d("MyTimerTask", "minuti : " + actualchannel.getMinutes());
+        Log.d("MyTimerTask", "lasttime è: " + actualchannel.getLastimevalues());
+        Log.d("MyTimerTask", "Distanza è:" + dist);
+        String urlString=null;
+        //se la distanza è 0 recupero solo l'ultimo valore
+        if(dist==0){
+            urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
+                    + "&results=1" + "&offset="+getCurrentTimezoneOffset();
         }
-        else{
-            int dist=0;
-            //se l'utente non ha settato il rnge di tempo per la media conto come distanza il tempo dall'ultimo valore
-            if(channel.getLastimevalues()==0) dist=minuti;
-            else dist=channel.getLastimevalues()+minuti;
-            Log.d("VALORI: ","distanza salvata: " + channel.getLastimevalues() + " ultimi minuti: " + minuti +" Distanza totale:"+ (minuti+channel.getLastimevalues()));
-            url= "https://api.thingspeak.com/channels/" + channel.getId() + "/feeds.json?api_key="
-                    + channel.getRead_key() + "&minutes=" + dist + "&offset="+getCurrentTimezoneOffset();
-        }
-            final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+        else urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
+                + "&minutes=" + dist + "&offset="+getCurrentTimezoneOffset();
+            final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlString, null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
@@ -501,26 +506,7 @@ public class AlertActivity extends AppCompatActivity {
             Toast.makeText(cont,"VALORI RESETTATI CORRETTAMENTE",Toast.LENGTH_SHORT).show();
     }
 
-    //funzione eseguita quando attivo le notifiche
-    public void startService() {
-            //se era stata già avviata fermo la precedente
-            if (channel.getTimer()!=null ) {
-                Log.d("TERMINO","sto terminando");
-                stopService();
-            }
-
-            //converto i minuti in Stringa;
-            String min=minutes.getText().toString();
-
-            //setto i parametri da me impostati al service
-            ExampleService.setvalue(temp, umid, ph, cond, irra, peso, channel, database,min);
-            ContextCompat.startForegroundService(this, serviceIntent);
-    }
-
-    public static void stopService() {
-        ExampleService.stoptimer();
-    }
-
+    //inizializzo in channel all'apertura iniziale
     public static void setChannel(Channel chan){
         channel=chan;
     }
@@ -556,6 +542,18 @@ public class AlertActivity extends AppCompatActivity {
 
         //restituisco la durata in minuti approssimata ad un minuto in piu per sicurezza
         return  (durata/60)+2;
+    }
+
+    //per avviare ExampleServices
+    public void startService() {
+        ContextCompat.startForegroundService(this, serviceIntent);
+        Log.d("MAINACTIVITY","STARTSERVICE");
+    }
+
+    //per fermare ExampleServices
+    public static void stopService() {
+        ExampleService.stoptimer();
+        Log.d("MAINACTIVITY","STOPSERVICE");
     }
 
 }

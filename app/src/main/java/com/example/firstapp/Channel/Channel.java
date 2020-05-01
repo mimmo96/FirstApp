@@ -65,8 +65,6 @@ public class Channel {
     private Double FlussoAcqua=null;
     private Double Leachingfactor =null;
     private int Numirra =0;
-    private static Timer timer=null;
-    private static MyTimerTask timerTask=null;
     private static AlarmManager alarmManager=null;
     private static String TimeAlarm=null;
     //valori settati dall'utente
@@ -94,22 +92,6 @@ public class Channel {
 
     public void setNotification(boolean notification) {
         this.notification = notification;
-    }
-
-    public Timer getTimer() {
-        return timer;
-    }
-
-    public void setTimer(Timer timer) {
-        Channel.timer = timer;
-    }
-
-    public MyTimerTask getTimerTask() {
-        return timerTask;
-    }
-
-    public void setTimerTask(MyTimerTask timerTask) {
-        Channel.timerTask = timerTask;
     }
 
     public String getFiled1() {
