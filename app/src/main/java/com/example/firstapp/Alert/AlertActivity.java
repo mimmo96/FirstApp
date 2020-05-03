@@ -157,7 +157,8 @@ public class AlertActivity extends AppCompatActivity {
                     x.setNotification(true);
                     database.ChannelDao().insert(x);
                     //comunico al service che devo attivare le notifiche
-                    startService(serviceIntent);
+                    stopService();
+                    startService();
                     channel=x;
                 }
                 else{
@@ -168,7 +169,7 @@ public class AlertActivity extends AppCompatActivity {
                     x.setNotification(false);
                     database.ChannelDao().insert(x);
                     //devo interrompere il servizio delle notifiche
-                    ExampleService.stopNotification(x);
+                    MyTimerTask.remove(x);
                 }
             }
         });

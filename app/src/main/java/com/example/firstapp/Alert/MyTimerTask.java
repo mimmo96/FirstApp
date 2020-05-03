@@ -52,17 +52,14 @@ import static com.example.firstapp.Graphic.MainActivity.getCurrentTimezoneOffset
  */
 
 public class MyTimerTask extends TimerTask {
-    private static Channel channel;
+    private static List<Channel> channel;
     private static Context cont;
     private static NotificationManagerCompat notificationManager;
     private static AppDatabase db;
     private int minuti=0;
 
-    public MyTimerTask(Channel chan,Context context,AppDatabase database) {
-        if(chan!=null){
-            Log.d("CHAN",chan.getId());
-            channel=chan;
-        }
+    public MyTimerTask(List<Channel> chan, Context context, AppDatabase database) {
+        channel=chan;
         db=database;
         cont=context;
         notificationManager=NotificationManagerCompat.from(cont);
@@ -70,25 +67,34 @@ public class MyTimerTask extends TimerTask {
 
     @Override
     public void run() {
-        Channel actualchannel = db.ChannelDao().findByName(channel.getId(),channel.getRead_key());
-        int dist=0;
-        //se l'utente non ha settato il range di tempo per la media conto come distanza il tempo dall'ultimo valore
-        if(actualchannel.getMinutes()!=0) minuti=actualchannel.getMinutes().intValue();
-        if(actualchannel.getLastimevalues()==0) dist=minuti;
-        else dist=actualchannel.getLastimevalues()+minuti;
-        Log.d("MyTimerTask", "minuti : " + actualchannel.getMinutes());
-        Log.d("MyTimerTask", "lasttime è: " + actualchannel.getLastimevalues());
-        Log.d("MyTimerTask", "Distanza è:" + dist);
-        String urlString;
-        //se la distanza è 0 recupero solo l'ultimo valore
-        if(dist==0){
-            urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
-                    + "&results=1" + "&offset="+getCurrentTimezoneOffset();
+        Log.d("TOTALE",String.valueOf(db.ChannelDao().getAll().size()));
+        //recupero la lista e controllo lo stato dei channel con il database
+        for(int i=0;i<channel.size();i++) {
+
+            Channel actualchannel = db.ChannelDao().findByName(channel.get(i).getId(), channel.get(i).getRead_key());
+            int dist = 0;
+            //se l'utente non ha settato il range di tempo per la media conto come distanza il tempo dall'ultimo valore
+            if (actualchannel.getMinutes() != 0) minuti = actualchannel.getMinutes().intValue();
+            if (actualchannel.getLastimevalues() == 0) dist = minuti;
+            else dist = actualchannel.getLastimevalues() + minuti;
+            Log.d("MyTimerTask", "Channel id : " + actualchannel.getId());
+            Log.d("MyTimerTask", "minuti : " + actualchannel.getMinutes());
+            Log.d("MyTimerTask", "lasttime è: " + actualchannel.getLastimevalues());
+            Log.d("MyTimerTask", "Distanza è:" + dist);
+            String urlString;
+            //se la distanza è 0 recupero solo l'ultimo valore
+            if (dist == 0) {
+                urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
+                        + "&results=1" + "&offset=" + getCurrentTimezoneOffset();
+            } else
+                urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
+                        + "&minutes=" + dist + "&offset=" + getCurrentTimezoneOffset();
+            if(actualchannel.getNotification()){
+                Log.d("MYTIMERTASK","AVVIO CHANNEL: "+ actualchannel.getId());
+                getJsonResponse(urlString, actualchannel);
+            }
+            Log.d("URL", urlString);
         }
-        else urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
-                + "&minutes=" + dist + "&offset="+getCurrentTimezoneOffset();
-        getJsonResponse(urlString,actualchannel);
-        Log.d("URL", urlString);
     }
 
     //metodo per reperire le risposte json
@@ -128,10 +134,8 @@ public class MyTimerTask extends TimerTask {
                             Channel v=channel;
                             //scorro tutto l'array
                             for (int i = 0; i < jsonArray.length(); i++) {
-
                                 //recupero il primo oggetto dell'array
                                 final JSONObject value = jsonArray.getJSONObject(i);
-
                                 try {
                                     String temperature = value.getString("field1");
                                     //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
@@ -305,7 +309,6 @@ public class MyTimerTask extends TimerTask {
         Calendar cal = GregorianCalendar.getInstance(tz);
         int offsetInMillis = tz.getOffset(cal.getTimeInMillis());
 
-
         return String.valueOf((offsetInMillis/(1000*3600))-1);
     }
     //restituisce la distanza in secondi dall'ultimo aggiornamento
@@ -378,6 +381,15 @@ public class MyTimerTask extends TimerTask {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void remove(Channel x){
+        if(channel!=null){
+            for(int i=0;i<channel.size();i++){
+                if(channel.get(i).getId().equals(x.getId()))
+                    channel.remove(i);
+            }
         }
     }
 }

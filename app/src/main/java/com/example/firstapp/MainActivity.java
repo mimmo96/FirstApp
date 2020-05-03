@@ -338,18 +338,6 @@ public class MainActivity extends AppCompatActivity {
         timer.scheduleAtFixedRate(timerTask, 0, 60000);
     }
 
-    //per avviare ExampleServices
-    public void startService() {
-        ContextCompat.startForegroundService(this, serviceIntent);
-        Log.d("MAINACTIVITY","STARTSERVICE");
-    }
-
-    //per fermare ExampleServices
-    public static void stopService() {
-        ExampleService.stoptimer();
-        Log.d("MAINACTIVITY","STOPSERVICE");
-    }
-
     //funzioni per settare i vari valori dei singoli fields non appena li premo
     public void tempSettings(View v) {
         //reperisco il channel utilizzato di default e faccio il parsing per scoprire quale fields è stato settato(posizione)
