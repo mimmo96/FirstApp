@@ -123,7 +123,7 @@ public class ChannelActivity  extends AppCompatActivity {
                                                                     // controllo se i parametri inseriti sono corretti
                                                                     DEFAULT_ID = taskEditText.getText().toString();
                                                                     DEFAULT_READ_KEY = taskEditText2.getText().toString();
-                                                                    DEFAULT_WRITE_KEY = taskEditText2.getText().toString();
+                                                                    DEFAULT_WRITE_KEY = taskEditText3.getText().toString();
                                                                     if (testData(DEFAULT_ID, DEFAULT_READ_KEY,DEFAULT_WRITE_KEY)) {
                                                                         //comunico il database aggiornato al thread
                                                                         MyTimerTask.updateDatabase(db);
@@ -234,6 +234,8 @@ public class ChannelActivity  extends AppCompatActivity {
                     MainActivity.setDefaultSetting(nuovo.getId(), nuovo.getRead_key(),nuovo.getWrite_key(), position-1);
                     Toast.makeText(BasicContext, "canale " + position + " cancellato!", Toast.LENGTH_SHORT).show();
                 }
+                //disattivo eventuali notifiche precedentemente settate
+                com.example.firstapp.Alert.MyTimerTask.remove(channel.get(position-1));
                 adapter.notifyDataSetChanged();
             }
         });

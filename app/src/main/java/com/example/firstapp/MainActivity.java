@@ -318,9 +318,7 @@ public class MainActivity extends AppCompatActivity {
                 WRITE_KEY=key_write;
                 url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=100";
                 restartTimer(cont);
-
             }
-
     }
 
     public static void restartTimer(Context cont) {
@@ -340,48 +338,131 @@ public class MainActivity extends AppCompatActivity {
 
     //funzioni per settare i vari valori dei singoli fields non appena li premo
     public void tempSettings(View v) {
-        //reperisco il channel utilizzato di default e faccio il parsing per scoprire quale fields è stato settato(posizione)
-        final List<savedValues> allchannel = database.SavedDao().getAll();
-        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
-        int pos=0;
-        if(inUse.getImagetemp()!=null) pos=Integer.parseInt(inUse.getImagetemp().substring(5));
-        fieldssettings(0,pos);
+        List<Channel> channeList=database.ChannelDao().getAll();
+        Channel trovato=null;
+        //controllo che esiste almeno un channel
+        for(int i=0;i<channeList.size();i++){
+            if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
+                trovato=channeList.get(i);
+            }
+        }
+        if(trovato==null){
+            Toast.makeText(cont,"INSERISCI UN CHANNEL",Toast.LENGTH_SHORT).show();
+        }
+        else {
+            //reperisco il channel utilizzato di default e faccio il parsing per scoprire quale fields è stato settato(posizione)
+            final List<savedValues> allchannel = database.SavedDao().getAll();
+            Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
+            int pos = 0;
+            if (inUse.getImagetemp() != null)
+                pos = Integer.parseInt(inUse.getImagetemp().substring(5));
+            fieldssettings(0, pos);
+        }
     }
 
     public void phSettings(View v){
-        final List<savedValues> allchannel = database.SavedDao().getAll();
-        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
-        int pos=0;
-        if(inUse.getImageph()!=null) pos=Integer.parseInt(inUse.getImageph().substring(5));
-        fieldssettings(1,pos);
+        List<Channel> channeList=database.ChannelDao().getAll();
+        Channel trovato=null;
+        //controllo che esiste almeno un channel
+        for(int i=0;i<channeList.size();i++){
+            if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
+                trovato=channeList.get(i);
+            }
+        }
+        if(trovato==null){
+            Toast.makeText(cont,"INSERISCI UN CHANNEL",Toast.LENGTH_SHORT).show();
+        }
+        else {
+            final List<savedValues> allchannel = database.SavedDao().getAll();
+            Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
+            int pos = 0;
+            if (inUse.getImageph() != null) pos = Integer.parseInt(inUse.getImageph().substring(5));
+            fieldssettings(1, pos);
+        }
     }
     public void irraSettings(View v){
-        final List<savedValues> allchannel = database.SavedDao().getAll();
-        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
-        int pos=0;
-        if(inUse.getImageirra()!=null) pos=Integer.parseInt(inUse.getImageirra().substring(5));
-        fieldssettings(2,pos);
+        List<Channel> channeList=database.ChannelDao().getAll();
+        Channel trovato=null;
+        //controllo che esiste almeno un channel
+        for(int i=0;i<channeList.size();i++){
+            if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
+                trovato=channeList.get(i);
+            }
+        }
+        if(trovato==null){
+            Toast.makeText(cont,"INSERISCI UN CHANNEL",Toast.LENGTH_SHORT).show();
+        }
+        else {
+            final List<savedValues> allchannel = database.SavedDao().getAll();
+            Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
+            int pos = 0;
+            if (inUse.getImageirra() != null)
+                pos = Integer.parseInt(inUse.getImageirra().substring(5));
+            fieldssettings(2, pos);
+        }
     }
     public void condSettings(View v){
-        final List<savedValues> allchannel = database.SavedDao().getAll();
-        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
-        int pos=0;
-        if(inUse.getImagecond()!=null)  pos=Integer.parseInt(inUse.getImagecond().substring(5));
-        fieldssettings(3,pos);
+        List<Channel> channeList=database.ChannelDao().getAll();
+        Channel trovato=null;
+        //controllo che esiste almeno un channel
+        for(int i=0;i<channeList.size();i++){
+            if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
+                trovato=channeList.get(i);
+            }
+        }
+        if(trovato==null){
+            Toast.makeText(cont,"INSERISCI UN CHANNEL",Toast.LENGTH_SHORT).show();
+        }
+        else {
+            final List<savedValues> allchannel = database.SavedDao().getAll();
+            Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
+            int pos = 0;
+            if (inUse.getImagecond() != null)
+                pos = Integer.parseInt(inUse.getImagecond().substring(5));
+            fieldssettings(3, pos);
+        }
     }
     public void pesoSettings(View v){
-        final List<savedValues> allchannel = database.SavedDao().getAll();
-        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
-        int pos=0;
-        if(inUse.getImagepeso()!=null)  pos=Integer.parseInt(inUse.getImagepeso().substring(5));
-        fieldssettings(4,pos);
+        List<Channel> channeList=database.ChannelDao().getAll();
+        Channel trovato=null;
+        //controllo che esiste almeno un channel
+        for(int i=0;i<channeList.size();i++){
+            if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
+                trovato=channeList.get(i);
+            }
+        }
+        if(trovato==null){
+            Toast.makeText(cont,"INSERISCI UN CHANNEL",Toast.LENGTH_SHORT).show();
+        }
+        else {
+            final List<savedValues> allchannel = database.SavedDao().getAll();
+            Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
+            int pos = 0;
+            if (inUse.getImagepeso() != null)
+                pos = Integer.parseInt(inUse.getImagepeso().substring(5));
+            fieldssettings(4, pos);
+        }
     }
     public void umidSettings(View v){
-        final List<savedValues> allchannel = database.SavedDao().getAll();
-        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
-        int pos=0;
-        if(inUse.getImageumid()!=null)  pos=Integer.parseInt(inUse.getImageumid().substring(5));
-        fieldssettings(5,pos);
+        List<Channel> channeList=database.ChannelDao().getAll();
+        Channel trovato=null;
+        //controllo che esiste almeno un channel
+        for(int i=0;i<channeList.size();i++){
+            if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
+                trovato=channeList.get(i);
+            }
+        }
+        if(trovato==null){
+            Toast.makeText(cont,"INSERISCI UN CHANNEL",Toast.LENGTH_SHORT).show();
+        }
+        else {
+            final List<savedValues> allchannel = database.SavedDao().getAll();
+            Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
+            int pos = 0;
+            if (inUse.getImageumid() != null)
+                pos = Integer.parseInt(inUse.getImageumid().substring(5));
+            fieldssettings(5, pos);
+        }
     }
 
     public void fieldssettings(final int field,int posizione){
@@ -488,15 +569,29 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //azione svolta quando premo sul pulsante irrigazione
     public void irrigation(View v){
-        Intent intent = IrrigationActivity.getActivityintent(MainActivity.this);
+        List<Channel> channeList=database.ChannelDao().getAll();
+        Channel trovato=null;
+        //controllo che esiste almeno un channel
+        for(int i=0;i<channeList.size();i++){
+            if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
+                trovato=channeList.get(i);
+            }
+        }
+        if(trovato==null){
+            Toast.makeText(cont,"INSERISCI UN CHANNEL",Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Intent intent = IrrigationActivity.getActivityintent(MainActivity.this);
 
-        //cerco nel database il channel in uso e lo mando
-        List<savedValues> allchannel = database.SavedDao().getAll();
-        Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
+            //cerco nel database il channel in uso e lo mando
+            List<savedValues> allchannel = database.SavedDao().getAll();
+            Channel inUse = database.ChannelDao().findByName(allchannel.get(0).getId(), allchannel.get(0).getRead_key());
 
-        IrrigationActivity.setChannle(inUse);
-        startActivity(intent);
+            IrrigationActivity.setChannle(inUse);
+            startActivity(intent);
+        }
     }
 
 }

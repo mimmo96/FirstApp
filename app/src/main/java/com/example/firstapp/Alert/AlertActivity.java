@@ -182,7 +182,7 @@ public class AlertActivity extends AppCompatActivity {
         //se l'utente non ha settato il range di tempo per la media conto come distanza il tempo dall'ultimo valore
         if(actualchannel.getMinutes()!=0) minuti=actualchannel.getMinutes().intValue();
         if(actualchannel.getLastimevalues()==0) dist=minuti;
-        else dist=actualchannel.getLastimevalues()+minuti;
+        else dist=actualchannel.getLastimevalues()+minuti+1;
         Log.d("MyTimerTask", "minuti : " + actualchannel.getMinutes());
         Log.d("MyTimerTask", "lasttime è: " + actualchannel.getLastimevalues());
         Log.d("MyTimerTask", "Distanza è:" + dist);
@@ -225,6 +225,8 @@ public class AlertActivity extends AppCompatActivity {
                                 Double somc=0.0;
                                 Double ir = 0.0;
                                 Double somir=0.0;
+                                Double pe=0.0;
+                                Double sompe=0.0;
                                 //stringa che mi salva l'ultimo data di aggiornamento dei valori
                                 String cretime=null;
                                 Channel v=channel;
@@ -304,6 +306,15 @@ public class AlertActivity extends AppCompatActivity {
                                     }catch (Exception e){
                                     }
                                     try {
+                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
+                                        if(v.getImagepeso()!=null){
+                                            String field=value.getString(v.getImagepeso());
+                                            pe=pe+(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0);
+                                            sompe++;
+                                        }
+                                    }catch (Exception e){
+                                    }
+                                    try {
                                         cretime = value.getString("created_at");
                                         Log.d("DISTANZA ", cretime);
                                         minuti=(int)distanza(cretime);
@@ -323,8 +334,9 @@ public class AlertActivity extends AppCompatActivity {
                                 p=Math.round(p/somp * 100.0) / 100.0;
                                 c=Math.round(c/somc * 100.0) / 100.0;
                                 ir=Math.round(ir/somir * 100.0) / 100.0;
-                                Log.d("SOMMA VALORI: ","t:"+somt+" u:"+ somu +" p:"+ somp +" c:"+ somc +" ir:"+ somir);
-                                Log.d("MEDIA VALORI: ","t:"+t+" u:"+ u +" p:"+ p +" c:"+ c +" ir:"+ ir);
+                                pe=Math.round(pe/sompe * 100.0) / 100.0;
+                                Log.d("SOMMA VALORI: ","t:"+somt+" u:"+ somu +" p:"+ somp +" c:"+ somc +" ir:"+ somir+" pe:"+ sompe);
+                                Log.d("MEDIA VALORI: ","t:"+t+" u:"+ u +" p:"+ p +" c:"+ c +" ir:"+ ir +" pe:"+ pe);
 
                                 if (channel.getNotification()) Log.d("NOTIFICHE", "ATTIVE");
                                 else Log.d("NOTIFICHE", "NON ATTIVE");
@@ -373,6 +385,13 @@ public class AlertActivity extends AppCompatActivity {
                                         }
                                     } catch (Exception e) {
                                       irra.setText("- -");
+                                    }
+                                     try {
+                                         if (peso != null){
+                                              if(sompe!=0)   peso.setText(String.valueOf(pe));
+                                        }
+                                    } catch (Exception e) {
+                                     peso.setText("- -");
                                     }
 
                             } catch (Exception e) {

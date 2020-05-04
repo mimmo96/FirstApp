@@ -22,6 +22,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.firstapp.AppDatabase;
 import com.example.firstapp.Channel.Channel;
+import com.example.firstapp.Channel.savedValues;
 import com.example.firstapp.R;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -158,13 +160,10 @@ public class IrrigationActivity extends AppCompatActivity {
         for(int i=0;i<numirra;i++) {
             int ora=(int) (distance*i);
             int minuto= (int)(((distance*i)-ora)*60);
-            /*
-             * da aggiungere solo se devo partire dalle 9
-             *
-             * ora=ora+9;
-             * if(ora>24) ora=ora-24;
-             *
-             */
+
+             ora=ora+9;
+             if(ora>24) ora=ora-24;
+
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
             //controllo che l'ora di partenza è superiore alla mia altrimenti aumento il giorno
@@ -214,10 +213,16 @@ public class IrrigationActivity extends AppCompatActivity {
     private void sendvalue(String value, final String tipo) {
 
         String url = "https://api.thingspeak.com/update.json";
+        List<savedValues> list=db.SavedDao().getAll();
+        Log.d("WRITE KEY",list.get(0).getWrite_key());
+        if(list==null || list.get(0)==null || list.get(0).getWrite_key()==null || list.get(0).getWrite_key().equals("")) {
+            Toast.makeText(getBaseContext(),"CHIAVE SCRITTURA ERRATA",Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         Map<String, String> params = new HashMap();
         params.put("accept", "application/json");
-        params.put("api_key", "PAG5TFQPULRTH8RY");
+        params.put("api_key", list.get(0).getWrite_key().toString());
         params.put("field1",value);
 
         JSONObject parameters = new JSONObject(params);
