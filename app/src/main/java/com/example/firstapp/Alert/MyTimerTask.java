@@ -82,12 +82,12 @@ public class MyTimerTask extends TimerTask {
             Log.d("MyTimerTask", "Distanza è:" + dist);
             String urlString;
             //se la distanza è 0 recupero solo l'ultimo valore
-           // if (dist == 0) {
+            if (dist == 0) {
                 urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
-                        + "&results=150" + "&offset=" + getCurrentTimezoneOffset();
-          //  } else
-            //    urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
-           //             + "&minutes=" + dist + "&offset=" + getCurrentTimezoneOffset();
+                        + "&results=1" + "&offset=" + getCurrentTimezoneOffset();
+            } else
+                urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
+                        + "&minutes=" + dist + "&offset=" + getCurrentTimezoneOffset();
             if(actualchannel.getNotification()){
                 Log.d("MYTIMERTASK","AVVIO CHANNEL: "+ actualchannel.getId());
                 getJsonResponse(urlString, actualchannel);
@@ -212,7 +212,7 @@ public class MyTimerTask extends TimerTask {
                                 }catch (Exception e){ }
                             }
 
-                            //controllo se i valori dell'evapotraspirazione rientrano nel range da me settato e se l'utente ha impostato l'evapotraspirazione
+                            //controllo se i valori dell'evapotraspirazione rientrano nel range da me settato
 
                             Boolean ok=false;
                             Double irrigazione =0.0;
