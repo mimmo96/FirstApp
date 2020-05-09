@@ -42,12 +42,6 @@
             android:exported="false" >
         </service>
 
-        <receiver
-            android:name=".Irrigation.MyReceiver"
-            android:enabled="true"
-            android:exported="false" >
-        </receiver>
-
     </application>
 
 </manifest>

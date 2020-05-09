@@ -27,11 +27,6 @@ import com.example.firstapp.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +50,7 @@ public class IrrigationActivity extends AppCompatActivity {
     private Double leaching=0.35;
     private Double flusso=160.0;
     private int numirra=1;
+    private int check=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,30 +76,32 @@ public class IrrigationActivity extends AppCompatActivity {
 
         cont=getApplicationContext();
 
+        //recupero i valori dal database
         setInitialValues();
+        //recupero i dati dal server
+        donwload();
 
+        //azione quando clicco sull'irrigazione automatica
         Switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //appena l'irrigazione è attiva
                 if (isChecked){
-                    setInitialValues();
-                    startAllarm();
-                    Toast.makeText(getBaseContext(),"IRRIGAZIONE AUTOMATICA ATTTIVATA!",Toast.LENGTH_SHORT).show();
+                    if(check!=0) {
+                        //mando i dati al server
+                        irrigationOn(flussoText.getText().toString(), leachingText.getText().toString(), irradayText.getText().toString(), "AUTOMATICA");
+                        textTime.setText("IRRIGAZIONE ATTIVATA");
+                    }
                 }
                 else{
-                    stopAllarm();
+                    //comunico al server di interrompere l'irrigazione
+                    irrigationOff();
                     textTime.setText("NESSUNA IRRIGAZIONE PRESENTE");
-                    Channel x=db.ChannelDao().findByName(channel.getId(),channel.getRead_key());
-                    db.ChannelDao().delete(x);
-                    x.setTimeAlarm("NESSUNA IRRIGAZIONE PRESENTE");
-                    x.setAlarmManager( null);
-                    db.ChannelDao().insert(x);
-                    Toast.makeText(getBaseContext(),"IRRIGAZIONE AUTOMATICA DISATTTIVATA!",Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+        //azione quando clicco sul bottone per attivare l'irrigazione manuale
         irra.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,6 +110,7 @@ public class IrrigationActivity extends AppCompatActivity {
         });
     }
 
+    //recupero dal database i dati precedentemente configurati
     private void setInitialValues() {
         if(channel.getAlarmManager()!=null){
             alarmManager=channel.getAlarmManager();
@@ -143,73 +142,7 @@ public class IrrigationActivity extends AppCompatActivity {
         MyNewIntentService.settingvalue(leaching,flusso);
     }
 
-    public void startAllarm() {
-        Intent notifyIntent = new Intent(this,MyReceiver.class);
-        pendingIntent = PendingIntent.getBroadcast(cont, 100, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager = (AlarmManager) cont.getSystemService(Context.ALARM_SERVICE);
-
-        //secupero il channel associato
-        Channel x=db.ChannelDao().findByName(channel.getId(),channel.getRead_key());
-
-        //resetto le date precedentemente impostate
-        textTime.setText("IRRIGAZIONE AUTOMATICA:\n");
-
-        //misuro la distanza tra le ore
-        double distance=(24.0/numirra);
-
-        for(int i=0;i<numirra;i++) {
-            int ora=(int) (distance*i);
-            int minuto= (int)(((distance*i)-ora)*60);
-
-             ora=ora+9;
-             if(ora>24) ora=ora-24;
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            //controllo che l'ora di partenza è superiore alla mia altrimenti aumento il giorno
-            if(ora<=calendar.getTime().getHours()){
-                Log.d("GIORNOPROVA",String.valueOf(calendar.getTime().getDate()));
-                calendar.set(Calendar.DAY_OF_MONTH,calendar.getTime().getDate()+1);
-            }
-            calendar.set(Calendar.HOUR_OF_DAY, ora);
-            calendar.set(Calendar.MINUTE, minuto);
-            calendar.set(Calendar.SECOND, 00);
-
-            SimpleDateFormat format1 = new SimpleDateFormat("HH:mm:ss");
-            Date date = calendar.getTime();
-            String time = format1.format(date);
-
-            String text=textTime.getText().toString();
-            text=text.concat(time +"\n");
-            textTime.setText(text);
-            //avvia l'allarme esattamente a quell'ora ogni giorno
-            Log.d("DATA SETTATA:",calendar.getTime().toString());
-
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,  calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
-        }
-
-        //nel caso voglia attivarla con una data mia settata
-        //Calendar calendar = Calendar.getInstance();
-        //calendar.setTimeInMillis(System.currentTimeMillis());
-        //calendar.set(Calendar.HOUR_OF_DAY, 15);
-        //calendar.set(Calendar.MINUTE, 31);
-        //calendar.set(Calendar.SECOND, 00);
-        //alarmManager.setExact(AlarmManager.RTC_WAKEUP,  calendar.getTimeInMillis(),pendingIntent);
-
-        db.ChannelDao().delete(x);
-        x.setAlarmManager(alarmManager);
-        x.setTimeAlarm(textTime.getText().toString());
-        db.ChannelDao().insert(x);
-
-        Log.d("ALARM","ATTIVATO");
-    }
-
-    public void stopAllarm(){
-        alarmManager.cancel(pendingIntent);
-        Log.d("ALARM","DISATTIVATO");
-    }
-
-    //invio i dati al server
+    //invio i dati al server (in caso di attivazione manuale)
     private void sendvalue(String value, final String tipo) {
 
         String url = "https://api.thingspeak.com/update.json";
@@ -224,6 +157,11 @@ public class IrrigationActivity extends AppCompatActivity {
         params.put("accept", "application/json");
         params.put("api_key", list.get(0).getWrite_key().toString());
         params.put("field1",value);
+        params.put("field2",flussoText.getText().toString());
+        params.put("field3",leachingText.getText().toString());
+        params.put("field4", irradayText.getText().toString());
+        if(Switch.isChecked()) params.put("field6","1");
+        else params.put("field6","0");
 
         JSONObject parameters = new JSONObject(params);
 
@@ -243,12 +181,83 @@ public class IrrigationActivity extends AppCompatActivity {
         Volley.newRequestQueue(this).add(jsonRequest);
     }
 
+    //invio i dati al server (in caso di attivazione automatica)
+    private void irrigationOn(String flusso,String Leaching,String numirra,  final String tipo) {
+
+        String url = "https://api.thingspeak.com/update.json";
+        List<savedValues> list=db.SavedDao().getAll();
+        Log.d("WRITE KEY",list.get(0).getWrite_key());
+        if(list==null || list.get(0)==null || list.get(0).getWrite_key()==null || list.get(0).getWrite_key().equals("")) {
+            Toast.makeText(getBaseContext(),"CHIAVE SCRITTURA ERRATA",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Map<String, String> params = new HashMap();
+        params.put("accept", "application/json");
+        params.put("api_key", list.get(0).getWrite_key().toString());
+        params.put("field2",flusso);
+        params.put("field3",Leaching);
+        params.put("field4",numirra);
+        params.put("field6",String.valueOf(1));
+
+        JSONObject parameters = new JSONObject(params);
+
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Toast.makeText(getBaseContext(),"IRRIGAZIONE"+tipo+" ATTTIVATA!",Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getBaseContext(),"ERRORE IRRIGAZIONE " +tipo+"!",Toast.LENGTH_SHORT).show();
+                error.printStackTrace();
+            }
+        });
+
+        Volley.newRequestQueue(this).add(jsonRequest);
+    }
+
+    //invio i dati al server (in caso di attivazione automatica)
+    private void irrigationOff() {
+
+        String url = "https://api.thingspeak.com/update.json";
+        List<savedValues> list=db.SavedDao().getAll();
+        Log.d("WRITE KEY",list.get(0).getWrite_key());
+        if(list==null || list.get(0)==null || list.get(0).getWrite_key()==null || list.get(0).getWrite_key().equals("")) {
+            Toast.makeText(getBaseContext(),"CHIAVE SCRITTURA ERRATA",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Map<String, String> params = new HashMap();
+        params.put("accept", "application/json");
+        params.put("api_key", list.get(0).getWrite_key().toString());
+        params.put("field2",flussoText.getText().toString());
+        params.put("field3",leachingText.getText().toString());
+        params.put("field4", irradayText.getText().toString());
+        params.put("field6","0");
+
+        JSONObject parameters = new JSONObject(params);
+
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Toast.makeText(getBaseContext(),"IRRIGAZIONE AUTOMATICA DIATTTIVATA!",Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getBaseContext(),"ERRORE DISATTIVAZIONE IRRIGAZIONE!",Toast.LENGTH_SHORT).show();
+                error.printStackTrace();
+            }
+        });
+
+        Volley.newRequestQueue(this).add(jsonRequest);
+    }
 
     //metodi che mi servono per settare le impostazioni
-
     public void saveirrigationvalues(View v){
         Channel x=db.ChannelDao().findByName(channel.getId(),channel.getRead_key());
-        boolean ok=true;
 
         if(x!=null){
             db.ChannelDao().delete(x);
@@ -256,31 +265,26 @@ public class IrrigationActivity extends AppCompatActivity {
                 x.setIrrigationDuration(Double.parseDouble(durationText.getText().toString()));
             }catch (Exception e){
                 e.printStackTrace();
-                ok=false;
             }
             try {
                 flusso=Double.parseDouble(flussoText.getText().toString());
                 x.setFlussoAcqua(flusso);
             }catch (Exception e){
                 e.printStackTrace();
-                ok=false;
             }
             try {
                 leaching=Double.parseDouble(leachingText.getText().toString());
                 x.setLeachingfactor(leaching);
             }catch (Exception e){
                 e.printStackTrace();
-                ok=false;
             }
             try {
                 numirra=Integer.parseInt(irradayText.getText().toString());
                 x.setNumirra(numirra);
             }catch (Exception e){
                 e.printStackTrace();
-                ok=false;
             }
-            if(ok) Toast.makeText(getApplicationContext(),"VALORI SALVATI CORRETTAMENTE",Toast.LENGTH_SHORT).show();
-            else Toast.makeText(getApplicationContext(),"ERRORE NEL SALVATAGGIO DI ALCUNI VALORI",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"VALORI SALVATI CORRETTAMENTE",Toast.LENGTH_SHORT).show();
             db.ChannelDao().insert(x);
             MyNewIntentService.settingvalue(leaching,flusso);
         }
@@ -319,5 +323,54 @@ public class IrrigationActivity extends AppCompatActivity {
         channel=chan;
     }
 
+    private void donwload() {
+        String url="https://api.thingspeak.com/channels/1034592/feeds.json?api_key=57XDWVJMXM8VPCCU&results=1";
+
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            //recupero l'array feeds
+                            JSONArray jsonArray = response.getJSONArray("feeds");
+
+                                JSONObject valori = jsonArray.getJSONObject(0);
+                            try {
+                                if (!valori.getString("field2").equals("null")) {
+                                    flussoText.setText(valori.getString("field2"));
+                                }
+                            }catch (Exception e){ }
+
+                            try {
+                                if (!valori.getString("field3").equals("null")) {
+                                    leachingText.setText(valori.getString("field3"));
+                                }
+                            } catch (Exception e) { }
+                            try {
+                                if (!valori.getString("field4").equals("null")) {
+                                    irradayText.setText(valori.getString("field4"));
+                                }
+                            } catch (Exception e) { }
+
+                            try {
+                                if (!valori.getString("field6").equals("null")) {
+                                    if(Double.parseDouble(valori.getString("field6"))==1) Switch.setChecked(true);
+                                    else Switch.setChecked(false);
+                                    check=1;
+                                }
+                            } catch (Exception e) { }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(cont,"ERRORE RECUPERO DATI DAL SERVER",Toast.LENGTH_SHORT).show();
+            }
+        });
+        Volley.newRequestQueue(cont).add(jsonObjectRequest);
+    }
 
 }

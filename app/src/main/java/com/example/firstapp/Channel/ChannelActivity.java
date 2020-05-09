@@ -235,7 +235,7 @@ public class ChannelActivity  extends AppCompatActivity {
                     Toast.makeText(BasicContext, "canale " + position + " cancellato!", Toast.LENGTH_SHORT).show();
                 }
                 //disattivo eventuali notifiche precedentemente settate
-                com.example.firstapp.Alert.MyTimerTask.remove(channel.get(position-1));
+               if(position!=0) com.example.firstapp.Alert.MyTimerTask.remove(channel.get(position-1));
                 adapter.notifyDataSetChanged();
             }
         });
