@@ -1,64 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/editText13"
+        android:id="@+id/channelRead_Lett"
         android:layout_width="149dp"
         android:layout_height="36dp"
         android:ems="10"
         android:hint="inserisci chiave lettura"
         android:inputType="textPersonName"
         android:textSize="12sp"
-        tools:layout_editor_absoluteX="3dp"
-        tools:layout_editor_absoluteY="198dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/channelRead_Scritt"
+        app:layout_constraintHorizontal_bias="0.231"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.465" />
 
     <EditText
-        android:id="@+id/editText9"
-        android:layout_width="150dp"
-        android:layout_height="36dp"
-        android:ems="10"
-        android:hint="inserisci ID"
-        android:inputType="textPersonName"
-        android:textSize="12sp"
-        tools:layout_editor_absoluteX="3dp"
-        tools:layout_editor_absoluteY="140dp" />
-
-    <EditText
-        android:id="@+id/editText10"
-        android:layout_width="154dp"
-        android:layout_height="36dp"
-        android:ems="10"
-        android:hint="inserisci chiave scrittura"
-        android:inputType="textPersonName"
-        android:textSize="12sp"
-        tools:layout_editor_absoluteX="160dp"
-        tools:layout_editor_absoluteY="254dp" />
-
-    <EditText
-        android:id="@+id/editText12"
+        android:id="@+id/channelRead_Scritt"
         android:layout_width="155dp"
         android:layout_height="36dp"
         android:ems="10"
         android:hint="inserisci chiave lettura"
         android:inputType="textPersonName"
         android:textSize="12sp"
-        tools:layout_editor_absoluteX="159dp"
-        tools:layout_editor_absoluteY="198dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.952"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.464" />
 
     <EditText
-        android:id="@+id/editText14"
+        android:id="@+id/channelID_Lett"
+        android:layout_width="150dp"
+        android:layout_height="36dp"
+        android:ems="10"
+        android:hint="inserisci ID"
+        android:inputType="textPersonName"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/channelID_Scritt"
+        app:layout_constraintHorizontal_bias="0.231"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.355" />
+
+    <EditText
+        android:id="@+id/channelWrite_Scritt"
+        android:layout_width="154dp"
+        android:layout_height="36dp"
+        android:ems="10"
+        android:hint="inserisci chiave scrittura"
+        android:inputType="textPersonName"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.945"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.577" />
+
+    <EditText
+        android:id="@+id/channelID_Scritt"
         android:layout_width="155dp"
         android:layout_height="36dp"
         android:ems="10"
         android:hint="inserisci ID"
         android:inputType="textPersonName"
         android:textSize="12sp"
-        tools:layout_editor_absoluteX="160dp"
-        tools:layout_editor_absoluteY="140dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.956"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.355" />
 
     <TextView
         android:id="@+id/textView3"
@@ -66,8 +87,12 @@
         android:layout_height="38dp"
         android:text="INSERISCI NUOVO PROFILO"
         android:textSize="18sp"
-        tools:layout_editor_absoluteX="38dp"
-        tools:layout_editor_absoluteY="16dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.038" />
 
     <TextView
         android:id="@+id/textView21"
@@ -76,8 +101,12 @@
         android:text="CHANNEL LETTURA"
         android:textColor="#171616"
         android:textSize="12sp"
-        tools:layout_editor_absoluteX="3dp"
-        tools:layout_editor_absoluteY="114dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.12"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.276" />
 
     <TextView
         android:id="@+id/textView22"
@@ -86,22 +115,34 @@
         android:text="CHANNEL SCRITTURA"
         android:textColor="#171616"
         android:textSize="12sp"
-        tools:layout_editor_absoluteX="160dp"
-        tools:layout_editor_absoluteY="114dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.919"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.276" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="95dp"
         android:layout_height="39dp"
         android:text="SALVA"
-        tools:layout_editor_absoluteX="209dp"
-        tools:layout_editor_absoluteY="363dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.861"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.87" />
 
     <Button
-        android:id="@+id/button6"
+        android:id="@+id/buttonAnnul"
         android:layout_width="97dp"
         android:layout_height="38dp"
         android:text="ANNULLA"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="364dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.114"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.871" />
 </androidx.constraintlayout.widget.ConstraintLayout>

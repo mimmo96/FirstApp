@@ -176,7 +176,6 @@ public class ChannelActivity  extends AppCompatActivity {
         adapter=new RecyclerViewAdapter(channel,BasicContext,db);
         recycleView.setAdapter(adapter);
         recycleView.setHasFixedSize(true);
-
     }
 
 
@@ -190,7 +189,6 @@ public class ChannelActivity  extends AppCompatActivity {
         adapter=new RecyclerViewAdapter(channel,BasicContext,db);
         recycleView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-
     }
 
 
@@ -247,7 +245,6 @@ public class ChannelActivity  extends AppCompatActivity {
         });
         AlertDialog allert=builder.create();
         allert.show();
-
     }
 
     //eseguito quando premo sul pulsante per i preferiti
