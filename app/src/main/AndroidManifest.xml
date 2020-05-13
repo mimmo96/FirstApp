@@ -28,6 +28,10 @@
             android:name=".Irrigation.IrrigationActivity"
             android:label="IrrigationActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".Channel.Channelinsert"
+            android:label="Channelinsert"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,10 +41,6 @@
         </activity>
         <service android:name=".Alert.ExampleService" />
 
-        <service
-            android:name=".Irrigation.MyNewIntentService"
-            android:exported="false" >
-        </service>
 
     </application>
 

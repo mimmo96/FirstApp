@@ -3,11 +3,8 @@ package com.example.firstapp.Channel;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,10 +12,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
-import com.example.firstapp.Alert.AlertActivity;
 import com.example.firstapp.AppDatabase;
 import com.example.firstapp.MainActivity;
-import com.example.firstapp.MyTimerTask;
 import com.example.firstapp.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.json.JSONObject;
@@ -88,85 +83,8 @@ public class ChannelActivity  extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final EditText taskEditText =new EditText(BasicContext);
-                //specifico che devo prendere solo numeri interi
-                taskEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                taskEditText.setRawInputType(Configuration.KEYBOARD_12KEY);
-
-                final EditText taskEditText2 =new EditText(BasicContext);
-                final EditText taskEditText3 =new EditText(BasicContext);
-                AlertDialog.Builder dialog=new AlertDialog.Builder(BasicContext)
-                        .setTitle("NUOVO CANALE")
-                        .setMessage("INSERISCI ID")
-                        .setView(taskEditText)
-                        .setPositiveButton("AVANTI", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                AlertDialog.Builder dialog2=new AlertDialog.Builder(BasicContext)
-                                        .setTitle("NUOVO CANALE")
-                                        .setMessage("INSERISCI CHIAVE LETTURA")
-                                        .setView(taskEditText2)
-                                        .setPositiveButton("AVANTI", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                 AlertDialog.Builder dialog3=new AlertDialog.Builder(BasicContext)
-                                                .setTitle("NUOVO CANALE")
-                                                .setMessage("INSERISCI CHIAVE SCRITTURA")
-                                                .setView(taskEditText3)
-                                                .setPositiveButton("CONFERMA", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                    //controllo se i dati inseriti corrispondono ad un channel esistente
-                                                                if (db.ChannelDao().findByName(taskEditText.getText().toString(), taskEditText2.getText().toString()) != null)
-                                                                    Toast.makeText(BasicContext, "channel già esistente!", Toast.LENGTH_SHORT).show();
-                                                                else {
-                                                                    // controllo se i parametri inseriti sono corretti
-                                                                    DEFAULT_ID = taskEditText.getText().toString();
-                                                                    DEFAULT_READ_KEY = taskEditText2.getText().toString();
-                                                                    DEFAULT_WRITE_KEY = taskEditText3.getText().toString();
-                                                                    if (testData(DEFAULT_ID, DEFAULT_READ_KEY,DEFAULT_WRITE_KEY)) {
-                                                                        //comunico il database aggiornato al thread
-                                                                        MyTimerTask.updateDatabase(db);
-                                                                        Toast.makeText(BasicContext, "operazione eseguita correttamente!", Toast.LENGTH_SHORT).show();
-                                                                        //segnalo al thread principale i nuovi id,key
-                                                                        if (pos == -1) pos = 0;
-                                                                        MainActivity.setDefaultSetting(DEFAULT_ID, DEFAULT_READ_KEY, DEFAULT_WRITE_KEY, pos);
-                                                                    } else
-                                                                        Toast.makeText(BasicContext, "operazione ERRATA!", Toast.LENGTH_SHORT).show();
-                                                                    //segnalo eventuali modifiche
-                                                                    adapter.notifyDataSetChanged();
-                                                                }
-                                                            }
-                                                        })
-                                                         .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                                                             @Override
-                                                             public void onClick(DialogInterface dialog, int which) {
-                                                                 Toast.makeText(BasicContext,"operazione annullata!",Toast.LENGTH_SHORT).show();
-                                                             }
-                                                         });
-                                                 AlertDialog allert3=dialog3.create();
-                                                 allert3.show();
-                                            }
-                                        })
-                                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                Toast.makeText(BasicContext,"operazione annullata!",Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                                AlertDialog allert2=dialog2.create();
-                                allert2.show();
-                            }
-                        })
-                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(BasicContext,"operazione annullata!",Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                AlertDialog allert=dialog.create();
-                allert.show();
+                Intent intent = Channelinsert.getActivityintent(ChannelActivity.this);
+                startActivity(intent);
             }
         });
 
