@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         for(int i=0;i<channelPos.size();i++){
-            url="https://api.thingspeak.com/channels/"+channelPos.get(i).getId()+"/feeds.json?api_key="+channelPos.get(i).getRead_key()+"&results=8000"+"&offset="+getCurrentTimezoneOffset();
+            url="https://api.thingspeak.com/channels/"+channelPos.get(i).getLett_id()+"/feeds.json?api_key="+channelPos.get(i).getLett_read_key()+"&results=8000"+"&offset="+getCurrentTimezoneOffset();
             getJsonResponse(url,i);
         }
     }
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         if(stop==0) {
             Insertdata.clear();
             for (int i = 0; i < channelPos.size(); i++) {
-                url = "https://api.thingspeak.com/channels/" + channelPos.get(i).getId() + "/feeds.json?api_key=" + channelPos.get(i).getRead_key() +
+                url = "https://api.thingspeak.com/channels/" + channelPos.get(i).getLett_id() + "/feeds.json?api_key=" + channelPos.get(i).getLett_read_key() +
                         "&start=" + annoStart + "-" + meseStart + "-" + giornoStart + "%2000:00:00&end=" + annoEnd + "-" + meseEnd + "-" + giornoEnd + "%2023:59:59" +"&offset=2" + "&results=8000";
                 getJsonResponse(url, i);
             }
@@ -330,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("FINE");
         System.out.println("Stampo channelPos :");
         for (int i = 0; i < channelPos.size(); i++) {
-            System.out.println(i + ": " + channelPos.get(i).getId());
+            System.out.println(i + ": " + channelPos.get(i).getLett_id());
         }
         System.out.println("FINE");
     }

@@ -46,7 +46,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(final MyVieworder holder, final int position) {
         final Channel chan=channel.get(position);
-        holder.testo.setText("Channel: " + chan.getId());
+        holder.testo.setText("Channel: " + chan.getLett_id());
         if(channel.get(position).getNotification()) holder.notifiche.setText("NOTIFICHE ON");
         else holder.notifiche.setText("NOTIFICHE OFF");
         pos=ChannelActivity.getposition();

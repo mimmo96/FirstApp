@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 import com.example.firstapp.AppDatabase;
 import com.example.firstapp.MainActivity;
+import com.example.firstapp.MyTimerTask;
 import com.example.firstapp.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.json.JSONObject;
@@ -49,7 +50,6 @@ public class ChannelActivity  extends AppCompatActivity {
     private static int pos=0;
     private static String DEFAULT_ID =null;
     private static String DEFAULT_READ_KEY = null;
-    private static String DEFAULT_WRITE_KEY = null;
 
     public static void setPosition(int position) {
         pos=position;
@@ -96,6 +96,27 @@ public class ChannelActivity  extends AppCompatActivity {
         recycleView.setHasFixedSize(true);
     }
 
+    public static void Execute(String id, String key, String id_scritt, String read_scritt,String write_scritt){
+        //controllo se i dati inseriti corrispondono ad un channel esistente
+        if (db.ChannelDao().findByName(id, key) != null)
+            Toast.makeText(BasicContext, "channel già esistente!", Toast.LENGTH_SHORT).show();
+        else {
+            // controllo se i parametri inseriti sono corretti
+            DEFAULT_ID = id;
+            DEFAULT_READ_KEY = key;
+            if (testData(DEFAULT_ID, DEFAULT_READ_KEY,id_scritt,read_scritt,write_scritt)) {
+                //comunico il database aggiornato al thread
+                MyTimerTask.updateDatabase(db);
+                Toast.makeText(BasicContext, "operazione eseguita correttamente!", Toast.LENGTH_SHORT).show();
+                //segnalo al thread principale i nuovi id,key
+                if (pos == -1) pos = 0;
+                MainActivity.setDefaultSetting(DEFAULT_ID, DEFAULT_READ_KEY, pos);
+            } else
+                Toast.makeText(BasicContext, "operazione ERRATA!", Toast.LENGTH_SHORT).show();
+            //segnalo eventuali modifiche
+            adapter.notifyDataSetChanged();
+        }
+    }
 
     private void getValue() {
         channel=db.ChannelDao().getAll();
@@ -131,7 +152,7 @@ public class ChannelActivity  extends AppCompatActivity {
                     //cancello il database dei canali
                     db.ChannelDao().deleteAll();
                     //invio agli altri che adesso è tutto null!
-                    MainActivity.setDefaultSetting(null, null,null,-1);
+                    MainActivity.setDefaultSetting(null, null,-1);
                 }
                 else {
                     db.ChannelDao().delete(channel.get(position));
@@ -147,7 +168,7 @@ public class ChannelActivity  extends AppCompatActivity {
                     }
 
                     Channel nuovo=channel.get(pos);
-                    MainActivity.setDefaultSetting(nuovo.getId(), nuovo.getRead_key(),nuovo.getWrite_key(), position-1);
+                    MainActivity.setDefaultSetting(nuovo.getLett_id(), nuovo.getLett_read_key(), position-1);
                     Toast.makeText(BasicContext, "canale " + position + " cancellato!", Toast.LENGTH_SHORT).show();
                 }
                 //disattivo eventuali notifiche precedentemente settate
@@ -170,16 +191,16 @@ public class ChannelActivity  extends AppCompatActivity {
         System.out.println("aumenta: " + position);
         //setto il nuovo channel come quello di default
         Channel chan = channel.get(position);
-        DEFAULT_ID = chan.getId();
-        DEFAULT_READ_KEY = chan.getRead_key();
+        DEFAULT_ID = chan.getLett_id();
+        DEFAULT_READ_KEY = chan.getLett_read_key();
         chan.setPosition(1);
-        db.ChannelDao().findByName(chan.getId(),chan.getRead_key()).setPosition(1);
+        db.ChannelDao().findByName(chan.getLett_id(),chan.getLett_read_key()).setPosition(1);
         if(pos==-1) pos=0;
         //cancello il channel precedente come default se è diverso dal precedente
         Channel prec=channel.get(pos);
-        if(chan.getId()!=prec.getId()) {
+        if(chan.getLett_id()!=prec.getLett_id()) {
             prec.setPosition(0);
-            db.ChannelDao().findByName(prec.getId(), prec.getRead_key()).setPosition(0);
+            db.ChannelDao().findByName(prec.getLett_id(), prec.getLett_read_key()).setPosition(0);
 
             //setto la nuova posizione
             pos = position;
@@ -202,7 +223,7 @@ public class ChannelActivity  extends AppCompatActivity {
 
         }
         //invio i nuovi dati di default
-        MainActivity.setDefaultSetting(DEFAULT_ID, DEFAULT_READ_KEY,DEFAULT_WRITE_KEY,pos);
+        MainActivity.setDefaultSetting(DEFAULT_ID, DEFAULT_READ_KEY,pos);
 
     }
 
@@ -217,11 +238,11 @@ public class ChannelActivity  extends AppCompatActivity {
     }
 
 
-        public boolean testData(String valueID, String valueREADKEY,String valueWRITEKEY) {
+        public static boolean testData(String valueID, String valueREADKEY, String id_scritt,String read_scritt,String write_scritt) {
 
         BlockingQueue<Boolean> esito = new LinkedBlockingQueue<Boolean>();
         ExecutorService pes = Executors.newFixedThreadPool(1);
-        pes.submit(new Task(esito, valueID, valueREADKEY,valueWRITEKEY));
+        pes.submit(new Task(esito, valueID, valueREADKEY, id_scritt, read_scritt, write_scritt));
         pes.shutdown();
         boolean esit=false;
         try {
@@ -232,35 +253,33 @@ public class ChannelActivity  extends AppCompatActivity {
         return esit;
     }
 
-    public static void stampa() {
-        for (int i = 0; i < channel.size(); i++) {
-            System.out.println(i + ": " + channel.get(i).getPosition());
-        }
-        System.out.println(pos);
-    }
+    static class Task implements Runnable {
+        private static String lett_id;
+        private static String lett_read_key;
 
-    class Task implements Runnable {
-        private String id = null;
-        private String key_read = null;
-        private String key_write = null;
-        private final BlockingQueue<Boolean> sharedQueue;
+        private static String scritt_read_key;
+        private static String scritt_id;
+        private static String write_key;
+        private final BlockingQueue<Boolean> sharedQueue ;
 
-        public Task(BlockingQueue<Boolean> esito, String valueID, String valueREADKEY,String valueWRITEKEY) {
-            this.id = valueID;
-            this.key_read = valueREADKEY;
-            this.key_write = valueWRITEKEY;
+        public Task(BlockingQueue<Boolean> esito, String id, String read_key, String id_scritt, String read_scritt, String write_scritt) {
+            lett_id = id;
+            scritt_id=id_scritt;
+            lett_read_key=read_key;
+            scritt_read_key=read_scritt;
+            write_key=write_scritt;
             this.sharedQueue = esito;
         }
 
         @Override
         public void run() {
             try {
-                URL url = new URL("https://api.thingspeak.com/channels/" + id + "/feeds.json?api_key=" + key_read);
+                URL url = new URL("https://api.thingspeak.com/channels/" + lett_id + "/feeds.json?api_key=" + lett_read_key);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
 
                 if (conn.getResponseCode() == 200) {
-                    Channel add = new Channel(id, key_read,key_write);
+                    Channel add = new Channel(lett_id,scritt_id, lett_read_key,scritt_read_key,write_key);
                     int id = -1;
                     //prendo uid dell'ultimo elemento inserito
                     if (channel.size() - 1 >= 0)

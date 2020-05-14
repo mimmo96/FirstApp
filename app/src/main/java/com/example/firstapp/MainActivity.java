@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
     private static List<savedValues> channeldefault;
     private static String channelID = null;
     private static String READ_KEY = null;
-    private static String WRITE_KEY = null;
     private static String url;
     private static AppDatabase database;
     private static TimerTask timerTask;
@@ -110,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
                 //se avevo un elmento inserito imposto quest'ultimo come default
                 channelID = channeldefault.get(0).getId();
                 READ_KEY = channeldefault.get(0).getRead_key();
-                WRITE_KEY=channeldefault.get(0).getWrite_key();
                 url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=100";
                 ChannelActivity.setPosition(channeldefault.get(0).getPosition());
             }
@@ -118,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
             else {
                 channelID = null;
                 READ_KEY = null;
-                WRITE_KEY=null;
                 url = null;
                 ChannelActivity.setPosition(-1);
             }
@@ -146,42 +143,42 @@ public class MainActivity extends AppCompatActivity {
             Channel inUse = allchannel.get(i);
             System.out.println("ho premuto:" + inUse.getFiled1());
             if (inUse.getFiled1() != null){
-                list.add(inUse.getFiled1().concat(" (id:").concat(inUse.getId()).concat(")"));
+                list.add(inUse.getFiled1().concat(" (id:").concat(inUse.getLett_id()).concat(")"));
                 selectedChannel.add(inUse);
                 posField.add(1);
             }
             if (inUse.getFiled2() != null){
-                list.add(inUse.getFiled2().concat(" (id:").concat(inUse.getId()).concat(")"));
+                list.add(inUse.getFiled2().concat(" (id:").concat(inUse.getLett_id()).concat(")"));
                 selectedChannel.add(inUse);
                 posField.add(2);
             }
             if (inUse.getFiled3() != null) {
-                list.add(inUse.getFiled3().concat(" (id:").concat(inUse.getId()).concat(")"));
+                list.add(inUse.getFiled3().concat(" (id:").concat(inUse.getLett_id()).concat(")"));
                 selectedChannel.add(inUse);
                 posField.add(3);
             }
             if (inUse.getFiled4() != null){
-                list.add(inUse.getFiled4().concat(" (id:").concat(inUse.getId()).concat(")"));
+                list.add(inUse.getFiled4().concat(" (id:").concat(inUse.getLett_id()).concat(")"));
                 selectedChannel.add(inUse);
                 posField.add(4);
             }
             if (inUse.getFiled5() != null){
-                list.add(inUse.getFiled5().concat(" (id:").concat(inUse.getId()).concat(")"));
+                list.add(inUse.getFiled5().concat(" (id:").concat(inUse.getLett_id()).concat(")"));
                 selectedChannel.add(inUse);
                 posField.add(5);
             }
             if (inUse.getFiled6() != null){
-                list.add(inUse.getFiled6().concat(" (id:").concat(inUse.getId()).concat(")"));
+                list.add(inUse.getFiled6().concat(" (id:").concat(inUse.getLett_id()).concat(")"));
                 selectedChannel.add(inUse);
                 posField.add(6);
             }
             if (inUse.getFiled7() != null){
-                list.add(inUse.getFiled7().concat(" (id:").concat(inUse.getId()).concat(")"));
+                list.add(inUse.getFiled7().concat(" (id:").concat(inUse.getLett_id()).concat(")"));
                 selectedChannel.add(inUse);
                 posField.add(7);
             }
             if (inUse.getFiled8() != null){
-                list.add(inUse.getFiled8().concat(" (id:").concat(inUse.getId()).concat(")"));
+                list.add(inUse.getFiled8().concat(" (id:").concat(inUse.getLett_id()).concat(")"));
                 selectedChannel.add(inUse);
                 posField.add(8);
             }
@@ -263,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
         Channel trovato=null;
         //controllo che esiste almeno un channel
         for(int i=0;i<channeList.size();i++){
-            if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
+            if(channeldefault.get(0).getId().equals(channeList.get(i).getLett_id())){
                 trovato=channeList.get(i);
             }
         }
@@ -281,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
         restartTimer(cont);
     }
 
-    public static void setDefaultSetting(String id, String key_read,String key_write,  int pos) {
+    public static void setDefaultSetting(String id, String key_read,int pos) {
 
         //se non ho nessun canale (pos=-1) cancello tutto
         if (pos == -1) {
@@ -309,13 +306,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             //aggiungo alla lista channel default il nuovo solo se è diverso dal precedente
                 if (channeldefault.size() != 0) channeldefault.clear();
-                channeldefault.add(new savedValues(id, key_read,key_write, pos));
+                channeldefault.add(new savedValues(id, key_read, pos));
                 database.SavedDao().deleteAll();
-                database.SavedDao().insert(new savedValues(id, key_read,key_write, pos));
-
+                database.SavedDao().insert(new savedValues(id, key_read,pos));
                 channelID = id;
                 READ_KEY = key_read;
-                WRITE_KEY=key_write;
                 url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=100";
                 restartTimer(cont);
             }
@@ -342,7 +337,7 @@ public class MainActivity extends AppCompatActivity {
         Channel trovato=null;
         //controllo che esiste almeno un channel
         for(int i=0;i<channeList.size();i++){
-            if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
+            if(channeldefault.get(0).getId().equals(channeList.get(i).getLett_id())){
                 trovato=channeList.get(i);
             }
         }
@@ -365,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
         Channel trovato=null;
         //controllo che esiste almeno un channel
         for(int i=0;i<channeList.size();i++){
-            if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
+            if(channeldefault.get(0).getId().equals(channeList.get(i).getLett_id())){
                 trovato=channeList.get(i);
             }
         }
@@ -385,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
         Channel trovato=null;
         //controllo che esiste almeno un channel
         for(int i=0;i<channeList.size();i++){
-            if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
+            if(channeldefault.get(0).getId().equals(channeList.get(i).getLett_id())){
                 trovato=channeList.get(i);
             }
         }
@@ -406,7 +401,7 @@ public class MainActivity extends AppCompatActivity {
         Channel trovato=null;
         //controllo che esiste almeno un channel
         for(int i=0;i<channeList.size();i++){
-            if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
+            if(channeldefault.get(0).getId().equals(channeList.get(i).getLett_id())){
                 trovato=channeList.get(i);
             }
         }
@@ -427,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
         Channel trovato=null;
         //controllo che esiste almeno un channel
         for(int i=0;i<channeList.size();i++){
-            if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
+            if(channeldefault.get(0).getId().equals(channeList.get(i).getLett_id())){
                 trovato=channeList.get(i);
             }
         }
@@ -448,7 +443,7 @@ public class MainActivity extends AppCompatActivity {
         Channel trovato=null;
         //controllo che esiste almeno un channel
         for(int i=0;i<channeList.size();i++){
-            if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
+            if(channeldefault.get(0).getId().equals(channeList.get(i).getLett_id())){
                 trovato=channeList.get(i);
             }
         }
@@ -575,7 +570,7 @@ public class MainActivity extends AppCompatActivity {
         Channel trovato=null;
         //controllo che esiste almeno un channel
         for(int i=0;i<channeList.size();i++){
-            if(channeldefault.get(0).getId().equals(channeList.get(i).getId())){
+            if(channeldefault.get(0).getId().equals(channeList.get(i).getLett_id())){
                 trovato=channeList.get(i);
             }
         }

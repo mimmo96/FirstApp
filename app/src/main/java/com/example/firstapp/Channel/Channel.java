@@ -1,12 +1,8 @@
 package com.example.firstapp.Channel;
 
-import android.app.AlarmManager;
-
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import com.example.firstapp.Alert.MyTimerTask;
-import java.util.Timer;
 
 /*
  * Progetto: svilluppo App Android per Tirocinio interno
@@ -24,10 +20,12 @@ public class Channel {
     private int uid;
 
     @ColumnInfo(name = "id_key")
-    private String id;
+    private String lett_id;
+    private String scritt_id;
 
     @ColumnInfo(name = "read_key")
-    private String read_key;
+    private String lett_read_key;
+    private String scritt_read_key;
     private String write_key;
 
     @ColumnInfo(name = "position_key")
@@ -65,16 +63,15 @@ public class Channel {
     private Double FlussoAcqua=null;
     private Double Leachingfactor =null;
     private int Numirra =0;
-    private static AlarmManager alarmManager=null;
-    private static String TimeAlarm=null;
-    //valori settati dall'utente
     private int lastimevalues=0;
     //ultimo valore dato server in tempo
     private Double minutes=null;
 
-    public Channel(String id, String read_key,String write_key) {
-        this.id = id;
-        this.read_key=read_key;
+    public Channel(String lett_id,String scritt_id, String lett_read_key,String scritt_read_key,String write_key) {
+        this.lett_id = lett_id;
+        this.scritt_id=scritt_id;
+        this.lett_read_key=lett_read_key;
+        this.scritt_read_key=scritt_read_key;
         this.write_key=write_key;
     }
 
@@ -166,25 +163,35 @@ public class Channel {
         this.uid = uid;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getRead_key() {
-        return read_key;
-    }
-
-    public void setRead_key(String read_key) {
-        this.read_key = read_key;
-    }
-
     public String getWrite_key() {
         return write_key;
     }
+
+    public String getLett_id() {
+        return lett_id;
+    }
+
+    public void setLett_id(String lett_id) { this.lett_id = lett_id; }
+
+    public String getScritt_id() {
+        return scritt_id;
+    }
+
+    public void setScritt_id(String scritt_id) {
+        this.scritt_id = scritt_id;
+    }
+
+    public String getLett_read_key() { return lett_read_key; }
+
+    public void setLett_read_key(String lett_read_key) {
+        this.lett_read_key = lett_read_key;
+    }
+
+    public String getScritt_read_key() {
+        return scritt_read_key;
+    }
+
+    public void setScritt_read_key(String scritt_read_key) { this.scritt_read_key = scritt_read_key; }
 
     public void setWrite_key(String write_key) {
         this.write_key = write_key;
@@ -354,22 +361,6 @@ public class Channel {
 
     public void setNumirra(int numirra) { Numirra = numirra; }
 
-    public AlarmManager getAlarmManager() {
-        return alarmManager;
-    }
-
-    public void setAlarmManager(AlarmManager alarmManager) {
-        this.alarmManager = alarmManager;
-    }
-
-    public String getTimeAlarm() {
-        return TimeAlarm;
-    }
-
-    public void setTimeAlarm(String timeAlarm) {
-        TimeAlarm = timeAlarm;
-    }
-
     public int getLastimevalues() {
         return lastimevalues;
     }
@@ -382,9 +373,7 @@ public class Channel {
         return evapotraspirazione;
     }
 
-    public void setEvapotraspirazione(Double evapotraspirazione) {
-        this.evapotraspirazione = evapotraspirazione;
-    }
+    public void setEvapotraspirazione(Double evapotraspirazione) { this.evapotraspirazione = evapotraspirazione; }
 
     public Double getMinutes() {
         return minutes;

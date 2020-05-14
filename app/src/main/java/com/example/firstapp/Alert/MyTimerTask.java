@@ -70,26 +70,26 @@ public class MyTimerTask extends TimerTask {
         //recupero la lista e controllo lo stato dei channel con il database
         for(int i=0;i<channel.size();i++) {
 
-            Channel actualchannel = db.ChannelDao().findByName(channel.get(i).getId(), channel.get(i).getRead_key());
+            Channel actualchannel = db.ChannelDao().findByName(channel.get(i).getLett_id(), channel.get(i).getLett_read_key());
             int dist = 0;
             //se l'utente non ha settato il range di tempo per la media conto come distanza il tempo dall'ultimo valore
             if (actualchannel.getMinutes() != 0) minuti = actualchannel.getMinutes().intValue();
             if (actualchannel.getLastimevalues() == 0) dist = minuti;
             else dist = actualchannel.getLastimevalues() + minuti;
-            Log.d("MyTimerTask", "Channel id : " + actualchannel.getId());
+            Log.d("MyTimerTask", "Channel id : " + actualchannel.getLett_id());
             Log.d("MyTimerTask", "minuti : " + actualchannel.getMinutes());
             Log.d("MyTimerTask", "lasttime è: " + actualchannel.getLastimevalues());
             Log.d("MyTimerTask", "Distanza è:" + dist);
             String urlString;
             //se la distanza è 0 recupero solo l'ultimo valore
             if (dist == 0) {
-                urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
+                urlString = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds.json?api_key=" + actualchannel.getLett_read_key()
                         + "&results=1" + "&offset=" + getCurrentTimezoneOffset();
             } else
-                urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
+                urlString = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds.json?api_key=" + actualchannel.getLett_read_key()
                         + "&minutes=" + dist + "&offset=" + getCurrentTimezoneOffset();
             if(actualchannel.getNotification()){
-                Log.d("MYTIMERTASK","AVVIO CHANNEL: "+ actualchannel.getId());
+                Log.d("MYTIMERTASK","AVVIO CHANNEL: "+ actualchannel.getLett_id());
                 getJsonResponse(urlString, actualchannel);
             }
             Log.d("URL", urlString);
@@ -267,7 +267,7 @@ public class MyTimerTask extends TimerTask {
                                 try{
                                     Log.d("TEMPO:","distanza settata: "+channel.getTempomax()*60+" distanza attuale: "+ distanza(cretime));
                                     if (channel.getTempomax()!= 0 && distanza(cretime) > channel.getTempomax()*60)
-                                         printnotify("Channel(" + channel.getId() + ") tempo alto!", 13*Integer.valueOf(channel.getId()));
+                                         printnotify("Channel(" + channel.getLett_id() + ") tempo alto!", 13*Integer.valueOf(channel.getLett_id()));
                                 }catch (Exception e) {
                                 }
                             }
@@ -357,8 +357,8 @@ public class MyTimerTask extends TimerTask {
                     if (getimage.equals("field8")) value = channel.getFiled8();
                 }
                 if(t < getmin)
-                    if(value==null) printnotify("Channel(" + channel.getId() + ") " + defaultvalue + " low!", i+Integer.valueOf(channel.getId()));
-                    else  printnotify("Channel(" + channel.getId() + ") " + value + " low!", i+Integer.valueOf(channel.getId()));
+                    if(value==null) printnotify("Channel(" + channel.getLett_id() + ") " + defaultvalue + " low!", i+Integer.valueOf(channel.getLett_id()));
+                    else  printnotify("Channel(" + channel.getLett_id() + ") " + value + " low!", i+Integer.valueOf(channel.getLett_id()));
             }
             if (getmacx != null){
                 String value = null;
@@ -375,8 +375,8 @@ public class MyTimerTask extends TimerTask {
                     if (getimage.equals("field8")) value = channel.getFiled8();
                 }
                 if(t > getmacx)
-                    if(value==null) printnotify("Channel(" + channel.getId() + ") " + defaultvalue+ " high!", (i+10)+Integer.valueOf(channel.getId()));
-                    else  printnotify("Channel (" + channel.getId() + ") "+value +" high!", (i+10)+Integer.valueOf(channel.getId()));
+                    if(value==null) printnotify("Channel(" + channel.getLett_id() + ") " + defaultvalue+ " high!", (i+10)+Integer.valueOf(channel.getLett_id()));
+                    else  printnotify("Channel (" + channel.getLett_id() + ") "+value +" high!", (i+10)+Integer.valueOf(channel.getLett_id()));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -386,7 +386,7 @@ public class MyTimerTask extends TimerTask {
     public static void remove(Channel x){
         if(channel!=null){
             for(int i=0;i<channel.size();i++){
-                if(channel.get(i).getId().equals(x.getId()))
+                if(channel.get(i).getLett_id().equals(x.getLett_id()))
                     channel.remove(i);
             }
         }

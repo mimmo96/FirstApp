@@ -1,7 +1,5 @@
 package com.example.firstapp.Irrigation;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -43,10 +41,6 @@ public class IrrigationActivity extends AppCompatActivity {
     private static Switch Switch;
     private static Button irra;
     private static Context cont;
-    private AlarmManager alarmManager;
-    private PendingIntent pendingIntent;
-    private Double pesoPrec=0.0;
-    private Double pesoAtt=0.0;
     private Double leaching=0.35;
     private Double flusso=160.0;
     private int numirra=1;
@@ -112,15 +106,6 @@ public class IrrigationActivity extends AppCompatActivity {
 
     //recupero dal database i dati precedentemente configurati
     private void setInitialValues() {
-        if(channel.getAlarmManager()!=null){
-            alarmManager=channel.getAlarmManager();
-            Switch.setChecked(true);
-        }
-
-        if(channel.getTimeAlarm()!=null){
-            textTime.setText(channel.getTimeAlarm());
-        }
-
         //minuti che mi serviranno per l'irrigazione automatica
         if(channel.getIrrigationDuration()!=null) durationText.setText(String.valueOf(channel.getIrrigationDuration()));
 
@@ -146,16 +131,17 @@ public class IrrigationActivity extends AppCompatActivity {
     private void sendvalue(String value, final String tipo) {
 
         String url = "https://api.thingspeak.com/update.json";
-        List<savedValues> list=db.SavedDao().getAll();
-        Log.d("WRITE KEY",list.get(0).getWrite_key());
-        if(list==null || list.get(0)==null || list.get(0).getWrite_key()==null || list.get(0).getWrite_key().equals("")) {
+        List<savedValues> lista=db.SavedDao().getAll();
+        Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
+        if(list.getWrite_key()!=null) Log.d("WRITE KEY",list.getWrite_key());
+        if(list.getWrite_key()==null || list.getWrite_key().equals("")) {
             Toast.makeText(getBaseContext(),"CHIAVE SCRITTURA ERRATA",Toast.LENGTH_SHORT).show();
             return;
         }
 
         Map<String, String> params = new HashMap();
         params.put("accept", "application/json");
-        params.put("api_key", list.get(0).getWrite_key().toString());
+        params.put("api_key", list.getWrite_key());
         params.put("field1",value);
         params.put("field2",flussoText.getText().toString());
         params.put("field3",leachingText.getText().toString());
@@ -185,16 +171,17 @@ public class IrrigationActivity extends AppCompatActivity {
     private void irrigationOn(String flusso,String Leaching,String numirra,  final String tipo) {
 
         String url = "https://api.thingspeak.com/update.json";
-        List<savedValues> list=db.SavedDao().getAll();
-        Log.d("WRITE KEY",list.get(0).getWrite_key());
-        if(list==null || list.get(0)==null || list.get(0).getWrite_key()==null || list.get(0).getWrite_key().equals("")) {
+        List<savedValues> lista=db.SavedDao().getAll();
+        Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
+        Log.d("WRITE KEY",list.getWrite_key());
+        if(list==null || list.getWrite_key()==null || list.getWrite_key().equals("")) {
             Toast.makeText(getBaseContext(),"CHIAVE SCRITTURA ERRATA",Toast.LENGTH_SHORT).show();
             return;
         }
 
         Map<String, String> params = new HashMap();
         params.put("accept", "application/json");
-        params.put("api_key", list.get(0).getWrite_key().toString());
+        params.put("api_key", list.getWrite_key());
         params.put("field2",flusso);
         params.put("field3",Leaching);
         params.put("field4",numirra);
@@ -210,7 +197,7 @@ public class IrrigationActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getBaseContext(),"ERRORE IRRIGAZIONE " +tipo+"!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(),"ERRORE ATTIVAZIONE IRRIGAZIONE " +tipo+"!",Toast.LENGTH_SHORT).show();
                 error.printStackTrace();
             }
         });
@@ -222,20 +209,21 @@ public class IrrigationActivity extends AppCompatActivity {
     private void irrigationOff() {
 
         String url = "https://api.thingspeak.com/update.json";
-        List<savedValues> list=db.SavedDao().getAll();
-        Log.d("WRITE KEY",list.get(0).getWrite_key());
-        if(list==null || list.get(0)==null || list.get(0).getWrite_key()==null || list.get(0).getWrite_key().equals("")) {
+        List<savedValues> lista=db.SavedDao().getAll();
+        Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
+        Log.d("WRITE KEY",list.getWrite_key());
+        if(list==null || list.getWrite_key()==null || list.getWrite_key().equals("")) {
             Toast.makeText(getBaseContext(),"CHIAVE SCRITTURA ERRATA",Toast.LENGTH_SHORT).show();
             return;
         }
 
         Map<String, String> params = new HashMap();
         params.put("accept", "application/json");
-        params.put("api_key", list.get(0).getWrite_key().toString());
+        params.put("api_key", list.getWrite_key());
         params.put("field2",flussoText.getText().toString());
         params.put("field3",leachingText.getText().toString());
         params.put("field4", irradayText.getText().toString());
-        params.put("field6","0");
+        params.put("field6",String.valueOf(0));
 
         JSONObject parameters = new JSONObject(params);
 
@@ -257,7 +245,7 @@ public class IrrigationActivity extends AppCompatActivity {
 
     //metodi che mi servono per settare le impostazioni
     public void saveirrigationvalues(View v){
-        Channel x=db.ChannelDao().findByName(channel.getId(),channel.getRead_key());
+        Channel x=db.ChannelDao().findByName(channel.getLett_id(),channel.getLett_read_key());
 
         if(x!=null){
             db.ChannelDao().delete(x);
@@ -293,7 +281,7 @@ public class IrrigationActivity extends AppCompatActivity {
     }
 
     public void resetirrigationvalues(View v){
-        Channel x=db.ChannelDao().findByName(channel.getId(),channel.getRead_key());
+        Channel x=db.ChannelDao().findByName(channel.getLett_id(),channel.getLett_read_key());
 
         if(x!=null){
             db.ChannelDao().delete(x);
@@ -301,9 +289,6 @@ public class IrrigationActivity extends AppCompatActivity {
             x.setLeachingfactor(null);
             x.setFlussoAcqua(null);
             x.setIrrigationDuration(null);
-            x.setAlarmManager(null);
-            x.setTimeAlarm("NESSUNA IRRIGAZIONE PRESENTE");
-            x.setAlarmManager( null);
             Switch.setChecked(false);
             durationText.setText("");
             flussoText.setText("");
@@ -324,7 +309,9 @@ public class IrrigationActivity extends AppCompatActivity {
     }
 
     private void donwload() {
-        String url="https://api.thingspeak.com/channels/1034592/feeds.json?api_key=57XDWVJMXM8VPCCU&results=1";
+        List<savedValues> lista=db.SavedDao().getAll();
+        Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
+        String url="https://api.thingspeak.com/channels/"+list.getScritt_id()+"/feeds.json?api_key="+list.getScritt_read_key()+"&results=1";
 
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {

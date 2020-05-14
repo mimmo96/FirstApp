@@ -152,7 +152,7 @@ public class AlertActivity extends AppCompatActivity {
                 if (isChecked){
                     Log.d("AlertActivity","attivo notifiche");
                     //abilito le notifiche
-                    Channel x=database.ChannelDao().findByName(channel.getId(),channel.getRead_key());
+                    Channel x=database.ChannelDao().findByName(channel.getLett_id(),channel.getLett_read_key());
                     database.ChannelDao().delete(x);
                     x.setNotification(true);
                     database.ChannelDao().insert(x);
@@ -164,7 +164,7 @@ public class AlertActivity extends AppCompatActivity {
                 else{
                     Log.d("AlertActivity","fermo notifiche");
                     //disabilito le notifiche
-                    Channel x=database.ChannelDao().findByName(channel.getId(),channel.getRead_key());
+                    Channel x=database.ChannelDao().findByName(channel.getLett_id(),channel.getLett_read_key());
                     database.ChannelDao().delete(x);
                     x.setNotification(false);
                     database.ChannelDao().insert(x);
@@ -177,7 +177,7 @@ public class AlertActivity extends AppCompatActivity {
     }
 
     private void downloadMedia() {
-        Channel actualchannel = database.ChannelDao().findByName(channel.getId(),channel.getRead_key());
+        Channel actualchannel = database.ChannelDao().findByName(channel.getLett_id(),channel.getLett_read_key());
         int dist=0;
         //se l'utente non ha settato il range di tempo per la media conto come distanza il tempo dall'ultimo valore
         if(actualchannel.getMinutes()!=0) minuti=actualchannel.getMinutes().intValue();
@@ -189,10 +189,10 @@ public class AlertActivity extends AppCompatActivity {
         String urlString=null;
         //se la distanza è 0 recupero solo l'ultimo valore
         if(dist==0){
-            urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
+            urlString = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds.json?api_key=" + actualchannel.getLett_read_key()
                     + "&results=1" + "&offset="+getCurrentTimezoneOffset();
         }
-        else urlString = "https://api.thingspeak.com/channels/" + actualchannel.getId() + "/feeds.json?api_key=" + actualchannel.getRead_key()
+        else urlString = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds.json?api_key=" + actualchannel.getLett_read_key()
                 + "&minutes=" + dist + "&offset="+getCurrentTimezoneOffset();
             final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlString, null,
                     new Response.Listener<JSONObject>() {
@@ -417,7 +417,7 @@ public class AlertActivity extends AppCompatActivity {
 
     //se premo il pulsante save
     public void saveButton(View v) {
-        Channel x = database.ChannelDao().findByName(channel.getId(), channel.getRead_key());
+        Channel x = database.ChannelDao().findByName(channel.getLett_id(), channel.getLett_read_key());
 
         if (x != null) {
             database.ChannelDao().delete(x);
@@ -488,7 +488,7 @@ public class AlertActivity extends AppCompatActivity {
 
     //se premo il pulsante reset
     public void resetButton (View v) {
-            Channel x=database.ChannelDao().findByName(channel.getId(),channel.getRead_key());
+            Channel x=database.ChannelDao().findByName(channel.getLett_id(),channel.getLett_read_key());
             database.ChannelDao().delete(x);
             x.setTempMin(null);
             x.setTempMax(null);
