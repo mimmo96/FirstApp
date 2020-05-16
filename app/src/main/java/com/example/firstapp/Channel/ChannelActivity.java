@@ -142,7 +142,9 @@ public class ChannelActivity  extends AppCompatActivity {
         builder.setPositiveButton("si", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-              //se non ci sono più canali cancello tutto
+                //devo interrompere il servizio delle notifiche
+                 com.example.firstapp.Alert.MyTimerTask.remove(channel.get(position));
+                // se non ci sono più canali cancello tutto
                 if(channel.size()<2){
                     Toast.makeText(BasicContext,"CANCELLO TUTTO",Toast.LENGTH_SHORT).show();
                     //cancello i database
@@ -155,9 +157,9 @@ public class ChannelActivity  extends AppCompatActivity {
                     MainActivity.setDefaultSetting(null, null,-1);
                 }
                 else {
+                    //lo elimino dal database
                     db.ChannelDao().delete(channel.get(position));
                     channel.remove(position);
-
                     if(position-1<0){
                         setPosition(0);
                     }
@@ -166,13 +168,10 @@ public class ChannelActivity  extends AppCompatActivity {
                         if(channel.size()<2) setPosition(0);
                         else pos=position-1;
                     }
-
                     Channel nuovo=channel.get(pos);
                     MainActivity.setDefaultSetting(nuovo.getLett_id(), nuovo.getLett_read_key(), position-1);
                     Toast.makeText(BasicContext, "canale " + position + " cancellato!", Toast.LENGTH_SHORT).show();
                 }
-                //disattivo eventuali notifiche precedentemente settate
-               if(position!=0) com.example.firstapp.Alert.MyTimerTask.remove(channel.get(position-1));
                 adapter.notifyDataSetChanged();
             }
         });

@@ -33,7 +33,6 @@ public class ExampleService extends Service {
     private static Timer timer;
     private static Context context;
     private static boolean isactive=false;
-    private List<Channel> channelNotification=new ArrayList<>();
 
     @Override
     public void onCreate() {

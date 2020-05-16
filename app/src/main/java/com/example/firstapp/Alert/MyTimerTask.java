@@ -128,9 +128,12 @@ public class MyTimerTask extends TimerTask {
                             Double somc=0.0;
                             Double ir = 0.0;
                             Double somir=0.0;
+                            Double ev = 0.0;
+                            Double somev=0.0;
                             //stringa che mi salva l'ultimo data di aggiornamento dei valori
                             String cretime=null;
                             Channel v=channel;
+
                             //scorro tutto l'array
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 //recupero il primo oggetto dell'array
@@ -197,7 +200,7 @@ public class MyTimerTask extends TimerTask {
                                     if(v.getImageph()!=null){
                                         String field=value.getString(v.getImageph());
                                         ir=ir+(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0);
-                                        somc++;
+                                        somir++;
                                     }
                                     else  if (fields.get(4).equals("Irradiance")) {
                                         ir=ir+(Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0);
@@ -207,32 +210,24 @@ public class MyTimerTask extends TimerTask {
                                 }
 
                                 try {
+                                    //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
+                                    if(v.getImagepeso()!=null){
+                                        String field=value.getString(v.getImagepeso());
+                                        ev=ev+(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0);
+                                        somev++;
+                                    }
+                                    //altrimenti faccio una richiesta degli ultimi 100 valori e tra questi prendo quest'ultima
+                                    else {
+                                        String url= "https://api.thingspeak.com/channels/"+channel.getLett_id()+"/fields/7-8.json?api_key=" + channel.getLett_read_key();
+                                        downloadEvapotraspirazione(url,channel);
+                                    }
+
+                                }catch (Exception e){
+                                }
+
+                                try {
                                     cretime = value.getString("created_at");
                                     minuti=(distanza(cretime)/60)+2;
-                                }catch (Exception e){ }
-                            }
-
-                            //controllo se i valori dell'evapotraspirazione rientrano nel range da me settato
-
-                            Boolean ok=false;
-                            Double irrigazione =0.0;
-                            Double drainaggio = 0.0;
-
-                            //scandisco tutti i 100 valori per trovare i valori di irrigazione e drenaggio
-                            for (int k = 0; k < jsonArray.length(); k++) {
-                                JSONObject valori = jsonArray.getJSONObject(k);
-                                try {
-                                    if (!valori.getString("field7").equals("") && !valori.getString("field7").equals("null")) {
-                                        ok=true;
-                                        irrigazione=Double.parseDouble(valori.getString("field7"));
-                                    }
-                                }catch (Exception e){ }
-
-                                try {
-                                    if (!valori.getString("field8").equals("") && !valori.getString("field8").equals("null")) {
-                                        ok=true;
-                                        drainaggio=Double.parseDouble(valori.getString("field8"));
-                                    }
                                 }catch (Exception e){ }
                             }
 
@@ -248,10 +243,10 @@ public class MyTimerTask extends TimerTask {
                             p=Math.round(p/somp * 100.0) / 100.0;
                             c=Math.round(c/somc * 100.0) / 100.0;
                             ir=Math.round(ir/somir * 100.0) / 100.0;
-                            Double ev=null;
-                            if(ok) ev=Math.round((irrigazione - drainaggio) * 100.0) / 100.0;
-                            Log.d("SOMMA VALORI: ","t:"+somt+" u:"+ somu +" ph:"+ somp +" c:"+ somc +" ir:"+ somir);
-                            Log.d("MEDIA VALORI: ","t:"+t+" u:"+ u +" ph:"+ p +" c:"+ c +" ir:"+ ir +" ev:"+ ev);
+                            ev=Math.round(ev/somev * 100.0) / 100.0;
+
+                            Log.d("SOMMA VALORI: ","t:"+somt+" u:"+ somu +" ph:"+ somp +" c:"+ somc +" ir:"+ somir +" ev:"+ somev);
+                            Log.d("MEDIA VALORI: ","t:"+t+" u:"+ u +" ph:"+ p +" c:"+ c +" ir:"+ ir  +" ev:"+ ev);
 
                             //invio le notifiche se i valori non rispettano le soglie imposte
                             if(channel.getNotification()) {
@@ -261,8 +256,7 @@ public class MyTimerTask extends TimerTask {
                                 if(somp!=0) notification(p,channel.getImageph(),channel.getPhMin(),channel.getPhMax(),channel,3,"ph");
                                 if(somc!=0) notification(c,channel.getImagecond(),channel.getCondMin(),channel.getCondMax(),channel,4,"conducibilità");
                                 if(somir!=0) notification(ir,channel.getImageirra(),channel.getIrraMin(),channel.getIrraMax(),channel,5,"irradianza");
-                                if(ok) notification(ev,channel.getImagepeso(),channel.getPesMin(),channel.getPesMax(),channel,6,"evapotraspirazione");
-
+                                if(somev!=0) notification(ev,channel.getImagepeso(),channel.getPesMin(),channel.getPesMax(),channel,6,"evapotraspirazione");
 
                                 try{
                                     Log.d("TEMPO:","distanza settata: "+channel.getTempomax()*60+" distanza attuale: "+ distanza(cretime));
@@ -310,6 +304,7 @@ public class MyTimerTask extends TimerTask {
 
         return String.valueOf((offsetInMillis/(1000*3600))-1);
     }
+
     //restituisce la distanza in secondi dall'ultimo aggiornamento
     private int distanza(String data) {
         Calendar date_now= Calendar.getInstance ();
@@ -391,6 +386,66 @@ public class MyTimerTask extends TimerTask {
             }
         }
     }
+
+    //notifiche dedicata all'evapotraspirazione
+    private void downloadEvapotraspirazione(String urlString,final Channel channel) {
+            final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlString, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                //recupero l'array feeds
+                                JSONArray jsonArray = response.getJSONArray("feeds");
+
+                                //recupero i fields associati al channel
+                                ArrayList<String> fields = new ArrayList<String>();
+                                int dim = response.getJSONObject("channel").length();
+                                Log.d("Thread background", "donwload eseguito");
+
+                                Boolean ok=false;
+                                Boolean ok1=false;
+                                Double irrigazione =0.0;
+                                Double drainaggio = 0.0;
+
+                                //scandisco tutti i 100 valori per trovare i valori di irrigazione e drenaggio
+                                for (int k = 0; k < jsonArray.length(); k++) {
+                                    JSONObject valori = jsonArray.getJSONObject(k);
+                                    try {
+                                        if (!valori.getString("field7").equals("") && !valori.getString("field7").equals("null")) {
+                                            ok=true;
+                                            irrigazione=Double.parseDouble(valori.getString("field7"));
+                                        }
+                                    }catch (Exception e){ }
+
+                                    try {
+                                        if (!valori.getString("field8").equals("") && !valori.getString("field8").equals("null")) {
+                                            ok1=true;
+                                            drainaggio=Double.parseDouble(valori.getString("field8"));
+                                        }
+                                    }catch (Exception e){ }
+                                }
+
+                                if(channel.getNotification()) {
+                                    Double ev=null;
+                                    if(ok && ok1){
+                                        ev=Math.round((irrigazione - drainaggio) * 100.0) / 100.0;
+                                        notification(ev,channel.getImagepeso(),channel.getPesMin(),channel.getPesMax(),channel,6,"evapotraspirazione");
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("Thread background", "errore donwload");
+                }
+            });
+            Volley.newRequestQueue(cont).add(jsonObjectRequest);
+    }
+
 }
 
 

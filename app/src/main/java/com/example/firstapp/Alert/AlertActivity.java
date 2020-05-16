@@ -280,8 +280,8 @@ public class AlertActivity extends AppCompatActivity {
                                     try {
                                         String conducibilita = value.getString("field4");
                                         //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
-                                        if(v.getImageph()!=null){
-                                            String field=value.getString(v.getImageph());
+                                        if(v.getImagecond()!=null){
+                                            String field=value.getString(v.getImagecond());
                                             c=c+(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0);
                                             somc++;
                                         }
@@ -306,7 +306,7 @@ public class AlertActivity extends AppCompatActivity {
                                     }catch (Exception e){
                                     }
                                     try {
-                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
+                                        //se ho impostato un valore, inserisci quello,altrimenti non scrivo nulla
                                         if(v.getImagepeso()!=null){
                                             String field=value.getString(v.getImagepeso());
                                             pe=pe+(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0);

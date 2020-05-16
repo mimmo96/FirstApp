@@ -41,7 +41,6 @@
         </activity>
         <service android:name=".Alert.ExampleService" />
 
-
     </application>
 
 </manifest>
