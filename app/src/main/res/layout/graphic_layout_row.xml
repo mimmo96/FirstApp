@@ -12,120 +12,156 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="445dp"
             android:padding="8dp">
 
             <TextView
                 android:id="@+id/titleText"
-                android:layout_width="284dp"
+                android:layout_width="237dp"
                 android:layout_height="26dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="69dp"
-                android:layout_marginTop="18dp"
-                android:layout_marginEnd="19dp"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.506"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.014"
                 tools:text="Temperature (id:123456)" />
 
             <com.jjoe64.graphview.GraphView
                 android:id="@+id/graph"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="279dp"
-                android:layout_marginTop="100dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.598" />
 
             <TextView
                 android:id="@+id/textViewstart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/graph"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginStart="43dp"
-                android:layout_marginBottom="34dp"
+                android:layout_marginStart="28dp"
+                android:layout_marginTop="8dp"
                 android:text="00-00-0000 60:60"
-                android:textColor="#DF050505" />
+                android:textColor="#DF050505"
+                app:layout_constraintEnd_toStartOf="@+id/textViewend"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/graph" />
 
             <TextView
                 android:id="@+id/textViewend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/graph"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginEnd="3dp"
-                android:layout_marginBottom="33dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="12dp"
                 android:text="00-00-0000 60:60"
                 android:textColor="#DF050505"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/graph"
+                app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/textView11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="18dp"
                 android:layout_below="@+id/titleText"
-                android:layout_alignStart="@+id/titleText"
-                android:layout_marginStart="-58dp"
-                android:layout_marginTop="17dp"
-                android:text="Minimo:" />
+                android:layout_alignParentStart="true"
+                android:text="Minimo:"
+                app:layout_constraintBottom_toTopOf="@+id/graph"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.055"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.752" />
 
             <TextView
                 android:id="@+id/textView12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="43dp"
+                android:layout_height="18dp"
                 android:layout_below="@+id/titleText"
-                android:layout_marginStart="69dp"
-                android:layout_marginTop="17dp"
-                android:layout_toEndOf="@+id/textView11"
-                android:text="Media:" />
+                android:layout_toEndOf="@+id/textViewMin"
+                android:text="Media:"
+                app:layout_constraintBottom_toTopOf="@+id/graph"
+                app:layout_constraintEnd_toEndOf="@+id/textViewMax"
+                app:layout_constraintHorizontal_bias="0.441"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.775" />
 
             <TextView
                 android:id="@+id/textView13"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/titleText"
-                android:layout_marginStart="67dp"
-                android:layout_marginTop="17dp"
-                android:layout_toEndOf="@+id/textView12"
-                android:text="Massimo:" />
+                android:layout_toEndOf="@+id/textViewMed"
+                android:text="Massimo:"
+                app:layout_constraintBottom_toTopOf="@+id/graph"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.847"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.772" />
 
             <TextView
                 android:id="@+id/textViewMin"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_alignTop="@+id/textView11"
-                android:layout_marginStart="1dp"
-                android:layout_marginTop="0dp"
+                android:layout_width="35dp"
+                android:layout_height="18dp"
+                android:layout_below="@+id/titleText"
                 android:layout_toEndOf="@+id/textView11"
-                android:text="00.00000" />
+                android:text="00.00"
+                app:layout_constraintBottom_toTopOf="@+id/graph"
+                app:layout_constraintEnd_toEndOf="@+id/textViewMax"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/textView11"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.759" />
 
             <TextView
                 android:id="@+id/textViewMed"
-                android:layout_width="67dp"
-                android:layout_height="40dp"
-                android:layout_alignTop="@+id/textView12"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
+                android:layout_width="39dp"
+                android:layout_height="18dp"
+                android:layout_below="@+id/titleText"
                 android:layout_toEndOf="@+id/textView12"
-                android:text="00.00000" />
+                android:text="00.00"
+                app:layout_constraintBottom_toTopOf="@+id/graph"
+                app:layout_constraintStart_toEndOf="@+id/textView12"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.775" />
 
             <TextView
                 android:id="@+id/textViewMax"
                 android:layout_width="wrap_content"
-                android:layout_height="42dp"
-                android:layout_alignTop="@+id/textView13"
-                android:layout_marginStart="1dp"
-                android:layout_marginTop="0dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/titleText"
                 android:layout_toEndOf="@+id/textView13"
-                android:text="00.00000" />
+                android:text="00.00"
+                app:layout_constraintBottom_toTopOf="@+id/graph"
+                app:layout_constraintStart_toEndOf="@+id/textView13"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.772" />
 
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 </RelativeLayout>

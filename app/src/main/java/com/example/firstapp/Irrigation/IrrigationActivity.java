@@ -123,8 +123,6 @@ public class IrrigationActivity extends AppCompatActivity {
             numirra=channel.getNumirra();
             irradayText.setText(String.valueOf(numirra));
         }
-
-        MyNewIntentService.settingvalue(leaching,flusso);
     }
 
     //invio i dati al server (in caso di attivazione manuale)
@@ -274,7 +272,6 @@ public class IrrigationActivity extends AppCompatActivity {
             }
             Toast.makeText(getApplicationContext(),"VALORI SALVATI CORRETTAMENTE",Toast.LENGTH_SHORT).show();
             db.ChannelDao().insert(x);
-            MyNewIntentService.settingvalue(leaching,flusso);
         }
         else Toast.makeText(getApplicationContext(),"IMPOSSIBILE TROVARE IL CHANNEL SPECIFICATO",Toast.LENGTH_SHORT).show();
 
@@ -308,6 +305,7 @@ public class IrrigationActivity extends AppCompatActivity {
         channel=chan;
     }
 
+    //scarico i dati dal server riguardante la configurazione dell'irrigazione
     private void donwload() {
         List<savedValues> lista=db.SavedDao().getAll();
         Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());

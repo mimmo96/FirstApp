@@ -62,18 +62,22 @@ public class Channelinsert  extends AppCompatActivity {
             id_lett=IDlett.getText().toString();
             readkey_lett= read_lett.getText().toString();
 
-            //verifico che la chiave di scrittura esiste realmente
-            if(!IDscritt.getText().toString().equals("") && !read_scritt.getText().toString().equals("")){
-                if(testData(IDscritt.getText().toString(),read_scritt.getText().toString(),null)){
-                    //mando i valori settati all'activity precedente
-                    ChannelActivity.Execute(id_lett,readkey_lett,IDscritt.getText().toString(),read_scritt.getText().toString(),write_scritt.getText().toString());
+                //verifico che ho inserito la chiave di scrittura altrimenti metto null
+                if(!IDscritt.getText().toString().equals("") && !read_scritt.getText().toString().equals("")){
+                    Log.d("Channelinsert1","sono qui");
+                    //verifico se esiste veramente la chiave di scrittura
+                    if(testData(IDscritt.getText().toString(),read_scritt.getText().toString())){
+                         //mando i valori settati all'activity precedente
+                         ChannelActivity.Execute(id_lett,readkey_lett,IDscritt.getText().toString(),read_scritt.getText().toString(),write_scritt.getText().toString());
+                        finish();
+                     }
+                //se ho inserito un channel in scrittura errato
+                    else Toast.makeText(getApplicationContext(),"Chiave di scrittura errata!",Toast.LENGTH_SHORT).show();
+                }
+                 else {
+                    ChannelActivity.Execute(id_lett, readkey_lett, null, null, null);
                     finish();
                 }
-                //se ho inserito un channel in scrittura errato
-                else{
-                    Toast.makeText(getApplicationContext(),"Chiave di scrittura errata!",Toast.LENGTH_SHORT).show();
-                }
-            }
         }
     }
 
@@ -82,11 +86,11 @@ public class Channelinsert  extends AppCompatActivity {
         return intent;
     }
 
-    public static boolean testData(String valueID, String valueREADKEY, String valueWRITEKEY) {
+    public static boolean testData(String valueID, String valueREADKEY) {
 
         BlockingQueue<Boolean> esito = new LinkedBlockingQueue<Boolean>();
         ExecutorService pes = Executors.newFixedThreadPool(1);
-        pes.submit(new Task(esito, valueID, valueREADKEY,valueWRITEKEY));
+        pes.submit(new Task(esito, valueID, valueREADKEY));
         pes.shutdown();
         boolean esit=false;
         try {
@@ -102,7 +106,7 @@ public class Channelinsert  extends AppCompatActivity {
         private String key_read = null;
         private final BlockingQueue<Boolean> sharedQueue;
 
-        public Task(BlockingQueue<Boolean> esito, String valueID, String valueREADKEY, String valueWRITEKEY) {
+        public Task(BlockingQueue<Boolean> esito, String valueID, String valueREADKEY) {
             this.id = valueID;
             this.key_read = valueREADKEY;
             this.sharedQueue = esito;
@@ -115,7 +119,7 @@ public class Channelinsert  extends AppCompatActivity {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
 
-                if (conn.getResponseCode() == 200) {
+                if (conn.getResponseCode()==200) {
                     sharedQueue.put(true);
                 } else sharedQueue.put(false);
 
