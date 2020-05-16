@@ -294,10 +294,10 @@ public class AlertActivity extends AppCompatActivity {
                                     try {
                                         String irradianza = value.getString("field5");
                                         //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
-                                        if(v.getImageph()!=null){
-                                            String field=value.getString(v.getImageph());
+                                        if(v.getImageirra()!=null){
+                                            String field=value.getString(v.getImageirra());
                                             ir=ir+(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0);
-                                            somc++;
+                                            somir++;
                                         }
                                         else  if (fields.get(4).equals("Irradiance")) {
                                             ir=ir+(Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0);
@@ -335,8 +335,8 @@ public class AlertActivity extends AppCompatActivity {
                                 c=Math.round(c/somc * 100.0) / 100.0;
                                 ir=Math.round(ir/somir * 100.0) / 100.0;
                                 pe=Math.round(pe/sompe * 100.0) / 100.0;
-                                Log.d("SOMMA VALORI: ","t:"+somt+" u:"+ somu +" p:"+ somp +" c:"+ somc +" ir:"+ somir+" pe:"+ sompe);
-                                Log.d("MEDIA VALORI: ","t:"+t+" u:"+ u +" p:"+ p +" c:"+ c +" ir:"+ ir +" pe:"+ pe);
+                                Log.d("SOMMA VALORI: ","t:"+somt+" u:"+ somu +" ph:"+ somp +" c:"+ somc +" ir:"+ somir+" pe:"+ sompe);
+                                Log.d("MEDIA VALORI: ","t:"+t+" u:"+ u +" ph:"+ p +" c:"+ c +" ir:"+ ir +" pe:"+ pe);
 
                                 if (channel.getNotification()) Log.d("NOTIFICHE", "ATTIVE");
                                 else Log.d("NOTIFICHE", "NON ATTIVE");

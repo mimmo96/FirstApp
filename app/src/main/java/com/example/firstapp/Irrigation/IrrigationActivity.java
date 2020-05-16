@@ -209,11 +209,11 @@ public class IrrigationActivity extends AppCompatActivity {
         String url = "https://api.thingspeak.com/update.json";
         List<savedValues> lista=db.SavedDao().getAll();
         Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
-        Log.d("WRITE KEY",list.getWrite_key());
         if(list==null || list.getWrite_key()==null || list.getWrite_key().equals("")) {
             Toast.makeText(getBaseContext(),"CHIAVE SCRITTURA ERRATA",Toast.LENGTH_SHORT).show();
             return;
         }
+        else Log.d("WRITE KEY",list.getWrite_key());
 
         Map<String, String> params = new HashMap();
         params.put("accept", "application/json");

@@ -171,7 +171,7 @@ public class MyTimerTask extends TimerTask {
                                         p=p+(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0);
                                         somp++;
                                     }
-                                    else if (fields.get(1).equals("pH_value")){
+                                    else if (fields.get(2).equals("pH_value")){
                                         p = p + (Math.round(Double.parseDouble(String.format(ph1)) * 100.0) / 100.0);
                                         somp++;
                                     }
@@ -180,8 +180,8 @@ public class MyTimerTask extends TimerTask {
                                 try {
                                     String conducibilita = value.getString("field4");
                                     //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
-                                    if(v.getImageph()!=null){
-                                        String field=value.getString(v.getImageph());
+                                    if(v.getImagecond()!=null){
+                                        String field=value.getString(v.getImagecond());
                                         c=c+(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0);
                                         somc++;
                                     }
@@ -218,7 +218,7 @@ public class MyTimerTask extends TimerTask {
                             Double irrigazione =0.0;
                             Double drainaggio = 0.0;
 
-                            //scandisco tutti i 100 valori per trovare i valodi di irrigazione e il drenaggio
+                            //scandisco tutti i 100 valori per trovare i valori di irrigazione e drenaggio
                             for (int k = 0; k < jsonArray.length(); k++) {
                                 JSONObject valori = jsonArray.getJSONObject(k);
                                 try {
@@ -250,8 +250,8 @@ public class MyTimerTask extends TimerTask {
                             ir=Math.round(ir/somir * 100.0) / 100.0;
                             Double ev=null;
                             if(ok) ev=Math.round((irrigazione - drainaggio) * 100.0) / 100.0;
-                            Log.d("SOMMA VALORI: ","t:"+somt+" u:"+ somu +" p:"+ somp +" c:"+ somc +" ir:"+ somir);
-                            Log.d("MEDIA VALORI: ","t:"+t+" u:"+ u +" p:"+ p +" c:"+ c +" ir:"+ ir +" ev:"+ ev);
+                            Log.d("SOMMA VALORI: ","t:"+somt+" u:"+ somu +" ph:"+ somp +" c:"+ somc +" ir:"+ somir);
+                            Log.d("MEDIA VALORI: ","t:"+t+" u:"+ u +" ph:"+ p +" c:"+ c +" ir:"+ ir +" ev:"+ ev);
 
                             //invio le notifiche se i valori non rispettano le soglie imposte
                             if(channel.getNotification()) {
