@@ -56,8 +56,8 @@ public class Channelinsert  extends AppCompatActivity {
         String id_lett=null;
         String readkey_lett=null;
         //verifico che ho effettivamente inserito i valori
-        if(IDlett.getText().toString().equals("") || read_lett.getText().toString().equals(""))
-            Toast.makeText(getApplicationContext(),"INSERISCI ID E CHIAVE DI LETTURA!",Toast.LENGTH_SHORT).show();
+        if(IDlett.getText().toString().equals("") )
+            Toast.makeText(getApplicationContext(),"INSERISCI ID",Toast.LENGTH_SHORT).show();
         else{
             id_lett=IDlett.getText().toString();
             readkey_lett= read_lett.getText().toString();

@@ -521,7 +521,6 @@ public class AlertActivity extends AppCompatActivity {
             minutes.setText(" ");
             tempomax.setText(" ");
 
-            if (channel.getLastimevalues()!=0) minutes.setText(String.valueOf(channel.getLastimevalues()));
             Toast.makeText(cont,"VALORI RESETTATI CORRETTAMENTE",Toast.LENGTH_SHORT).show();
     }
 

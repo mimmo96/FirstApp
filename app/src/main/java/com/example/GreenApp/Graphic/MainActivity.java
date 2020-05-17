@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
             Insertdata.clear();
             for (int i = 0; i < channelPos.size(); i++) {
                 url = "https://api.thingspeak.com/channels/" + channelPos.get(i).getLett_id() + "/feeds.json?api_key=" + channelPos.get(i).getLett_read_key() +
-                        "&start=" + annoStart + "-" + meseStart + "-" + giornoStart + "%2000:00:00&end=" + annoEnd + "-" + meseEnd + "-" + giornoEnd + "%2023:59:59" +"&offset=2" + "&results=8000";
+                        "&start=" + annoStart + "-" + meseStart + "-" + giornoStart + "%2000:00:00&end=" + annoEnd + "-" + meseEnd + "-" + giornoEnd + "%2023:59:59&results=8000"+"&offset="+getCurrentTimezoneOffset();
                 getJsonResponse(url, i);
             }
         }

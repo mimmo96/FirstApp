@@ -90,10 +90,10 @@
                 android:text="Minimo:"
                 app:layout_constraintBottom_toTopOf="@+id/graph"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.055"
+                app:layout_constraintHorizontal_bias="0.03"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.752" />
+                app:layout_constraintTop_toBottomOf="@+id/titleText"
+                app:layout_constraintVertical_bias="0.756" />
 
             <TextView
                 android:id="@+id/textView12"
@@ -104,61 +104,65 @@
                 android:text="Media:"
                 app:layout_constraintBottom_toTopOf="@+id/graph"
                 app:layout_constraintEnd_toEndOf="@+id/textViewMax"
-                app:layout_constraintHorizontal_bias="0.441"
+                app:layout_constraintHorizontal_bias="0.416"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.775" />
+                app:layout_constraintTop_toBottomOf="@+id/titleText"
+                app:layout_constraintVertical_bias="0.756" />
 
             <TextView
                 android:id="@+id/textView13"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="18dp"
                 android:layout_below="@+id/titleText"
                 android:layout_toEndOf="@+id/textViewMed"
                 android:text="Massimo:"
                 app:layout_constraintBottom_toTopOf="@+id/graph"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.847"
+                app:layout_constraintHorizontal_bias="0.812"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.772" />
+                app:layout_constraintTop_toBottomOf="@+id/titleText"
+                app:layout_constraintVertical_bias="0.75" />
 
             <TextView
                 android:id="@+id/textViewMin"
-                android:layout_width="35dp"
+                android:layout_width="47dp"
                 android:layout_height="18dp"
                 android:layout_below="@+id/titleText"
                 android:layout_toEndOf="@+id/textView11"
                 android:text="00.00"
                 app:layout_constraintBottom_toTopOf="@+id/graph"
-                app:layout_constraintEnd_toEndOf="@+id/textViewMax"
+                app:layout_constraintEnd_toStartOf="@+id/textView12"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/textView11"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/titleText"
                 app:layout_constraintVertical_bias="0.759" />
 
             <TextView
                 android:id="@+id/textViewMed"
-                android:layout_width="39dp"
+                android:layout_width="45dp"
                 android:layout_height="18dp"
                 android:layout_below="@+id/titleText"
                 android:layout_toEndOf="@+id/textView12"
                 android:text="00.00"
                 app:layout_constraintBottom_toTopOf="@+id/graph"
+                app:layout_constraintEnd_toStartOf="@+id/textView13"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/textView12"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/titleText"
                 app:layout_constraintVertical_bias="0.775" />
 
             <TextView
                 android:id="@+id/textViewMax"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="41dp"
+                android:layout_height="18dp"
                 android:layout_below="@+id/titleText"
                 android:layout_toEndOf="@+id/textView13"
                 android:text="00.00"
                 app:layout_constraintBottom_toTopOf="@+id/graph"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/textView13"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/titleText"
                 app:layout_constraintVertical_bias="0.772" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
