@@ -1,45 +1,36 @@
-package com.example.firstapp.Alert;
+package com.example.GreenApp.Alert;
 
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.room.Room;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.firstapp.AppDatabase;
-import com.example.firstapp.Channel.Channel;
-import com.example.firstapp.MainActivity;
+import com.example.GreenApp.Channel.Channel;
+import com.example.GreenApp.AppDatabase;
+import com.example.GreenApp.MainActivity;
 import com.example.firstapp.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.example.firstapp.Alert.App.CHANNEL_1_ID;
-import static com.example.firstapp.Graphic.MainActivity.getCurrentTimezoneOffset;
+import static com.example.GreenApp.Alert.App.CHANNEL_1_ID;
 
 /*
  * Progetto: svilluppo App Android per Tirocinio interno

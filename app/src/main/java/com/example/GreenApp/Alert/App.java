@@ -1,4 +1,4 @@
-package com.example.firstapp.Alert;
+package com.example.GreenApp.Alert;
 
 import android.app.Application;
 import android.app.NotificationChannel;

@@ -1,12 +1,12 @@
-package com.example.firstapp;
+package com.example.GreenApp;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
 
-import com.example.firstapp.Channel.Channel;
-import com.example.firstapp.Channel.ChannelDao;
-import com.example.firstapp.Channel.SavedDao;
-import com.example.firstapp.Channel.savedValues;
+import com.example.GreenApp.Channel.Channel;
+import com.example.GreenApp.Channel.ChannelDao;
+import com.example.GreenApp.Channel.SavedDao;
+import com.example.GreenApp.Channel.savedValues;
 
 /*
  * Progetto: svilluppo App Android per Tirocinio interno

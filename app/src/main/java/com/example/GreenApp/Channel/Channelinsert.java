@@ -1,4 +1,4 @@
-package com.example.firstapp.Channel;
+package com.example.GreenApp.Channel;
 
 import android.content.Context;
 import android.content.Intent;

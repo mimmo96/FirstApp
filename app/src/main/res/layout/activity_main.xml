@@ -5,9 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/sfondo"
-    tools:context=".MainActivity"
+    tools:context="com.example.GreenApp.MainActivity"
     tools:layout_editor_absoluteY="81dp">
-
 
     <TextView
         android:id="@+id/textPh"
@@ -57,7 +56,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/imageConducibility"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.637" />
+        app:layout_constraintVertical_bias="0.65" />
 
     <TextView
         android:id="@+id/textTemp"
@@ -69,9 +68,11 @@
         android:text="- -"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textIrradiance"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/imageTemperature"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.364" />
+        app:layout_constraintVertical_bias="0.363" />
 
     <ImageView
         android:id="@+id/imageTemperature"
@@ -83,10 +84,10 @@
         android:onClick="tempSettings"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.099"
+        app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.345"
+        app:layout_constraintVertical_bias="0.343"
         app:srcCompat="@drawable/temp" />
 
     <ImageView
@@ -104,20 +105,21 @@
 
     <TextView
         android:id="@+id/textView1"
-        android:layout_width="357dp"
-        android:layout_height="20dp"
+        android:layout_width="319dp"
+        android:layout_height="19dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="24dp"
+        android:autoSizeTextType="uniform"
         android:text="ultimo aggiornamento:"
         android:textSize="14sp"
-        android:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.518"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.933" />
 
     <ImageView
         android:id="@+id/imagePh"
@@ -176,10 +178,10 @@
         android:onClick="condSettings"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.921"
+        app:layout_constraintHorizontal_bias="0.899"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.645"
+        app:layout_constraintVertical_bias="0.649"
         app:srcCompat="@drawable/cond" />
 
     <ImageView
@@ -205,14 +207,13 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginBottom="80dp"
         android:autoSizeTextType="uniform"
         android:text="- -"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageViewPeso"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.761" />
+        app:layout_constraintVertical_bias="0.648" />
 
     <ImageButton
         android:id="@+id/imageView"
@@ -256,9 +257,9 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
+        android:autoSizeTextType="uniform"
         android:text="STATUS"
         android:textSize="24sp"
-        android:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
@@ -271,10 +272,10 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:autoSizeTextType="uniform"
         android:text="OFFLINE"
         android:textColor="#E4F50404"
         android:textSize="30sp"
-        android:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.523"
         app:layout_constraintStart_toStartOf="parent"
@@ -317,6 +318,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginStart="4dp"
         android:layout_marginBottom="20dp"
         android:onClick="refresh"
         app:layout_constraintBottom_toBottomOf="@+id/textView1"
@@ -370,7 +372,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="85dp" />
+        app:layout_constraintGuide_begin="160dp" />
 
     <ImageView
         android:id="@+id/imageView3"

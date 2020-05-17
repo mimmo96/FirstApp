@@ -1,4 +1,4 @@
-package com.example.firstapp.Graphic;
+package com.example.GreenApp.Graphic;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.firstapp.Channel.Channel;
+import com.example.GreenApp.Channel.Channel;
 import com.example.firstapp.R;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;

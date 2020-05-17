@@ -1,4 +1,4 @@
-package com.example.firstapp.Irrigation;
+package com.example.GreenApp.Irrigation;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,9 +18,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.firstapp.AppDatabase;
-import com.example.firstapp.Channel.Channel;
-import com.example.firstapp.Channel.savedValues;
+import com.example.GreenApp.AppDatabase;
+import com.example.GreenApp.Channel.Channel;
+import com.example.GreenApp.Channel.savedValues;
 import com.example.firstapp.R;
 import org.json.JSONArray;
 import org.json.JSONException;

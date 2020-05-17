@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.firstapp">
 
@@ -13,33 +14,33 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Graphic.MainActivity"
+            android:name="com.example.GreenApp.Graphic.MainActivity"
             android:label="@string/title_activity_graphic"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".Channel.ChannelActivity"
+            android:name="com.example.GreenApp.Channel.ChannelActivity"
             android:label="ChannelActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".Alert.AlertActivity"
+            android:name="com.example.GreenApp.Alert.AlertActivity"
             android:label="AlertActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".Irrigation.IrrigationActivity"
+            android:name="com.example.GreenApp.Irrigation.IrrigationActivity"
             android:label="IrrigationActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".Channel.Channelinsert"
+            android:name="com.example.GreenApp.Channel.Channelinsert"
             android:label="Channelinsert"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".MainActivity">
+        <activity android:name="com.example.GreenApp.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".Alert.ExampleService" />
+        <service android:name="com.example.GreenApp.Alert.ExampleService" />
 
     </application>
 

@@ -1,15 +1,13 @@
-package com.example.firstapp;
+package com.example.GreenApp;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,12 +16,13 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.example.firstapp.Alert.AlertActivity;
-import com.example.firstapp.Alert.ExampleService;
-import com.example.firstapp.Channel.Channel;
-import com.example.firstapp.Channel.ChannelActivity;
-import com.example.firstapp.Channel.savedValues;
-import com.example.firstapp.Irrigation.IrrigationActivity;
+import com.example.GreenApp.Alert.AlertActivity;
+import com.example.GreenApp.Alert.ExampleService;
+import com.example.GreenApp.Channel.Channel;
+import com.example.GreenApp.Channel.ChannelActivity;
+import com.example.GreenApp.Channel.savedValues;
+import com.example.GreenApp.Irrigation.IrrigationActivity;
+import com.example.firstapp.R;
 
 /*
  * Progetto: svilluppo App Android per Tirocinio interno
@@ -221,8 +220,8 @@ public class MainActivity extends AppCompatActivity {
                     if (name.size() == 0)
                         Toast.makeText(cont, "NESSUN GRAFICO SELEZIONATO!", Toast.LENGTH_SHORT).show();
                     else {
-                        Intent intent = com.example.firstapp.Graphic.MainActivity.getActivityintent(MainActivity.this);
-                        com.example.firstapp.Graphic.MainActivity.setGrapView(name, selChan,selectedPos);
+                        Intent intent = com.example.GreenApp.Graphic.MainActivity.getActivityintent(MainActivity.this);
+                        com.example.GreenApp.Graphic.MainActivity.setGrapView(name, selChan,selectedPos);
                         startActivity(intent);
                     }
                 }

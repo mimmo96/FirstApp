@@ -1,4 +1,4 @@
-package com.example.firstapp.Channel;
+package com.example.GreenApp.Channel;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,9 +12,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
-import com.example.firstapp.AppDatabase;
-import com.example.firstapp.MainActivity;
-import com.example.firstapp.MyTimerTask;
+
+import com.example.GreenApp.Alert.MyTimerTask;
+import com.example.GreenApp.AppDatabase;
+import com.example.GreenApp.MainActivity;
 import com.example.firstapp.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.json.JSONObject;
@@ -106,7 +107,7 @@ public class ChannelActivity  extends AppCompatActivity {
             DEFAULT_READ_KEY = key;
             if (testData(DEFAULT_ID, DEFAULT_READ_KEY,id_scritt,read_scritt,write_scritt)) {
                 //comunico il database aggiornato al thread
-                MyTimerTask.updateDatabase(db);
+                com.example.GreenApp.MyTimerTask.updateDatabase(db);
                 Toast.makeText(BasicContext, "operazione eseguita correttamente!", Toast.LENGTH_SHORT).show();
                 //segnalo al thread principale i nuovi id,key
                 if (pos == -1) pos = 0;
@@ -143,7 +144,7 @@ public class ChannelActivity  extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //devo interrompere il servizio delle notifiche
-                 com.example.firstapp.Alert.MyTimerTask.remove(channel.get(position));
+                 MyTimerTask.remove(channel.get(position));
                 // se non ci sono più canali cancello tutto
                 if(channel.size()<2){
                     Toast.makeText(BasicContext,"CANCELLO TUTTO",Toast.LENGTH_SHORT).show();

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/view_layout"
-    tools:context=".Channel.ChannelActivity">
+    tools:context="com.example.GreenApp.Channel.ChannelActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"

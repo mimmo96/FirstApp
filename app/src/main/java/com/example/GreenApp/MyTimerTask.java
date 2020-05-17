@@ -1,9 +1,8 @@
-package com.example.firstapp;
+package com.example.GreenApp;
 
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -11,21 +10,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.firstapp.Alert.AlertActivity;
-import com.example.firstapp.Channel.Channel;
-import com.example.firstapp.Channel.SavedDao;
-import com.example.firstapp.Channel.savedValues;
+import com.example.GreenApp.Channel.Channel;
+import com.example.GreenApp.Graphic.MainActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.TimeZone;
 import java.util.TimerTask;
-
-import static com.example.firstapp.Graphic.MainActivity.getCurrentTimezoneOffset;
 
 /*
  * Progetto: svilluppo App Android per Tirocinio interno
@@ -225,7 +219,7 @@ public class MyTimerTask extends TimerTask {
                                 //salvo i valori sul database
                                 database.ChannelDao().delete(v);
                                 int minuti=(int)distanza1(cretime);
-                                minuti=minuti-(Integer.valueOf(getCurrentTimezoneOffset())+1)*60;
+                                minuti=minuti-(Integer.valueOf(MainActivity.getCurrentTimezoneOffset())+1)*60;
                                 v.setEvapotraspirazione(evapotraspirazione);
                                 v.setMinutes((double)minuti);
                                 database.ChannelDao().insert(v);

@@ -1,4 +1,4 @@
-package com.example.firstapp.Alert;
+package com.example.GreenApp.Alert;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,16 +19,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.firstapp.AppDatabase;
-import com.example.firstapp.Channel.Channel;
+import com.example.GreenApp.Channel.Channel;
+import com.example.GreenApp.Graphic.MainActivity;
+import com.example.GreenApp.AppDatabase;
 import com.example.firstapp.R;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
-
-import static com.example.firstapp.Graphic.MainActivity.getCurrentTimezoneOffset;
 
 /*
  * Progetto: svilluppo App Android per Tirocinio interno
@@ -190,10 +189,10 @@ public class AlertActivity extends AppCompatActivity {
         //se la distanza è 0 recupero solo l'ultimo valore
         if(dist==0){
             urlString = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds.json?api_key=" + actualchannel.getLett_read_key()
-                    + "&results=1" + "&offset="+getCurrentTimezoneOffset();
+                    + "&results=1" + "&offset="+ MainActivity.getCurrentTimezoneOffset();
         }
         else urlString = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds.json?api_key=" + actualchannel.getLett_read_key()
-                + "&minutes=" + dist + "&offset="+getCurrentTimezoneOffset();
+                + "&minutes=" + dist + "&offset="+ MainActivity.getCurrentTimezoneOffset();
             final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlString, null,
                     new Response.Listener<JSONObject>() {
                         @Override

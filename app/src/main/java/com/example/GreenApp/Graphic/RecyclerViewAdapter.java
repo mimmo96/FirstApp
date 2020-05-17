@@ -1,8 +1,7 @@
-package com.example.firstapp.Graphic;
+package com.example.GreenApp.Graphic;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

@@ -7,7 +7,7 @@
     android:gravity="center"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".Alert.AlertActivity"
+    tools:context="com.example.GreenApp.Alert.AlertActivity"
     tools:layout_editor_absoluteY="25dp">
 
     <ImageView

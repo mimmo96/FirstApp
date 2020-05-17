@@ -1,22 +1,20 @@
-package com.example.firstapp.Alert;
+package com.example.GreenApp.Alert;
 
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.EditText;
-import android.widget.TextView;
+
 import androidx.annotation.Nullable;
 import androidx.room.Room;
 
-import com.example.firstapp.AppDatabase;
-import com.example.firstapp.Channel.Channel;
+import com.example.GreenApp.Channel.Channel;
+import com.example.GreenApp.AppDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 
 /*
  * Progetto: svilluppo App Android per Tirocinio interno

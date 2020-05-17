@@ -1,4 +1,4 @@
-package com.example.firstapp.Graphic;
+package com.example.GreenApp.Graphic;
 
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;

@@ -1,4 +1,4 @@
-package com.example.firstapp.Channel;
+package com.example.GreenApp.Channel;
 
 
 import android.content.Context;
@@ -9,7 +9,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.firstapp.AppDatabase;
+import com.example.GreenApp.AppDatabase;
 import com.example.firstapp.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
