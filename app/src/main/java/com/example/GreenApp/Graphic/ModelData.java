@@ -19,25 +19,16 @@ public class ModelData
     private String name;
     private LineGraphSeries<DataPoint> series;
     private Double media;
-    private PointsGraphSeries<DataPoint> point;
 
     public ModelData() {}
 
 
-    public ModelData(String name, LineGraphSeries<DataPoint> series, Double media, PointsGraphSeries<DataPoint> poi) {
+    public ModelData(String name, LineGraphSeries<DataPoint> series, Double media) {
         this.name = name;
         this.series = series;
         this.media=media;
-        point=poi;
     }
 
-    public PointsGraphSeries<DataPoint> getPoint() {
-        return point;
-    }
-
-    public void setPoint(PointsGraphSeries<DataPoint> point) {
-        this.point = point;
-    }
     public String getName() {
         return name;
     }

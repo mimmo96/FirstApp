@@ -305,10 +305,9 @@ public class MainActivity extends AppCompatActivity {
             somma=somma+list.get(i);
         }
         series = new LineGraphSeries<>(data);
-        PointsGraphSeries<DataPoint> last=null;
         series.setColor(Color.RED);
         Double media=Math.round((somma/created.size()) * 100.0) / 100.0;
-        Insertdata.add(new ModelData(name, series,media,last));
+        Insertdata.add(new ModelData(name, series,media));
         date_value.clear();
     }
 

@@ -1,6 +1,7 @@
 package com.example.GreenApp.Alert;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -281,10 +282,13 @@ public class MyTimerTask extends TimerTask {
                 .setSmallIcon(R.drawable.pianta)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .build();
 
         notification.flags = Notification.FLAG_INSISTENT | Notification.FLAG_AUTO_CANCEL;
         notificationManager.notify(i,notification);
+
+
     }
 
     public static String getCurrentTimezoneOffset() {
