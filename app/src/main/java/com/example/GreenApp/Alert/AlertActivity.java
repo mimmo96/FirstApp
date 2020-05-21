@@ -42,7 +42,6 @@ import java.util.TimeZone;
 
 
 public class AlertActivity extends AppCompatActivity {
-    private static NotificationManagerCompat notificationManager;
     private static Context cont;
     private EditText tempMin;
     private EditText tempMax;
@@ -79,7 +78,6 @@ public class AlertActivity extends AppCompatActivity {
         serviceIntent = new Intent(this, ExampleService.class);
 
         cont=getApplication();
-        notificationManager=NotificationManagerCompat.from(this);
         tempMin=findViewById(R.id.Tempmin);
         tempMax=findViewById(R.id.tempmax);
         umidMin=findViewById(R.id.umidmin);
@@ -176,15 +174,40 @@ public class AlertActivity extends AppCompatActivity {
         String u = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds/last_data_age.json?api_key=" + actualchannel.getLett_read_key();
         //memorizza nel database gli ultimi minuti
         getlasttime(u, actualchannel);
-        //se l'utente non ha settato il range di tempo per la media conto come distanza il tempo dall'ultimo valore
-        minuti = actualchannel.getMinutes().intValue();
-        if (actualchannel.getLastimevalues() == 0) dist = minuti;
-        else dist = actualchannel.getLastimevalues() + minuti;
-        String urlString;
-        //se la distanza è 0 recupero solo l'ultimo valore
-        urlString = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds.json?api_key=" + actualchannel.getLett_read_key()
-                + "&minutes=" + dist + "&offset=" + MainActivity.getCurrentTimezoneOffset();
-        getJsonResponse(urlString);
+    }
+
+    private void getlasttime(String url, final Channel channel){
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    int minuti=0;
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String cretime =  response.get("last_data_age").toString();
+                            minuti= Integer.parseInt(cretime);
+                            minuti =(minuti /60)+1;
+                            database.ChannelDao().delete(channel);
+                            channel.setMinutes((double)minuti);
+                            database.ChannelDao().insert(channel);
+                            int dist = channel.getLastimevalues() + minuti;
+
+                            String urlString;
+                            urlString = "https://api.thingspeak.com/channels/" + channel.getLett_id() + "/feeds.json?api_key=" + channel.getLett_read_key()
+                                    + "&minutes=" + dist + "&offset=" + MainActivity.getCurrentTimezoneOffset();
+                            Log.d("ALERTACTIVITY",urlString);
+                            getJsonResponse(urlString);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Thread background", "errore donwload");
+            }
+        });
+        Volley.newRequestQueue(cont).add(jsonObjectRequest);
     }
 
     private void getJsonResponse (final String url){
@@ -394,34 +417,6 @@ public class AlertActivity extends AppCompatActivity {
                 }
             });
             Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
-    }
-
-    private void getlasttime(String url, final Channel channel){
-        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    int minuti=0;
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-
-                            String cretime =  response.get("last_data_age").toString();
-                            minuti= Integer.parseInt(cretime);
-                            minuti =(minuti /60)+1;
-                            database.ChannelDao().delete(channel);
-                            channel.setMinutes((double)minuti);
-                            database.ChannelDao().insert(channel);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("Thread background", "errore donwload");
-            }
-        });
-        Volley.newRequestQueue(cont).add(jsonObjectRequest);
     }
 
     //notifiche dedicata all'evapotraspirazione

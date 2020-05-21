@@ -71,27 +71,6 @@ public class MyTimerTask extends TimerTask {
             String u = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds/last_data_age.json?api_key=" + actualchannel.getLett_read_key();
             //memorizza nel database gli ultimi minuti
             getlasttime(u,actualchannel);
-            //se l'utente non ha settato il range di tempo per la media conto come distanza il tempo dall'ultimo valore
-            minuti = actualchannel.getMinutes().intValue();
-            if (actualchannel.getLastimevalues() == 0) dist = minuti;
-            else dist = actualchannel.getLastimevalues() + minuti;
-            Log.d("MyTimerTask", "Channel id : " + actualchannel.getLett_id());
-            Log.d("MyTimerTask", "minuti : " + actualchannel.getMinutes());
-            Log.d("MyTimerTask", "lasttime è: " + actualchannel.getLastimevalues());
-            Log.d("MyTimerTask", "Distanza è:" + dist);
-            String urlString;
-            //se la distanza è 0 recupero solo l'ultimo valore
-            if (dist == 0) {
-                urlString = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds.json?api_key=" + actualchannel.getLett_read_key()
-                        + "&results=1" + "&offset=" + getCurrentTimezoneOffset();
-            } else
-                urlString = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds.json?api_key=" + actualchannel.getLett_read_key()
-                        + "&minutes=" + dist + "&offset=" + getCurrentTimezoneOffset();
-            if(actualchannel.getNotification()){
-                Log.d("MYTIMERTASK","AVVIO CHANNEL: "+ actualchannel.getLett_id());
-                getJsonResponse(urlString, actualchannel);
-            }
-            Log.d("URL", urlString);
         }
     }
 
@@ -110,6 +89,21 @@ public class MyTimerTask extends TimerTask {
                             channel.setMinutes((double)minuti);
                             db.ChannelDao().insert(channel);
 
+                            //se l'utente non ha settato il range di tempo per la media conto come distanza il tempo dall'ultimo valore
+                            int  dist = channel.getLastimevalues() + minuti;
+                            Log.d("MyTimerTask", "Channel id : " + channel.getLett_id());
+                            Log.d("MyTimerTask", "minuti : " + channel.getMinutes());
+                            Log.d("MyTimerTask", "lasttime è: " + channel.getLastimevalues());
+                            Log.d("MyTimerTask", "Distanza è:" + dist);
+                            String urlString;
+                            //se la distanza è 0 recupero solo l'ultimo valore
+                            urlString = "https://api.thingspeak.com/channels/" + channel.getLett_id() + "/feeds.json?api_key=" + channel.getLett_read_key()
+                                    + "&minutes=" + dist + "&offset=" + getCurrentTimezoneOffset();
+                            if(channel.getNotification()){
+                                Log.d("MYTIMERTASK","AVVIO CHANNEL: "+ channel.getLett_id());
+                                getJsonResponse(urlString, channel);
+                            }
+                            Log.d("URL", urlString);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
