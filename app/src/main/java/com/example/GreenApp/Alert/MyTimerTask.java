@@ -1,10 +1,13 @@
 package com.example.GreenApp.Alert;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -274,20 +277,36 @@ public class MyTimerTask extends TimerTask {
 
 
     public void printnotify(String text,int i){
-        Intent notificationIntent = new Intent(cont, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(cont,0, notificationIntent, 0);
-        Notification notification = new NotificationCompat.Builder(cont, CHANNEL_1_ID)
-                .setContentTitle("Green App")
-                .setContentText(text)
-                .setSmallIcon(R.drawable.pianta)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .build();
 
-        notification.flags = Notification.FLAG_INSISTENT | Notification.FLAG_AUTO_CANCEL;
-        notificationManager.notify(i,notification);
+        NotificationManager notificationManager = (NotificationManager) cont.getSystemService(Context.NOTIFICATION_SERVICE);
 
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            String CHANNEL_ID = "channel"+ i;
+            CharSequence name = "channel"+ i;
+            String Description = "This is my channel";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+            mChannel.setDescription(Description);
+            mChannel.enableLights(true);
+            mChannel.setLightColor(Color.RED);
+            mChannel.enableVibration(true);
+            mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            mChannel.setShowBadge(false);
+            notificationManager.createNotificationChannel(mChannel);
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(cont, "channel"+ i)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("green App")
+                .setContentText(text);
+
+        Intent resultIntent = new Intent(cont, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(cont);
+        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(resultPendingIntent);
+        notificationManager.notify(i, builder.build());
 
     }
 
