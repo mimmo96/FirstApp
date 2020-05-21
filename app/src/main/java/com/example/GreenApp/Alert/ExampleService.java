@@ -78,7 +78,8 @@ public class ExampleService extends Service {
             else{
                 myTimerTask=new MyTimerTask(channelNotification,context,database);
                 timer = new Timer();
-                timer.scheduleAtFixedRate(myTimerTask, 0, 3000);
+                //ogni 10 minuti
+                timer.scheduleAtFixedRate(myTimerTask, 0, 600000);
                 Log.d("ExampleServices"," ho avviato: " +k +" notifiche");
             }
 
