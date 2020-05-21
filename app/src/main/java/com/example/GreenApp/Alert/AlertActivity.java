@@ -24,6 +24,7 @@ import com.example.GreenApp.Graphic.MainActivity;
 import com.example.GreenApp.AppDatabase;
 import com.example.firstapp.R;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -124,13 +125,6 @@ public class AlertActivity extends AppCompatActivity {
         if (channel.getPesMax()!=null) pesMax.setText(String.format(channel.getPesMax().toString()));
         if (channel.getLastimevalues()!=0) minutes.setText(String.valueOf(channel.getLastimevalues()));
         if (channel.getTempomax()!=0) tempomax.setText(String.valueOf(channel.getTempomax()));
-        if (channel.getEvapotraspirazione()!=null) peso.setText(String.valueOf(channel.getEvapotraspirazione()));
-        else  peso.setText("- -");
-        if(channel.getMinutes()!=null) {
-            Double x = channel.getMinutes();
-            minuti=x.intValue();
-            Log.d("MINUTI SETATTI",String.valueOf(minuti));
-        }
 
         //se le notifiche erano attive avvio il servizio notifiche
         if (channel.getNotification()){
@@ -176,24 +170,25 @@ public class AlertActivity extends AppCompatActivity {
     }
 
     private void downloadMedia() {
-        Channel actualchannel = database.ChannelDao().findByName(channel.getLett_id(),channel.getLett_read_key());
-        int dist=0;
+        Channel actualchannel = database.ChannelDao().findByName(channel.getLett_id(), channel.getLett_read_key());
+        int dist = 0;
+        //recupero il tempo dall'ultimo inserimento
+        String u = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds/last_data_age.json?api_key=" + actualchannel.getLett_read_key();
+        //memorizza nel database gli ultimi minuti
+        getlasttime(u, actualchannel);
         //se l'utente non ha settato il range di tempo per la media conto come distanza il tempo dall'ultimo valore
-        if(actualchannel.getMinutes()!=0) minuti=actualchannel.getMinutes().intValue();
-        if(actualchannel.getLastimevalues()==0) dist=minuti;
-        else dist=actualchannel.getLastimevalues()+minuti+1;
-        Log.d("MyTimerTask", "minuti : " + actualchannel.getMinutes());
-        Log.d("MyTimerTask", "lasttime è: " + actualchannel.getLastimevalues());
-        Log.d("MyTimerTask", "Distanza è:" + dist);
-        String urlString=null;
+        minuti = actualchannel.getMinutes().intValue();
+        if (actualchannel.getLastimevalues() == 0) dist = minuti;
+        else dist = actualchannel.getLastimevalues() + minuti;
+        String urlString;
         //se la distanza è 0 recupero solo l'ultimo valore
-        if(dist==0){
-            urlString = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds.json?api_key=" + actualchannel.getLett_read_key()
-                    + "&results=1" + "&offset="+ MainActivity.getCurrentTimezoneOffset();
-        }
-        else urlString = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds.json?api_key=" + actualchannel.getLett_read_key()
-                + "&minutes=" + dist + "&offset="+ MainActivity.getCurrentTimezoneOffset();
-            final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlString, null,
+        urlString = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds.json?api_key=" + actualchannel.getLett_read_key()
+                + "&minutes=" + dist + "&offset=" + MainActivity.getCurrentTimezoneOffset();
+        getJsonResponse(urlString);
+    }
+
+    private void getJsonResponse (final String url){
+            final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
@@ -310,22 +305,14 @@ public class AlertActivity extends AppCompatActivity {
                                             String field=value.getString(v.getImagepeso());
                                             pe=pe+(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0);
                                             sompe++;
+                                        }else {
+                                            String url= "https://api.thingspeak.com/channels/"+channel.getLett_id()+"/fields/7-8.json?api_key=" + channel.getLett_read_key();
+                                            downloadEvapotraspirazione(url);
                                         }
+
                                     }catch (Exception e){
                                     }
-                                    try {
-                                        cretime = value.getString("created_at");
-                                        Log.d("DISTANZA ", cretime);
-                                        minuti=(int)distanza(cretime);
-                                        Log.d("minuti ", String.valueOf(minuti));
-                                    }catch (Exception e){ }
                                 }
-
-                                //lo salvo nel server
-                                database.ChannelDao().delete(v);
-                                Log.d("ALERTACTIVITY/MINUTES:",String.valueOf((double) minuti));
-                                v.setMinutes((double) minuti);
-                                database.ChannelDao().insert(v);
 
                                 //calcolo la media di tutti i valori e la confronto con i miei valori,se la supera invio la notifica
                                 t=Math.round(t/somt * 100.0) / 100.0;
@@ -407,6 +394,91 @@ public class AlertActivity extends AppCompatActivity {
                 }
             });
             Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
+    }
+
+    private void getlasttime(String url, final Channel channel){
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    int minuti=0;
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            String cretime =  response.get("last_data_age").toString();
+                            minuti= Integer.parseInt(cretime);
+                            minuti =(minuti /60)+1;
+                            database.ChannelDao().delete(channel);
+                            channel.setMinutes((double)minuti);
+                            database.ChannelDao().insert(channel);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Thread background", "errore donwload");
+            }
+        });
+        Volley.newRequestQueue(cont).add(jsonObjectRequest);
+    }
+
+    //notifiche dedicata all'evapotraspirazione
+    private void downloadEvapotraspirazione(String urlString) {
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlString, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            //recupero l'array feeds
+                            JSONArray jsonArray = response.getJSONArray("feeds");
+
+                            //recupero i fields associati al channel
+                            ArrayList<String> fields = new ArrayList<String>();
+                            int dim = response.getJSONObject("channel").length();
+                            Log.d("Thread background", "donwload eseguito");
+
+                            Boolean ok=false;
+                            Boolean ok1=false;
+                            Double irrigazione =0.0;
+                            Double drainaggio = 0.0;
+
+                            //scandisco tutti i 100 valori per trovare i valori di irrigazione e drenaggio
+                            for (int k = 0; k < jsonArray.length(); k++) {
+                                JSONObject valori = jsonArray.getJSONObject(k);
+                                try {
+                                    if (!valori.getString("field7").equals("") && !valori.getString("field7").equals("null")) {
+                                        ok=true;
+                                        irrigazione=Double.parseDouble(valori.getString("field7"));
+                                    }
+                                }catch (Exception e){ }
+
+                                try {
+                                    if (!valori.getString("field8").equals("") && !valori.getString("field8").equals("null")) {
+                                        ok1=true;
+                                        drainaggio=Double.parseDouble(valori.getString("field8"));
+                                    }
+                                }catch (Exception e){ }
+
+                                if(ok && ok1) {
+                                    Double ev=Math.round((irrigazione - drainaggio) * 100.0) / 100.0;
+                                    peso.setText(String.valueOf(ev));
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("AlertActivity", "errore donwload");
+            }
+        });
+        Volley.newRequestQueue(cont).add(jsonObjectRequest);
     }
 
     public static Intent getActivityintent(Context context){

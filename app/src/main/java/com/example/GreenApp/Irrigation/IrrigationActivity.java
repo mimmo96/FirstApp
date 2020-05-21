@@ -66,7 +66,6 @@ public class IrrigationActivity extends AppCompatActivity {
         irradayText=findViewById(R.id.editTextIrraDay);
         Switch= findViewById(R.id.switch1);
         irra=findViewById(R.id.buttonIrra);
-        textTime=findViewById(R.id.textViewTime);
 
         cont=getApplicationContext();
 
@@ -84,13 +83,11 @@ public class IrrigationActivity extends AppCompatActivity {
                     if(check!=0) {
                         //mando i dati al server
                         irrigationOn(flussoText.getText().toString(), leachingText.getText().toString(), irradayText.getText().toString(), "AUTOMATICA");
-                        textTime.setText("IRRIGAZIONE ATTIVATA");
                     }
                 }
                 else{
                     //comunico al server di interrompere l'irrigazione
                     irrigationOff();
-                    textTime.setText("NESSUNA IRRIGAZIONE PRESENTE");
                 }
             }
         });

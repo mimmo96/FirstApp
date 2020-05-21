@@ -216,14 +216,6 @@ public class MyTimerTask extends TimerTask {
                                 String cretime = value.getString("created_at");
                                 distanza(cretime);
 
-                                //salvo i valori sul database
-                                database.ChannelDao().delete(v);
-                                int minuti=(int)distanza1(cretime);
-                                minuti=minuti-(Integer.valueOf(MainActivity.getCurrentTimezoneOffset())+1)*60;
-                                v.setEvapotraspirazione(evapotraspirazione);
-                                v.setMinutes((double)minuti);
-                                database.ChannelDao().insert(v);
-
                                 stato.setText("ONLINE");
                                 stato.setTextColor(Color.GREEN);
                             } catch (JSONException e) {

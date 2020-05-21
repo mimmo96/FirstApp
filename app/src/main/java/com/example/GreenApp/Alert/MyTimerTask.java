@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -64,11 +65,14 @@ public class MyTimerTask extends TimerTask {
     public void run() {
         //recupero la lista e controllo lo stato dei channel con il database
         for(int i=0;i<channel.size();i++) {
-
             Channel actualchannel = db.ChannelDao().findByName(channel.get(i).getLett_id(), channel.get(i).getLett_read_key());
             int dist = 0;
+            //recupero il tempo dall'ultimo inserimento
+            String u = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds/last_data_age.json?api_key=" + actualchannel.getLett_read_key();
+            //memorizza nel database gli ultimi minuti
+            getlasttime(u,actualchannel);
             //se l'utente non ha settato il range di tempo per la media conto come distanza il tempo dall'ultimo valore
-            if (actualchannel.getMinutes() != 0) minuti = actualchannel.getMinutes().intValue();
+            minuti = actualchannel.getMinutes().intValue();
             if (actualchannel.getLastimevalues() == 0) dist = minuti;
             else dist = actualchannel.getLastimevalues() + minuti;
             Log.d("MyTimerTask", "Channel id : " + actualchannel.getLett_id());
@@ -89,6 +93,34 @@ public class MyTimerTask extends TimerTask {
             }
             Log.d("URL", urlString);
         }
+    }
+
+    private void getlasttime(String url, final Channel channel){
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+            int minuti=0;
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            String cretime =  response.get("last_data_age").toString();
+                           minuti= Integer.parseInt(cretime);
+                            minuti =(minuti /60)+1;
+                            db.ChannelDao().delete(channel);
+                            channel.setMinutes((double)minuti);
+                            db.ChannelDao().insert(channel);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Thread background", "errore donwload");
+            }
+        });
+        Volley.newRequestQueue(cont).add(jsonObjectRequest);
     }
 
     //metodo per reperire le risposte json
