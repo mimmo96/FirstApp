@@ -220,4 +220,18 @@
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/irrigazione" />
 
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="296dp"
+        android:layout_height="71dp"
+        android:autoSizeTextType="uniform"
+        android:text="NOTA: in caso di errore di disattivazione/attivazione ricordarsi che le richieste di salvataggio,reset dei valori o attivazione e disattivazione devono essere effettuate a partire da 15 secondi dall'ultima richiesta"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.414"
+        app:layout_constraintStart_toStartOf="@+id/guideline8"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.829" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

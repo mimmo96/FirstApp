@@ -18,10 +18,9 @@
         android:layout_alignParentTop="true"
         app:layout_constraintBottom_toTopOf="@+id/phmin"
         app:layout_constraintEnd_toStartOf="@+id/imageConducibility2"
-        app:layout_constraintHorizontal_bias="0.98"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/phmax"
         app:layout_constraintTop_toBottomOf="@+id/phmax"
-        app:layout_constraintVertical_bias="0.476"
         app:srcCompat="@drawable/phprova" />
 
     <TextView
@@ -122,10 +121,9 @@
         android:contentDescription="temperature"
         app:layout_constraintBottom_toTopOf="@+id/Tempmin"
         app:layout_constraintEnd_toStartOf="@+id/imageUminidy2"
-        app:layout_constraintHorizontal_bias="0.977"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/irramax"
         app:layout_constraintTop_toBottomOf="@+id/tempmax"
-        app:layout_constraintVertical_bias="0.428"
         app:srcCompat="@drawable/temp" />
 
     <ImageView
@@ -153,10 +151,9 @@
         android:background="@drawable/irradiance"
         app:layout_constraintBottom_toTopOf="@+id/irramin"
         app:layout_constraintEnd_toStartOf="@+id/imageTemperature2"
-        app:layout_constraintHorizontal_bias="0.973"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/irramax"
-        app:layout_constraintVertical_bias="0.476" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/irramax" />
 
     <ImageView
         android:id="@+id/imageConducibility"
@@ -182,10 +179,10 @@
         android:layout_centerVertical="true"
         app:layout_constraintBottom_toTopOf="@+id/condmin"
         app:layout_constraintEnd_toStartOf="@+id/imageView6"
-        app:layout_constraintHorizontal_bias="0.994"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.25"
+        app:layout_constraintStart_toEndOf="@+id/phmax"
         app:layout_constraintTop_toBottomOf="@+id/condmax"
-        app:layout_constraintVertical_bias="0.428"
+        app:layout_constraintVertical_bias="0.444"
         app:srcCompat="@drawable/cond" />
 
     <ImageView
@@ -212,10 +209,10 @@
         android:layout_alignParentEnd="true"
         app:layout_constraintBottom_toTopOf="@+id/umidmin"
         app:layout_constraintEnd_toStartOf="@+id/imagePh2"
-        app:layout_constraintHorizontal_bias="0.98"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/umidmax"
         app:layout_constraintTop_toBottomOf="@+id/umidmax"
-        app:layout_constraintVertical_bias="0.428"
+        app:layout_constraintVertical_bias="0.472"
         app:srcCompat="@drawable/umidity" />
 
     <ImageView
@@ -539,11 +536,11 @@
         android:layout_width="37dp"
         android:layout_height="37dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.993"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/Edittempomax"
+        app:layout_constraintHorizontal_bias="0.994"
+        app:layout_constraintStart_toStartOf="@+id/Edittempomax"
         app:layout_constraintTop_toBottomOf="@+id/Edittempomax"
-        app:layout_constraintVertical_bias="0.081"
+        app:layout_constraintVertical_bias="0.09"
         app:srcCompat="@drawable/clessidra" />
 
     <ImageView
@@ -552,10 +549,10 @@
         android:layout_height="37dp"
         app:layout_constraintBottom_toTopOf="@+id/pesomin"
         app:layout_constraintEnd_toStartOf="@+id/imageViewclessidra"
-        app:layout_constraintHorizontal_bias="0.984"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.222"
+        app:layout_constraintStart_toStartOf="@+id/pesomax"
         app:layout_constraintTop_toBottomOf="@+id/pesomax"
-        app:layout_constraintVertical_bias="0.428"
+        app:layout_constraintVertical_bias="0.444"
         app:srcCompat="@drawable/evapotraspirazione" />
 
     <androidx.constraintlayout.widget.Guideline
