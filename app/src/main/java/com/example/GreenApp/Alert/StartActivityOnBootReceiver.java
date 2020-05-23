@@ -15,6 +15,7 @@ public class StartActivityOnBootReceiver extends BroadcastReceiver {
             ExampleService.stoptimer();
             Intent serviceIntent = new Intent(context, ExampleService.class);
             ContextCompat.startForegroundService(context, serviceIntent);
+            Log.d("STARTACTIVITYONBOOT","BOOT COMPLETATO");
         }
     }
 }

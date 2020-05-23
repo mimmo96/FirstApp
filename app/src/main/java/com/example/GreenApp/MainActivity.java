@@ -2,6 +2,7 @@ package com.example.GreenApp;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -58,8 +59,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //inizializzo l'intent per il service da lanciare in background
-        serviceIntent = new Intent(this, ExampleService.class);
 
         //ripristino valori salvati precedentemente se ci sono
         BackupValues(savedInstanceState);
@@ -87,8 +86,9 @@ public class MainActivity extends AppCompatActivity {
             testo1.setText("INSERISCI UN NUOVO CHANNEL");
         } else {
             startTimer(cont);
-            //avvio il service in background
-           // startService();
+            ExampleService.stoptimer();
+            Intent serviceIntent = new Intent(cont, ExampleService.class);
+            ContextCompat.startForegroundService(cont, serviceIntent);
         }
     }
 
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                         selChan.remove(selectedChannel.get(position));
                     }
 
-                    if(name.size()>5){
+                    if(name.size()>6){
                         name.remove(list.get(position));
                         selectedPos.remove(posField.get(position));
                         selChan.remove(selectedChannel.get(position));
