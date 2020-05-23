@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -190,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(cont, "INSERISCI UN CHANNEL!", Toast.LENGTH_SHORT).show();
         else {
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-            mBuilder.setTitle("Seleziona i tipi di grafici");
+            mBuilder.setTitle("Seleziona i tipi di grafici(max 6)");
             final ArrayList<Integer> selectedPos=new ArrayList<>();
             final ArrayList<Channel> selChan=new ArrayList<>();
             mBuilder.setMultiChoiceItems(listItems, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
@@ -198,16 +199,25 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialogInterface, int position, boolean isChecked) {
                     //salvo la selezione
                     if (isChecked) {
-                        // mUserItems.add(position);
                         name.add(list.get(position));
                         selectedPos.add(posField.get(position));
                         selChan.add(selectedChannel.get(position));
                     } else {
-                        // mUserItems.remove((Integer.valueOf(position)));
                         name.remove(list.get(position));
                         selectedPos.remove(posField.get(position));
                         selChan.remove(selectedChannel.get(position));
                     }
+
+                    if(name.size()>5){
+                        name.remove(list.get(position));
+                        selectedPos.remove(posField.get(position));
+                        selChan.remove(selectedChannel.get(position));
+
+                        ((AlertDialog) dialogInterface).getListView().setItemChecked(position, false);
+                        checkedItems[position]=false;
+                        Toast.makeText(getApplicationContext(),"HAI SELEZIONATO PIU GRAFICI DEL PREVISTO, DESELEZIONA I PRECEDENTI",Toast.LENGTH_LONG).show();
+                    }
+
                 }
             });
 

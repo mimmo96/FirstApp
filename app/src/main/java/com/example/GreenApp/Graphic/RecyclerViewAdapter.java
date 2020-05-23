@@ -80,7 +80,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onTap(Series series, DataPointInterface dataPoint) {
                 Date dat=new Date((long) dataPoint.getX());
-                Toast.makeText(context,"x: " + sdf.format(dat) +"\ny: "+dataPoint.getY(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"x: " + sdf.format(dat) +"\ny: "+dataPoint.getY(),Toast.LENGTH_LONG).show();
 
                 //avvio un thread per inserire i valori
                 MyThread myThread = new MyThread();

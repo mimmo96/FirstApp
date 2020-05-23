@@ -272,8 +272,8 @@
 
     <EditText
         android:id="@+id/Tempmin"
-        android:layout_width="43dp"
-        android:layout_height="30dp"
+        android:layout_width="44dp"
+        android:layout_height="40dp"
         android:ems="10"
         android:hint="--"
         android:inputType="numberSigned|number|numberDecimal"
@@ -287,8 +287,8 @@
 
     <EditText
         android:id="@+id/irramin"
-        android:layout_width="43dp"
-        android:layout_height="30dp"
+        android:layout_width="44dp"
+        android:layout_height="40dp"
         android:ems="10"
         android:hint="--"
         android:inputType="numberSigned|number|numberDecimal"
@@ -302,8 +302,8 @@
 
     <EditText
         android:id="@+id/phmax"
-        android:layout_width="43dp"
-        android:layout_height="30dp"
+        android:layout_width="44dp"
+        android:layout_height="40dp"
         android:ems="10"
         android:hint="--"
         android:inputType="numberSigned|number|numberDecimal"
@@ -317,8 +317,8 @@
 
     <EditText
         android:id="@+id/Edittempomax"
-        android:layout_width="40dp"
-        android:layout_height="30dp"
+        android:layout_width="44dp"
+        android:layout_height="40dp"
         android:ems="10"
         android:hint="--"
         android:inputType="numberSigned|number|numberDecimal"
@@ -332,8 +332,8 @@
 
     <EditText
         android:id="@+id/pesomin"
-        android:layout_width="40dp"
-        android:layout_height="30dp"
+        android:layout_width="44dp"
+        android:layout_height="40dp"
         android:ems="10"
         android:hint="--"
         android:inputType="numberSigned|number|numberDecimal"
@@ -347,8 +347,8 @@
 
     <EditText
         android:id="@+id/umidmax"
-        android:layout_width="43dp"
-        android:layout_height="30dp"
+        android:layout_width="44dp"
+        android:layout_height="40dp"
         android:ems="10"
         android:hint="--"
         android:inputType="numberSigned|number|numberDecimal"
@@ -362,8 +362,8 @@
 
     <EditText
         android:id="@+id/phmin"
-        android:layout_width="43dp"
-        android:layout_height="30dp"
+        android:layout_width="44dp"
+        android:layout_height="40dp"
         android:ems="10"
         android:hint="--"
         android:inputType="numberSigned|number|numberDecimal"
@@ -377,8 +377,8 @@
 
     <EditText
         android:id="@+id/condmin"
-        android:layout_width="40dp"
-        android:layout_height="30dp"
+        android:layout_width="44dp"
+        android:layout_height="40dp"
         android:ems="10"
         android:hint="--"
         android:inputType="numberSigned|number|numberDecimal"
@@ -392,8 +392,8 @@
 
     <EditText
         android:id="@+id/pesomax"
-        android:layout_width="43dp"
-        android:layout_height="30dp"
+        android:layout_width="44dp"
+        android:layout_height="40dp"
         android:ems="10"
         android:hint="--"
         android:inputType="numberSigned|number|numberDecimal"
@@ -407,8 +407,8 @@
 
     <EditText
         android:id="@+id/condmax"
-        android:layout_width="40dp"
-        android:layout_height="30dp"
+        android:layout_width="44dp"
+        android:layout_height="40dp"
         android:ems="10"
         android:hint="--"
         android:inputType="numberSigned|number|numberDecimal"
@@ -422,8 +422,8 @@
 
     <EditText
         android:id="@+id/umidmin"
-        android:layout_width="43dp"
-        android:layout_height="30dp"
+        android:layout_width="44dp"
+        android:layout_height="40dp"
         android:ems="10"
         android:hint="--"
         android:inputType="numberSigned|number|numberDecimal"
@@ -437,8 +437,8 @@
 
     <EditText
         android:id="@+id/irramax"
-        android:layout_width="43dp"
-        android:layout_height="30dp"
+        android:layout_width="44dp"
+        android:layout_height="40dp"
         android:ems="10"
         android:hint="--"
         android:inputType="numberSigned|number|numberDecimal"
@@ -452,8 +452,8 @@
 
     <EditText
         android:id="@+id/tempmax"
-        android:layout_width="43dp"
-        android:layout_height="30dp"
+        android:layout_width="44dp"
+        android:layout_height="40dp"
         android:ems="10"
         android:hint="--"
         android:inputType="numberSigned|number|numberDecimal"
@@ -537,10 +537,10 @@
         android:layout_height="37dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/Edittempomax"
-        app:layout_constraintHorizontal_bias="0.994"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/Edittempomax"
         app:layout_constraintTop_toBottomOf="@+id/Edittempomax"
-        app:layout_constraintVertical_bias="0.09"
+        app:layout_constraintVertical_bias="0.078"
         app:srcCompat="@drawable/clessidra" />
 
     <ImageView

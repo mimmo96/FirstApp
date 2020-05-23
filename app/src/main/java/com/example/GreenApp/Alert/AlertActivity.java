@@ -589,6 +589,7 @@ public class AlertActivity extends AppCompatActivity {
             tempomax.setText(" ");
 
             Toast.makeText(cont,"VALORI RESETTATI CORRETTAMENTE",Toast.LENGTH_SHORT).show();
+            downloadMedia();
     }
 
     //inizializzo in channel all'apertura iniziale

@@ -13,11 +13,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:largeHeap="true"
-        android:hardwareAccelerated="false"
+        android:hardwareAccelerated="true"
         android:theme="@style/AppTheme">
         <activity
             android:name="com.example.GreenApp.Graphic.MainActivity"
             android:label="@string/title_activity_graphic"
+            android:hardwareAccelerated="true"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name="com.example.GreenApp.Channel.ChannelActivity"
