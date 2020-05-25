@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -87,8 +88,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             startTimer(cont);
             ExampleService.stoptimer();
-            Intent serviceIntent = new Intent(cont, ExampleService.class);
-            ContextCompat.startForegroundService(cont, serviceIntent);
+            Intent intentservices=new Intent(cont,ExampleService.class);
+            ContextCompat.startForegroundService(cont,intentservices);
         }
     }
 
