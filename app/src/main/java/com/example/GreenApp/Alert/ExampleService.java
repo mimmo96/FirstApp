@@ -132,7 +132,7 @@ public class ExampleService extends Service {
             myTimerTask = new MyTimerTask(channelNotification, context, database);
             timer = new Timer();
             //ogni 10 minuti
-            timer.scheduleAtFixedRate(myTimerTask, 0, 30000);
+            timer.scheduleAtFixedRate(myTimerTask, 0, 600000);
             Log.d("ExampleServices", " ho avviato: " + k + " notifiche");
         }
         return START_NOT_STICKY;
