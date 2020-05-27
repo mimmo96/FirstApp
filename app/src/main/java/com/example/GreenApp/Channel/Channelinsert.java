@@ -63,7 +63,7 @@ public class Channelinsert  extends AppCompatActivity {
             readkey_lett= read_lett.getText().toString();
 
                 //verifico che ho inserito la chiave di scrittura altrimenti metto null
-                if(!IDscritt.getText().toString().equals("") && !read_scritt.getText().toString().equals("")){
+                if(!IDscritt.getText().toString().equals("") ){
                     Log.d("Channelinsert1","sono qui");
                     //verifico se esiste veramente la chiave di scrittura
                     if(testData(IDscritt.getText().toString(),read_scritt.getText().toString())){

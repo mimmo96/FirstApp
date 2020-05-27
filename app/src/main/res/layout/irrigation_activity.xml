@@ -185,8 +185,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
         android:layout_marginBottom="4dp"
-        android:onClick="resetirrigationvalues"
-        android:text="RESET"
+        android:onClick="refreshvalues"
+        android:text="AGGIORNA"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.007"
@@ -200,13 +200,13 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:onClick="saveirrigationvalues"
-        android:text="SAVE"
+        android:text="SALVA"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.851"
+        app:layout_constraintHorizontal_bias="0.934"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.973" />
+        app:layout_constraintVertical_bias="0.98" />
 
     <ImageView
         android:id="@+id/imageView4"
@@ -222,16 +222,53 @@
 
     <TextView
         android:id="@+id/textView6"
-        android:layout_width="296dp"
-        android:layout_height="71dp"
-        android:autoSizeTextType="uniform"
-        android:text="NOTA: in caso di errore di disattivazione/attivazione ricordarsi che le richieste di salvataggio,reset dei valori o attivazione e disattivazione devono essere effettuate a partire da 15 secondi dall'ultima richiesta"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ultima irrigazione manuale:"
+        app:layout_constraintBottom_toTopOf="@+id/textViewduration"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.414"
-        app:layout_constraintStart_toStartOf="@+id/guideline8"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.829" />
+        app:layout_constraintHorizontal_bias="0.153"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView19"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/textViewduration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autoSizeTextType="uniform"
+        android:text="- -"
+        app:layout_constraintBottom_toTopOf="@+id/button4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.125"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView19"
+        app:layout_constraintVertical_bias="0.703" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="Durata"
+        app:layout_constraintBottom_toTopOf="@+id/textDurationValues"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.724"
+        app:layout_constraintStart_toEndOf="@+id/textView6"
+        app:layout_constraintTop_toBottomOf="@+id/editTextIrraDay"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/textDurationValues"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autoSizeTextType="uniform"
+        android:text="- -"
+        app:layout_constraintBottom_toTopOf="@+id/button5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.781"
+        app:layout_constraintStart_toEndOf="@+id/textViewduration"
+        app:layout_constraintTop_toBottomOf="@+id/editTextIrraDay"
+        app:layout_constraintVertical_bias="0.641" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

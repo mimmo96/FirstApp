@@ -19,16 +19,21 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.GreenApp.Alert.AlertActivity;
 import com.example.GreenApp.AppDatabase;
 import com.example.GreenApp.Channel.Channel;
 import com.example.GreenApp.Channel.savedValues;
+import com.example.GreenApp.MainActivity;
 import com.example.firstapp.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 
 public class IrrigationActivity extends AppCompatActivity {
@@ -37,7 +42,8 @@ public class IrrigationActivity extends AppCompatActivity {
     private static EditText flussoText;
     private static EditText leachingText;
     private static EditText irradayText;
-    private static TextView textTime;
+    private static TextView textDurata;
+    private static TextView Durata;
     private static Channel channel;
     private static Switch Switch;
     private static Button irra;
@@ -71,6 +77,8 @@ public class IrrigationActivity extends AppCompatActivity {
         irradayText=findViewById(R.id.editTextIrraDay);
         Switch= findViewById(R.id.switch1);
         irra=findViewById(R.id.buttonIrra);
+        textDurata=findViewById(R.id.textViewduration);
+        Durata=findViewById(R.id.textDurationValues);
 
         cont=getApplicationContext();
 
@@ -156,12 +164,12 @@ public class IrrigationActivity extends AppCompatActivity {
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Toast.makeText(getBaseContext(),"IRRIGAZIONE"+tipo+" ATTTIVATA!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(),"IRRIGAZIONE "+tipo+" ATTTIVATA!",Toast.LENGTH_SHORT).show();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getBaseContext(),"ERRORE IRRIGAZIONE " +tipo+"!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(),"ERRORE ATTIVAZIONE IRRIGAZIONE " +tipo+" RIPROVA TRA 15 SECONDI O CONTROLLA LA TUA CONNESSIONE!",Toast.LENGTH_LONG).show();
                 error.printStackTrace();
             }
         });
@@ -200,7 +208,7 @@ public class IrrigationActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getBaseContext(),"ERRORE ATTIVAZIONE IRRIGAZIONE " +tipo+"!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(),"ERRORE ATTIVAZIONE IRRIGAZIONE " +tipo+" RIPROVA TRA 15 SECONDI O CONTROLLA LA TUA CONNESSIONE!",Toast.LENGTH_LONG).show();
                 //in caso di errore devo lasciare inalterata
                 Switch.setChecked(false);
                 check1=false;
@@ -242,7 +250,7 @@ public class IrrigationActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getBaseContext(),"ERRORE DISATTIVAZIONE IRRIGAZIONE!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(),"ERRORE DISATTIVAZIONE IRRIGAZIONE AUTOMATICA RIPROVA TRA 15 SECONDI O CONTROLLA LA TUA CONNESSIONE!",Toast.LENGTH_LONG).show();
                 Switch.setChecked(true);
                 check1=true;
                 check2=false;
@@ -311,7 +319,7 @@ public class IrrigationActivity extends AppCompatActivity {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getBaseContext(),"ERRORE SALVATAGGIO VALORI!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(),"ERRORE SALVATAGGIO VALORI RIPROVA TRA 15 SECONDI O CONTROLLA LA TUA CONNESSIONE!",Toast.LENGTH_LONG).show();
                     error.printStackTrace();
                 }
             });
@@ -322,49 +330,9 @@ public class IrrigationActivity extends AppCompatActivity {
 
     }
 
-    public void resetirrigationvalues(View v){
-        Channel list=db.ChannelDao().findByName(channel.getLett_id(),channel.getLett_read_key());
-
-        if(list!=null){
-            String url = "https://api.thingspeak.com/update.json";
-            List<savedValues> lista=db.SavedDao().getAll();
-
-            if(list==null || list.getWrite_key()==null || list.getWrite_key().equals("")) {
-                Toast.makeText(getBaseContext(),"CHIAVE SCRITTURA ERRATA",Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            Map<String, String> params = new HashMap();
-            params.put("accept", "application/json");
-            params.put("api_key", list.getWrite_key());
-            params.put("field2","");
-            params.put("field3","");
-            params.put("field4","");
-            if(Switch.isChecked()) params.put("field6",String.valueOf(1));
-            else params.put("field6",String.valueOf(0));
-
-            JSONObject parameters = new JSONObject(params);
-
-            JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Toast.makeText(getApplicationContext(),"VALORI RESETTATI CORRETTAMENTE",Toast.LENGTH_SHORT).show();
-                    durationText.setText("");
-                    flussoText.setText("");
-                    leachingText.setText("");
-                    irradayText.setText("");
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getBaseContext(),"ERRORE RESET VALORI!",Toast.LENGTH_SHORT).show();
-                    error.printStackTrace();
-                }
-            });
-
-            queue.add(jsonRequest);
-        }
-        else Toast.makeText(getApplicationContext(),"IMPOSSIBILE TROVARE IL CHANNEL SPECIFICATO",Toast.LENGTH_SHORT).show();
+    public void refreshvalues(View v){
+        //recupero i dati dal server
+        donwload();
     }
 
     public static Intent getActivityintent(Context context){
@@ -380,7 +348,7 @@ public class IrrigationActivity extends AppCompatActivity {
     private void donwload() {
         List<savedValues> lista=db.SavedDao().getAll();
         Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
-        String url="https://api.thingspeak.com/channels/"+list.getScritt_id()+"/feeds.json?api_key="+list.getScritt_read_key()+"&results=1";
+        String url="https://api.thingspeak.com/channels/"+list.getScritt_id()+"/feeds.json?api_key="+list.getScritt_read_key()+"&results=50";
 
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -389,7 +357,24 @@ public class IrrigationActivity extends AppCompatActivity {
                         try {
                             //recupero l'array feeds
                             JSONArray jsonArray = response.getJSONArray("feeds");
-                            JSONObject valori = jsonArray.getJSONObject(0);
+                            boolean trovato=false;
+                            for(int i=0;i<jsonArray.length();i++){
+                                JSONObject valori = jsonArray.getJSONObject(i);
+                                try {
+                                    if (!valori.getString("field1").equals("null") && !valori.getString("field1").equals("")) {
+                                        trovato=true;
+                                        Durata.setText(valori.getString("field1") + " minuti");
+                                    }
+                                    else trovato=false;
+                                }catch (Exception e){ trovato=false;}
+
+                                if(trovato){
+                                    String cretime = valori.getString("created_at");
+                                    distanza(cretime);
+                                }
+                            }
+
+                            JSONObject valori = jsonArray.getJSONObject(jsonArray.length()-1);
 
                             try {
                                 if (!valori.getString("field2").equals("null")) {
@@ -433,6 +418,42 @@ public class IrrigationActivity extends AppCompatActivity {
             }
         });
        queue.add(jsonObjectRequest);
+    }
+
+    private void distanza(String data) {
+        Calendar date_now= Calendar.getInstance ();
+        date_now.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Calendar date_value = Calendar.getInstance ();
+
+        //parsing della data
+        int giorno=Integer.valueOf(data.substring(8, 10));
+        int mese=Integer.valueOf(data.substring(5, 7));
+        int anno=Integer.valueOf(data.substring(0, 4));
+        int ore=Integer.valueOf(data.substring(11, 13));
+        int minuti=Integer.valueOf(data.substring(14, 16));
+        int secondi=Integer.valueOf(data.substring(17, 19));
+
+        //setto le impostazioni relative alla data
+        date_value.set (Calendar.YEAR,anno);
+        date_value.set (Calendar.MONTH,mese-1);
+        date_value.set (Calendar.DAY_OF_MONTH,giorno);
+        date_value.set (Calendar.HOUR_OF_DAY,ore);
+        date_value.set (Calendar.MINUTE,minuti);
+        date_value.set (Calendar.SECOND, secondi);
+
+        //converto la data del cloud alla mia zona gmt
+        date_value.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        //durata in secondi
+        long durata= (date_now.getTimeInMillis()/1000 - date_value.getTimeInMillis()/1000);
+        long giorni1=(durata/86400);
+        long temp=giorni1*86400;
+        long ore1=(durata-temp)/3600;
+        long minuti1=((durata-temp)-3600*ore1)/60;
+        temp=(durata-temp)-3600*ore1;
+        long secondi1=temp-(minuti1*60);
+
+        textDurata.setText( giorni1 + " giorni " + ore1 + " ore " + minuti1 + " minuti " + secondi1+ " secondi ");
     }
 
 }
