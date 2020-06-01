@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,16 +20,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.GreenApp.Alert.AlertActivity;
 import com.example.GreenApp.AppDatabase;
 import com.example.GreenApp.Channel.Channel;
 import com.example.GreenApp.Channel.savedValues;
-import com.example.GreenApp.MainActivity;
 import com.example.firstapp.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -48,12 +46,14 @@ public class IrrigationActivity extends AppCompatActivity {
     private static Switch Switch;
     private static Button irra;
     private static Context cont;
+    private static ImageView image;
     private Double leaching=null;
     private Double flusso=null;
     private int numirra=-1;
     private boolean check1=false;
     private boolean check2=false;
     private RequestQueue queue;
+    private int field7=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +79,7 @@ public class IrrigationActivity extends AppCompatActivity {
         irra=findViewById(R.id.buttonIrra);
         textDurata=findViewById(R.id.textViewduration);
         Durata=findViewById(R.id.textDurationValues);
+        image=findViewById(R.id.imageView4);
 
         cont=getApplicationContext();
 
@@ -158,6 +159,7 @@ public class IrrigationActivity extends AppCompatActivity {
         params.put("field4", irradayText.getText().toString());
         if(Switch.isChecked()) params.put("field6","1");
         else params.put("field6","0");
+        params.put("field7",String.valueOf(field7));
 
         JSONObject parameters = new JSONObject(params);
 
@@ -195,6 +197,7 @@ public class IrrigationActivity extends AppCompatActivity {
         params.put("field3",Leaching);
         params.put("field4",numirra);
         params.put("field6",String.valueOf(1));
+        params.put("field7",String.valueOf(field7));
 
         JSONObject parameters = new JSONObject(params);
 
@@ -237,6 +240,7 @@ public class IrrigationActivity extends AppCompatActivity {
         params.put("field3",leachingText.getText().toString());
         params.put("field4", irradayText.getText().toString());
         params.put("field6",String.valueOf(0));
+        params.put("field7",String.valueOf(field7));
 
         JSONObject parameters = new JSONObject(params);
 
@@ -308,6 +312,7 @@ public class IrrigationActivity extends AppCompatActivity {
             else  params.put("field4",String.valueOf(numirra));
             if(Switch.isChecked()) params.put("field6",String.valueOf(1));
             else params.put("field6",String.valueOf(0));
+            params.put("field7",String.valueOf(field7));
 
             JSONObject parameters = new JSONObject(params);
 
@@ -348,7 +353,7 @@ public class IrrigationActivity extends AppCompatActivity {
     private void donwload() {
         List<savedValues> lista=db.SavedDao().getAll();
         Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
-        String url="https://api.thingspeak.com/channels/"+list.getScritt_id()+"/feeds.json?api_key="+list.getScritt_read_key()+"&results=50";
+        String url="https://api.thingspeak.com/channels/"+list.getScritt_id()+"/feeds.json?api_key="+list.getScritt_read_key()+"&results=100";
 
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -406,6 +411,21 @@ public class IrrigationActivity extends AppCompatActivity {
 
                                 }
                             } catch (Exception e) { }
+                            try {
+                                if (!valori.getString("field7").equals("null")) {
+                                    if(Double.parseDouble(valori.getString("field7"))==1){
+                                        image.setImageResource(R.drawable.irrigazioneattiva);
+                                        field7=1;
+                                    }
+                                    else{
+                                        image.setImageResource(R.drawable.irrigazione);
+                                        field7=0;
+                                    }
+                                }
+                                else  image.setImageResource(R.drawable.irrigazione);
+                            } catch (Exception e) {
+                                image.setImageResource(R.drawable.irrigazione);
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();

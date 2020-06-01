@@ -441,6 +441,13 @@ public class MyTimerTask extends TimerTask {
                                 ArrayList<String> fields = new ArrayList<String>();
                                 int dim = response.getJSONObject("channel").length();
                                 Log.d("Thread background", "donwload eseguito");
+                                //salvo tutti i nomi dei field nell'array
+                                try {
+                                    for(int i=0;i<dim;i++) {
+                                        fields.add(String.valueOf(response.getJSONObject("channel").get("field" + (i+1))));
+                                    }
+                                }catch(Exception e) {
+                                }
 
                                 Boolean ok=false;
                                 Boolean ok1=false;
@@ -451,14 +458,14 @@ public class MyTimerTask extends TimerTask {
                                 for (int k = 0; k < jsonArray.length(); k++) {
                                     JSONObject valori = jsonArray.getJSONObject(k);
                                     try {
-                                        if (!valori.getString("field7").equals("") && !valori.getString("field7").equals("null")) {
+                                        if (!valori.getString("field7").equals("") && !valori.getString("field7").equals("null") && fields.get(6).equals("Irrigation")) {
                                             ok=true;
                                             irrigazione=Double.parseDouble(valori.getString("field7"));
                                         }
                                     }catch (Exception e){ }
 
                                     try {
-                                        if (!valori.getString("field8").equals("") && !valori.getString("field8").equals("null")) {
+                                        if (!valori.getString("field8").equals("") && !valori.getString("field8").equals("null") && fields.get(7).equals("Drainage")) {
                                             ok1=true;
                                             drainaggio=Double.parseDouble(valori.getString("field8"));
                                         }

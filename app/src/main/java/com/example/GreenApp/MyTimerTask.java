@@ -187,14 +187,14 @@ public class MyTimerTask extends TimerTask {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject valori = jsonArray.getJSONObject(i);
                                     try {
-                                        if (!valori.getString("field7").equals("") && !valori.getString("field7").equals("null")) {
+                                        if (!valori.getString("field7").equals("") && !valori.getString("field7").equals("null") && fields.get(6).equals("Irrigation")) {
                                             ok=true;
                                             irrigazione=Double.parseDouble(valori.getString("field7"));
                                         }
                                     }catch (Exception e){ }
 
                                     try {
-                                        if (!valori.getString("field8").equals("") && !valori.getString("field8").equals("null")) {
+                                        if (!valori.getString("field8").equals("") && !valori.getString("field8").equals("null") && fields.get(7).equals("Drainage")) {
                                             ok=true;
                                             drainaggio=Double.parseDouble(valori.getString("field8"));
                                         }
@@ -274,36 +274,6 @@ public class MyTimerTask extends TimerTask {
 
     public static void updateDatabase(AppDatabase db){
         database=db;
-    }
-
-
-    private static long distanza1(String data) {
-        if(data==null) return 0;
-        Calendar date_now= Calendar.getInstance ();
-        date_now.setTimeZone(TimeZone.getTimeZone("GMT"));
-        Calendar date_value = Calendar.getInstance ();
-
-        //parsing della data
-        int giorno=Integer.valueOf(data.substring(8, 10));
-        int mese=Integer.valueOf(data.substring(5, 7));
-        int anno=Integer.valueOf(data.substring(0, 4));
-        int ore=Integer.valueOf(data.substring(11, 13));
-        int minuti=Integer.valueOf(data.substring(14, 16));
-        int secondi=Integer.valueOf(data.substring(17, 19));
-
-        //setto le impostazioni relative alla data
-        date_value.set (Calendar.YEAR,anno);
-        date_value.set (Calendar.MONTH,mese-1);
-        date_value.set (Calendar.DAY_OF_MONTH,giorno);
-        date_value.set (Calendar.HOUR_OF_DAY,ore);
-        date_value.set (Calendar.MINUTE,minuti);
-        date_value.set (Calendar.SECOND, secondi);
-
-        //durata in secondi dall'ultimo aggiornamento
-        long durata= (date_now.getTimeInMillis()/1000 - date_value.getTimeInMillis()/1000);
-
-        //restituisco la durata in minuti approssimata ad un minuto in piu per sicurezza
-        return  (durata/60)+1;
     }
 
     }
