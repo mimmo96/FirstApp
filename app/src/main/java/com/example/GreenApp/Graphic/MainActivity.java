@@ -1,12 +1,15 @@
 package com.example.GreenApp.Graphic;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -75,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
     private List<String> date_fields8=new ArrayList<>();
     private Context context=this;
     private static int i=0;
+    private static TextView dataStart;
+    private static TextView dataEnd;
 
     private List<ModelData> Insertdata=new ArrayList<>();
 
@@ -91,7 +96,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.graphic_activity_main);
         recyclerView = findViewById(R.id.recyclerview);
-
+        dataStart=findViewById(R.id.textViewInizio);
+        dataEnd=findViewById(R.id.textViewfine);
 
         for(int i=0;i<channelPos.size();i++){
             url="https://api.thingspeak.com/channels/"+channelPos.get(i).getLett_id()+"/feeds.json?api_key="+channelPos.get(i).getLett_read_key()+"&results=8000"+"&offset="+getCurrentTimezoneOffset();
@@ -102,8 +108,6 @@ public class MainActivity extends AppCompatActivity {
     //azione che deve avvenire quando premo sul pulsante vai
     public void visualizzaGrafici(View v){
 
-        EditText dataStart=findViewById(R.id.editTextDatestart);
-        EditText dataEnd=findViewById(R.id.editTextDateEnd);
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
         Date dateObject;
@@ -311,28 +315,10 @@ public class MainActivity extends AppCompatActivity {
         date_value.clear();
     }
 
-        public static Intent getActivityintent(Context context){
+    public static Intent getActivityintent(Context context){
             Intent intent=new Intent(context, MainActivity.class);
             return intent;
         }
-
-    public static void stampa() {
-        System.out.println("Stampo nameFields :");
-        for (int i = 0; i < nameFields.size(); i++) {
-            System.out.println(i + ": " + nameFields.get(i));
-        }
-        System.out.println("FINE");
-        System.out.println("Stampo position :");
-        for (int i = 0; i < position.size(); i++) {
-            System.out.println(i + ": " + position.get(i));
-        }
-        System.out.println("FINE");
-        System.out.println("Stampo channelPos :");
-        for (int i = 0; i < channelPos.size(); i++) {
-            System.out.println(i + ": " + channelPos.get(i).getLett_id());
-        }
-        System.out.println("FINE");
-    }
 
     public static String getCurrentTimezoneOffset() {
 
@@ -342,5 +328,39 @@ public class MainActivity extends AppCompatActivity {
 
 
         return String.valueOf((offsetInMillis/(1000*3600))-1);
+    }
+
+    public void inizio(View v){
+       final  TextView testo=findViewById(R.id.textViewInizio);
+        Calendar current=Calendar.getInstance();
+        int day=current.get(Calendar.DAY_OF_MONTH);
+        int month= current.get(Calendar.MONTH);
+        int year=current.get(Calendar.YEAR);
+
+        DatePickerDialog datePickerDialog=new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int mouthofyear, int dayofMonth) {
+                mouthofyear=mouthofyear+1;
+                testo.setText(dayofMonth+"/"+mouthofyear+"/"+year);
+            }
+        }, year,month,day);
+        datePickerDialog.show();
+    }
+
+    public void fine(View v){
+        final TextView testo=findViewById(R.id.textViewfine);
+        Calendar current=Calendar.getInstance();
+        int day=current.get(Calendar.DAY_OF_MONTH);
+        int month= current.get(Calendar.MONTH);
+        int year=current.get(Calendar.YEAR);
+
+        DatePickerDialog datePickerDialog=new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int mouthofyear, int dayofMonth) {
+                mouthofyear=mouthofyear+1;
+                testo.setText(dayofMonth+"/"+mouthofyear+"/"+year);
+            }
+        }, year,month,day);
+        datePickerDialog.show();
     }
 }
