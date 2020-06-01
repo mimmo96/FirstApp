@@ -14,9 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
+
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -83,8 +86,6 @@ public class IrrigationActivity extends AppCompatActivity {
 
         cont=getApplicationContext();
 
-        //recupero i valori dal database
-        setInitialValues();
         //recupero i dati dal server
         donwload();
 
@@ -115,27 +116,6 @@ public class IrrigationActivity extends AppCompatActivity {
                 sendvalue(durationText.getText().toString(),"MANUALE");
             }
         });
-    }
-
-    //recupero dal database i dati precedentemente configurati
-    private void setInitialValues() {
-        //minuti che mi serviranno per l'irrigazione automatica
-        if(channel.getIrrigationDuration()!=null) durationText.setText(String.valueOf(channel.getIrrigationDuration()));
-
-        if(channel.getFlussoAcqua()!=null){
-            flusso=channel.getFlussoAcqua();
-            flussoText.setText(String.valueOf(flusso));
-        }
-        if(channel.getLeachingfactor()!=null){
-            leaching=channel.getLeachingfactor();
-            leachingText.setText(String.valueOf(leaching));
-        }
-
-        //numero di irrigazioni al giorno
-        if(channel.getNumirra()!=0){
-            numirra=channel.getNumirra();
-            irradayText.setText(String.valueOf(numirra));
-        }
     }
 
     //invio i dati al server (in caso di attivazione manuale)
@@ -176,7 +156,11 @@ public class IrrigationActivity extends AppCompatActivity {
             }
         });
 
-       queue.add(jsonRequest);
+       // jsonRequest.setRetryPolicy(new DefaultRetryPolicy(
+       //         15000,
+       //        4,
+       //         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(jsonRequest);
     }
 
     //invio i dati al server (in caso di attivazione automatica)
