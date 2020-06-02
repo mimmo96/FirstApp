@@ -3,7 +3,9 @@ package com.example.GreenApp;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -11,13 +13,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.GreenApp.Channel.Channel;
+import com.example.GreenApp.Channel.savedValues;
 import com.example.GreenApp.Graphic.MainActivity;
+import com.example.firstapp.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.TimerTask;
 
@@ -40,6 +45,7 @@ public class MyTimerTask extends TimerTask {
     TextView textPeso;
     TextView text1;
     TextView stato;
+    ImageView image;
     String url;
     Context context;
     private static String channelID=null;
@@ -48,7 +54,7 @@ public class MyTimerTask extends TimerTask {
 
 
     public MyTimerTask(String id, String key,String url, TextView textTemp1,TextView textUmidity1, TextView textPh1, TextView textConducibilita1,
-                       TextView textIrradianza1,TextView textPO1,TextView stato,TextView testo1, Context cont,AppDatabase database) {
+                       TextView textIrradianza1,TextView textPO1,TextView stato,TextView testo1, Context cont,AppDatabase database,ImageView imm) {
         textTemp=textTemp1;
         textUmidity=textUmidity1;
         textPh=textPh1;
@@ -62,11 +68,16 @@ public class MyTimerTask extends TimerTask {
         this.url=url;
         this.database=database;
         context=cont;
+        image=imm;
     }
 
     @Override
     public void run() {
+        //reperisco i valori channel lettura
        getJsonResponse(url);
+
+       //reperisco valori channel scrittura
+       donwload();
     }
 
     //metodo per reperire le risposte json
@@ -234,6 +245,41 @@ public class MyTimerTask extends TimerTask {
             });
             Volley.newRequestQueue(context).add(jsonObjectRequest);
 
+    }
+
+    //scarico i dati dal server riguardante la configurazione dell'irrigazione
+    private void donwload() {
+        List<savedValues> lista=database.SavedDao().getAll();
+        Channel list=database.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
+        String url="https://api.thingspeak.com/channels/"+list.getScritt_id()+"/feeds.json?api_key="+list.getScritt_read_key()+"&results=1&&offset=1";
+
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray jsonArray = response.getJSONArray("feeds");
+                            JSONObject valori = jsonArray.getJSONObject(0);
+                                if (!valori.getString("field7").equals("null")) {
+                                    if(Double.parseDouble(valori.getString("field7"))==1){
+                                        image.setImageResource(R.drawable.irrigazioneattiva);
+                                    }
+                                    else{
+                                        image.setImageResource(R.drawable.irrigazione);
+                                    }
+                                }
+                                else  image.setImageResource(R.drawable.irrigazione);
+                            } catch (Exception e) {
+                                image.setImageResource(R.drawable.irrigazione);
+                            }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                image.setImageResource(R.drawable.irrigazione);
+            }
+        });
+        Volley.newRequestQueue(context).add(jsonObjectRequest);
     }
 
     private void distanza(String data) {

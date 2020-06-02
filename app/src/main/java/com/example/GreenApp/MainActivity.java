@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import com.example.firstapp.R;
 public class MainActivity extends AppCompatActivity {
 
     public static TextView textTemp;
+    public static ImageView image;
     public static TextView textUmidity;
     public static TextView textPh;
     public static TextView textConducibilita;
@@ -74,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         textPeso = findViewById(R.id.textEvap);
         textStato = findViewById(R.id.textViewON);
         testo1 = findViewById(R.id.textView1);
+        image=findViewById(R.id.imageView3);
         cont = getApplicationContext();
 
         //controllo se ho almeno un channel inserito
@@ -330,13 +333,13 @@ public class MainActivity extends AppCompatActivity {
 
         if (timer != null) timer.cancel();
         if (timerTask != null) timerTask.cancel();
-        timerTask = new MyTimerTask(channelID, READ_KEY, url, textTemp, textUmidity, textPh, textConducibilita, textIrradianza, textPeso, textStato, testo1, cont, database);
+        timerTask = new MyTimerTask(channelID, READ_KEY, url, textTemp, textUmidity, textPh, textConducibilita, textIrradianza, textPeso, textStato, testo1, cont, database,image);
         timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 0, 60000);
     }
 
     public static void startTimer(Context cont) {
-        timerTask = new MyTimerTask(channelID, READ_KEY, url, textTemp, textUmidity, textPh, textConducibilita, textIrradianza, textPeso, textStato, testo1, cont, database);
+        timerTask = new MyTimerTask(channelID, READ_KEY, url, textTemp, textUmidity, textPh, textConducibilita, textIrradianza, textPeso, textStato, testo1, cont, database,image);
         timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 0, 60000);
     }

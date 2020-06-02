@@ -14,12 +14,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
-
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -30,12 +27,13 @@ import com.example.firstapp.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-
 
 public class IrrigationActivity extends AppCompatActivity {
     private static AppDatabase db;
@@ -337,7 +335,7 @@ public class IrrigationActivity extends AppCompatActivity {
     private void donwload() {
         List<savedValues> lista=db.SavedDao().getAll();
         Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
-        String url="https://api.thingspeak.com/channels/"+list.getScritt_id()+"/feeds.json?api_key="+list.getScritt_read_key()+"&results=100";
+        String url="https://api.thingspeak.com/channels/"+list.getScritt_id()+"/feeds.json?api_key="+list.getScritt_read_key()+"&results=150&&offset=1";
 
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -346,25 +344,74 @@ public class IrrigationActivity extends AppCompatActivity {
                         try {
                             //recupero l'array feeds
                             JSONArray jsonArray = response.getJSONArray("feeds");
-                            boolean trovato=false;
+                            ArrayList<String> save=new ArrayList<>();
+                            ArrayList<String> saveTime=new ArrayList<>();
+
                             for(int i=0;i<jsonArray.length();i++){
                                 JSONObject valori = jsonArray.getJSONObject(i);
                                 try {
-                                    if (!valori.getString("field1").equals("null") && !valori.getString("field1").equals("")) {
-                                        trovato=true;
-                                        Durata.setText(valori.getString("field1") + " minuti");
+                                    if (!valori.getString("field7").equals("null") && !valori.getString("field7").equals("")) {
+                                        save.add(valori.getString("field7"));
+                                        saveTime.add(valori.getString("created_at"));
                                     }
-                                    else trovato=false;
-                                }catch (Exception e){ trovato=false;}
-
-                                if(trovato){
-                                    String cretime = valori.getString("created_at");
-                                    distanza(cretime);
-                                }
+                                }catch (Exception e){}
                             }
 
-                            JSONObject valori = jsonArray.getJSONObject(jsonArray.length()-1);
+                            String primadata="",seconda="";
+                            int i=0;
+                            boolean trovato=false;
 
+                            while(i<save.size()){
+                                if(save.get(i).equals("1")){
+                                    if(!trovato) primadata=saveTime.get(i);
+                                    //stampo la distanza dall'ultima irrigazione
+                                    trovato=true;
+                                }
+                                if(save.get(i).equals("0")){
+                                    if(trovato) {
+                                        seconda = saveTime.get(i);
+                                        distanza(seconda);
+                                        trovato=false;
+                                    }
+                                }
+                                i++;
+                            }
+
+                            if(trovato){
+                                textDurata.setText("0 minuti");
+
+                                Calendar date_now= Calendar.getInstance ();
+                                Calendar date_value = Calendar.getInstance ();
+                                //parsing della data
+                                int giorno=Integer.valueOf(primadata.substring(8, 10));
+                                int mese=Integer.valueOf(primadata.substring(5, 7));
+                                int anno=Integer.valueOf(primadata.substring(0, 4));
+                                int ore=Integer.valueOf(primadata.substring(11, 13));
+                                int minuti=Integer.valueOf(primadata.substring(14, 16));
+                                int secondi=Integer.valueOf(primadata.substring(17, 19));
+
+                                //setto le impostazioni relative alla data
+                                date_value.set (Calendar.YEAR,anno);
+                                date_value.set (Calendar.MONTH,mese-1);
+                                date_value.set (Calendar.DAY_OF_MONTH,giorno);
+                                date_value.set (Calendar.HOUR_OF_DAY,ore);
+                                date_value.set (Calendar.MINUTE,minuti);
+                                date_value.set (Calendar.SECOND, secondi);
+
+                                //durata in secondi
+                                long durata= (date_now.getTimeInMillis()/1000 - date_value.getTimeInMillis()/1000);
+                                long giorni1=(durata/86400);
+                                long temp=giorni1*86400;
+                                long ore1=(durata-temp)/3600;
+                                long minuti1=((durata-temp)-3600*ore1)/60;
+                                temp=(durata-temp)-3600*ore1;
+                                long secondi1=temp-(minuti1*60);
+
+                                Durata.setText( giorni1 + " giorni " + ore1 + " ore " + minuti1 + " minuti " + secondi1+ " secondi ");
+                            }
+                            else distanza2(primadata,seconda);
+
+                            JSONObject valori = jsonArray.getJSONObject(jsonArray.length()-1);
                             try {
                                 if (!valori.getString("field2").equals("null")) {
                                     flussoText.setText(valori.getString("field2"));
@@ -426,7 +473,6 @@ public class IrrigationActivity extends AppCompatActivity {
 
     private void distanza(String data) {
         Calendar date_now= Calendar.getInstance ();
-        date_now.setTimeZone(TimeZone.getTimeZone("GMT"));
         Calendar date_value = Calendar.getInstance ();
 
         //parsing della data
@@ -445,9 +491,6 @@ public class IrrigationActivity extends AppCompatActivity {
         date_value.set (Calendar.MINUTE,minuti);
         date_value.set (Calendar.SECOND, secondi);
 
-        //converto la data del cloud alla mia zona gmt
-        date_value.setTimeZone(TimeZone.getTimeZone("GMT"));
-
         //durata in secondi
         long durata= (date_now.getTimeInMillis()/1000 - date_value.getTimeInMillis()/1000);
         long giorni1=(durata/86400);
@@ -458,6 +501,53 @@ public class IrrigationActivity extends AppCompatActivity {
         long secondi1=temp-(minuti1*60);
 
         textDurata.setText( giorni1 + " giorni " + ore1 + " ore " + minuti1 + " minuti " + secondi1+ " secondi ");
+    }
+
+    private void distanza2(String data1,String data2) {
+        Calendar date_value1 = Calendar.getInstance ();
+        Calendar date_value2 = Calendar.getInstance ();
+        //parsing della data
+        int giorno=Integer.valueOf(data1.substring(8, 10));
+        int mese=Integer.valueOf(data1.substring(5, 7));
+        int anno=Integer.valueOf(data1.substring(0, 4));
+        int ore=Integer.valueOf(data1.substring(11, 13));
+        int minuti=Integer.valueOf(data1.substring(14, 16));
+        int secondi=Integer.valueOf(data1.substring(17, 19));
+
+        //setto le impostazioni relative alla data
+        date_value1.set (Calendar.YEAR,anno);
+        date_value1.set (Calendar.MONTH,mese-1);
+        date_value1.set (Calendar.DAY_OF_MONTH,giorno);
+        date_value1.set (Calendar.HOUR_OF_DAY,ore);
+        date_value1.set (Calendar.MINUTE,minuti);
+        date_value1.set (Calendar.SECOND, secondi);
+
+        //parsing della data
+        int gio=Integer.valueOf(data2.substring(8, 10));
+        int me=Integer.valueOf(data2.substring(5, 7));
+        int an=Integer.valueOf(data2.substring(0, 4));
+        int or=Integer.valueOf(data2.substring(11, 13));
+        int min=Integer.valueOf(data2.substring(14, 16));
+        int sec=Integer.valueOf(data2.substring(17, 19));
+
+        //setto le impostazioni relative alla data
+        date_value2.set (Calendar.YEAR,an);
+        date_value2.set (Calendar.MONTH,me-1);
+        date_value2.set (Calendar.DAY_OF_MONTH,gio);
+        date_value2.set (Calendar.HOUR_OF_DAY,or);
+        date_value2.set (Calendar.MINUTE,min);
+        date_value2.set (Calendar.SECOND, sec);
+
+        //durata in secondi
+        long durata= (date_value2.getTimeInMillis()/1000 - date_value1.getTimeInMillis()/1000);
+        long giorni1=(durata/86400);
+        long temp=giorni1*86400;
+        long ore1=(durata-temp)/3600;
+        long minuti1=((durata-temp)-3600*ore1)/60;
+        temp=(durata-temp)-3600*ore1;
+        long secondi1=temp-(minuti1*60);
+
+        Durata.setText(  ore1 + " ore " + minuti1 + " minuti " + secondi1+ " secondi ");
     }
 
 }
