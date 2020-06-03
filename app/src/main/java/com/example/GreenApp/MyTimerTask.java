@@ -251,7 +251,7 @@ public class MyTimerTask extends TimerTask {
     private void donwload() {
         List<savedValues> lista=database.SavedDao().getAll();
         Channel list=database.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
-        String url="https://api.thingspeak.com/channels/"+list.getScritt_id()+"/feeds.json?api_key="+list.getScritt_read_key()+"&results=1&&offset=1";
+        String url="https://api.thingspeak.com/channels/"+list.getScritt_id()+"/feeds.json?api_key="+list.getScritt_read_key()+"&results=1";
 
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
