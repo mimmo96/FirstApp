@@ -3,6 +3,7 @@ package com.example.GreenApp.Irrigation;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,7 +30,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +55,12 @@ public class IrrigationActivity extends AppCompatActivity {
     private boolean check2=false;
     private RequestQueue queue;
     private int field7=0;
+    private boolean attendi=false;
+
+    //parametri per il timer
+    private static final long START_TIME_IN_MILLIS = 5000;
+    private CountDownTimer mCountDownTimer;
+    private long mTimeLeftInMillis = START_TIME_IN_MILLIS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,8 +123,8 @@ public class IrrigationActivity extends AppCompatActivity {
     }
 
     //invio i dati al server (in caso di attivazione manuale)
-    private void sendvalue(String value, final String tipo) {
-
+    private void sendvalue(final String value, final String tipo) {
+        //if(attendi) return;
         String url = "https://api.thingspeak.com/update.json";
         List<savedValues> lista=db.SavedDao().getAll();
         Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
@@ -149,20 +155,35 @@ public class IrrigationActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getBaseContext(),"ERRORE ATTIVAZIONE IRRIGAZIONE " +tipo+" RIPROVA TRA 15 SECONDI O CONTROLLA LA TUA CONNESSIONE!",Toast.LENGTH_LONG).show();
-                error.printStackTrace();
-            }
-        });
+           //     if (attendi)
+                    Toast.makeText(getBaseContext(), "ERRORE ATTIVAZIONE", Toast.LENGTH_LONG).show();
+            /*    else {
+                    Toast.makeText(getBaseContext(), "ATTENDI..", Toast.LENGTH_LONG).show();
+                    mCountDownTimer = null;
+                    mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            mTimeLeftInMillis = millisUntilFinished;
+                        }
 
-       // jsonRequest.setRetryPolicy(new DefaultRetryPolicy(
-       //         15000,
-       //        4,
-       //         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                        @Override
+                        public void onFinish() {
+                            sendvalue(value, tipo);
+                        }
+                    }.start();
+                    attendi = true;
+                }
+
+             */
+            }
+
+
+        });
         queue.add(jsonRequest);
     }
 
     //invio i dati al server (in caso di attivazione automatica)
-    private void irrigationOn(String flusso,String Leaching,String numirra,  final String tipo) {
+    private void irrigationOn(final String flusso,final String Leaching,final String numirra,  final String tipo) {
         String url = "https://api.thingspeak.com/update.json";
         List<savedValues> lista=db.SavedDao().getAll();
         Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
@@ -194,11 +215,28 @@ public class IrrigationActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getBaseContext(),"ERRORE ATTIVAZIONE IRRIGAZIONE " +tipo+" RIPROVA TRA 15 SECONDI O CONTROLLA LA TUA CONNESSIONE!",Toast.LENGTH_LONG).show();
+             /*
                 //in caso di errore devo lasciare inalterata
                 Switch.setChecked(false);
                 check1=false;
                 check2=true;
+                Toast.makeText(getBaseContext(),"ATTENDI..",Toast.LENGTH_LONG).show();
+                mCountDownTimer=null;
+                mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        mTimeLeftInMillis = millisUntilFinished;
+                    }
+                    @Override
+                    public void onFinish() {
+                        irrigationOn( flusso, Leaching, numirra, tipo);
+                    }
+                }.start();
+                attendi=true;
+
+              */
             }
+
         });
         queue.add(jsonRequest);
     }
@@ -567,15 +605,6 @@ public class IrrigationActivity extends AppCompatActivity {
         long secondi1=temp-(minuti1*60);
 
         Durata.setText( ore1 + " ore " + minuti1 + " minuti " + secondi1+ " secondi ");
-    }
-
-    public static String getCurrentTimezoneOffset() {
-
-        TimeZone tz = TimeZone.getDefault();
-        Calendar cal = GregorianCalendar.getInstance(tz);
-        int offsetInMillis = tz.getOffset(cal.getTimeInMillis());
-
-        return String.valueOf((offsetInMillis/(1000*3600))-1);
     }
 
 }

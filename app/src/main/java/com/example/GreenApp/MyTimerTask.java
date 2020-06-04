@@ -262,21 +262,23 @@ public class MyTimerTask extends TimerTask {
                             JSONObject valori = jsonArray.getJSONObject(0);
                                 if (!valori.getString("field7").equals("null")) {
                                     if(Double.parseDouble(valori.getString("field7"))==1){
-                                        image.setImageResource(R.drawable.irrigazioneattiva);
+                                        if(image!=null)image.setImageResource(R.drawable.irrigazioneattiva);
                                     }
                                     else{
-                                        image.setImageResource(R.drawable.irrigazione);
+                                        if(image!=null)image.setImageResource(R.drawable.irrigazione);
                                     }
                                 }
-                                else  image.setImageResource(R.drawable.irrigazione);
+                                else {
+                                    if(image!=null)image.setImageResource(R.drawable.irrigazione);
+                                }
                             } catch (Exception e) {
-                                image.setImageResource(R.drawable.irrigazione);
+                            if(image!=null)image.setImageResource(R.drawable.irrigazione);
                             }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                image.setImageResource(R.drawable.irrigazione);
+                if(image!=null) image.setImageResource(R.drawable.irrigazione);
             }
         });
         Volley.newRequestQueue(context).add(jsonObjectRequest);
