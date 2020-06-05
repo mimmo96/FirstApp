@@ -410,7 +410,7 @@ public class IrrigationActivity extends AppCompatActivity {
     private void donwload() {
         List<savedValues> lista=db.SavedDao().getAll();
         Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
-        String url="https://api.thingspeak.com/channels/"+list.getScritt_id()+"/feeds.json?api_key="+list.getScritt_read_key()+"&results=150";
+        String url="https://api.thingspeak.com/channels/"+list.getScritt_id()+"/feeds.json?api_key="+list.getScritt_read_key()+"&results=300";
 
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -538,7 +538,9 @@ public class IrrigationActivity extends AppCompatActivity {
                                 long secondi1 = temp - (minuti1 * 60);
 
                                 Durata.setText(ore1 + " ore " + minuti1 + " minuti " + secondi1 + " secondi ");
-                            } else distanza2(primadata, seconda);
+                            } else{
+                                if(primadata.length()!=0 && seconda.length()!=0) distanza2(primadata, seconda);
+                            }
 
                             JSONObject valori = jsonArray.getJSONObject(jsonArray.length()-1);
                             try {

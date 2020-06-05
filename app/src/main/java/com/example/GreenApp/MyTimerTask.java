@@ -93,138 +93,191 @@ public class MyTimerTask extends TimerTask {
                                 JSONArray jsonArray = response.getJSONArray("feeds");
 
                                 //recupero i fields associati al channel
-                                ArrayList<String> fields=new ArrayList<String>();
-                                int dim=response.getJSONObject("channel").length();
+                                ArrayList<String> fields = new ArrayList<String>();
+                                int dim = response.getJSONObject("channel").length();
 
                                 //salvo tutti i nomi dei field nell'array
                                 try {
-                                    for(int i=0;i<dim;i++) {
-                                        fields.add(String.valueOf(response.getJSONObject("channel").get("field" + (i+1))));
+                                    for (int i = 0; i < dim; i++) {
+                                        fields.add(String.valueOf(response.getJSONObject("channel").get("field" + (i + 1))));
                                     }
-                                }catch(Exception e) {
+                                } catch (Exception e) {
                                 }
 
                                 //recupero il canale e lo cancello, dopo aver settato i valori lo reinserisco
-                                Channel v=database.ChannelDao().findByName(channelID,READ_KEY);
-                                if(v!=null) database.ChannelDao().delete(v);
+                                Channel v = database.ChannelDao().findByName(channelID, READ_KEY);
+                                if (v != null) database.ChannelDao().delete(v);
 
-                                if (0<fields.size() && fields.get(0) != null) v.setFiled1(fields.get(0));
+                                if (0 < fields.size() && fields.get(0) != null)
+                                    v.setFiled1(fields.get(0));
                                 else v.setFiled1(null);
-                                if (1<fields.size() && fields.get(1) != null) v.setFiled2(fields.get(1));
+                                if (1 < fields.size() && fields.get(1) != null)
+                                    v.setFiled2(fields.get(1));
                                 else v.setFiled2(null);
-                                if (2<fields.size() && fields.get(2) != null) v.setFiled3(fields.get(2));
+                                if (2 < fields.size() && fields.get(2) != null)
+                                    v.setFiled3(fields.get(2));
                                 else v.setFiled3(null);
-                                if (3<fields.size() && fields.get(3) != null) v.setFiled4(fields.get(3));
+                                if (3 < fields.size() && fields.get(3) != null)
+                                    v.setFiled4(fields.get(3));
                                 else v.setFiled4(null);
-                                if (4<fields.size() && fields.get(4) != null) v.setFiled5(fields.get(4));
+                                if (4 < fields.size() && fields.get(4) != null)
+                                    v.setFiled5(fields.get(4));
                                 else v.setFiled5(null);
-                                if (5<fields.size() && fields.get(5) != null) v.setFiled6(fields.get(5));
+                                if (5 < fields.size() && fields.get(5) != null)
+                                    v.setFiled6(fields.get(5));
                                 else v.setFiled6(null);
-                                if (6<fields.size() && fields.get(6) != null) v.setFiled7(fields.get(6));
+                                if (6 < fields.size() && fields.get(6) != null)
+                                    v.setFiled7(fields.get(6));
                                 else v.setFiled7(null);
-                                if (7<fields.size() && fields.get(7) != null) v.setFiled8(fields.get(7));
+                                if (7 < fields.size() && fields.get(7) != null)
+                                    v.setFiled8(fields.get(7));
                                 else v.setFiled8(null);
                                 database.ChannelDao().insert(v);
 
-                                int size=jsonArray.length()-1;
-                                //scorro tutto l'array di valori che ho ricevuto
-                                    //recupero il primo oggetto dell'array
-                                    final JSONObject value = jsonArray.getJSONObject(size);
+                                Boolean ok = false;
+                                Double irrigazione = 0.0;
+                                Double drainaggio = 0.0;
+                                String temperature = null;
+                                String umidity = null;
+                                String ph = null;
+                                String conducibilita = null;
+                                String irradianza = null;
+                                String cretime=null;
+                                String evapotraspirazione=null;
 
-                                    try {
-                                        String temperature = value.getString("field1");
-                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
-                                        if(v.getImagetemp()!=null){
-                                            String field=value.getString(v.getImagetemp());
-                                            textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
-                                        }
-                                        else if (fields.get(0).equals("Temperature")){
-                                            textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(temperature)) * 100.0) / 100.0).concat(" °C"));
-                                        }
-                                        else  textTemp.setText("- -");
-                                    }catch (Exception e){
-                                        textTemp.setText("- -");
-                                    }
-                                    try{
-                                        String umidity = value.getString("field2");
-                                        if(v.getImageumid()!=null){
-                                            String field=value.getString(v.getImageumid());
-                                            textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
-                                        }
-                                        else if(fields.get(1).equals("Humidity")) textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0));
-                                        else textUmidity.setText("- -");
-                                    }catch (Exception e){
-                                        textUmidity.setText("- -");
-                                    }
-                                    try {
-                                        String ph = value.getString("field3");
-                                        if(v.getImageph()!=null){
-                                            String field=value.getString(v.getImageph());
-                                            textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
-                                        }
-                                       else if (fields.get(2).equals("pH_value")) textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(ph)) * 100.0) / 100.0));
-                                       else textPh.setText("- -");
-                                    }catch (Exception e){
-                                        textPh.setText("- -");
-                                    }
-                                    try {
-                                        String conducibilita = value.getString("field4");
-                                        if(v.getImagecond()!=null){
-                                            String field=value.getString(v.getImagecond());
-                                            textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
-                                        }
-                                        else if (fields.get(3).equals("electric_conductivity")) textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(conducibilita)) * 100.0) / 100.0).concat(" dS/m"));
-                                        else textConducibilita.setText("- -");
-                                    }catch (Exception e){
-                                        textConducibilita.setText("- -");
-                                    }
-                                    try {
-                                        String irradianza = value.getString("field5");
-                                        if(v.getImageirra()!=null){
-                                            String field=value.getString(v.getImageirra());
-                                            textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
-                                        }
-                                        else if (fields.get(4).equals("Irradiance")) textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0).concat(" w/m²"));
-                                        else  textIrradianza.setText("- -");
-                                    }catch (Exception e){
-                                        textIrradianza.setText("- -");
-                                    }
-
-                                    Boolean ok=false;
-                                    Double irrigazione =0.0;
-                                    Double drainaggio = 0.0;
-
-                                    //scandisco tutti i 100 valori per trovare i valodi di irrigazione e il drenaggio
+                                //scandisco tutti i 100 valori per trovare i valodi di irrigazione e il drenaggio
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject valori = jsonArray.getJSONObject(i);
                                     try {
                                         if (!valori.getString("field7").equals("") && !valori.getString("field7").equals("null") && fields.get(6).equals("Irrigation")) {
-                                            ok=true;
-                                            irrigazione=Double.parseDouble(valori.getString("field7"));
+                                            ok = true;
+                                            irrigazione = Double.parseDouble(valori.getString("field7"));
                                         }
-                                    }catch (Exception e){ }
+                                    } catch (Exception e) {
+                                    }
 
                                     try {
                                         if (!valori.getString("field8").equals("") && !valori.getString("field8").equals("null") && fields.get(7).equals("Drainage")) {
-                                            ok=true;
-                                            drainaggio=Double.parseDouble(valori.getString("field8"));
+                                            ok = true;
+                                            drainaggio = Double.parseDouble(valori.getString("field8"));
                                         }
-                                    }catch (Exception e){ }
+                                    } catch (Exception e) {
+                                    }
+
+                                    try {
+                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
+                                        if (v.getImagetemp() != null && !valori.getString(v.getImagetemp()).equals("") && !valori.getString(v.getImagetemp()).equals("null"))
+                                            temperature = valori.getString(v.getImagetemp());
+                                        else if (fields.get(0).equals("Temperature") && !valori.getString("field1").equals("") && !valori.getString("field1").equals("null")) {
+                                            temperature = valori.getString("field1");
+                                        }
+                                    } catch (Exception e) {
+                                    }
+
+                                    try {
+                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
+                                        if (v.getImageumid() != null && !valori.getString(v.getImageumid()).equals("") && !valori.getString(v.getImageumid()).equals("null"))
+                                            umidity = valori.getString(v.getImageumid());
+                                        else if (fields.get(1).equals("Humidity") && !valori.getString("field2").equals("") && !valori.getString("field2").equals("null")) {
+                                            umidity = valori.getString("field2");
+                                        }
+                                    } catch (Exception e) {
+                                    }
+
+                                    try {
+                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
+                                        if (v.getImageph() != null && !valori.getString(v.getImageph()).equals("") && !valori.getString(v.getImageph()).equals("null"))
+                                            ph = valori.getString(v.getImageph());
+                                        else if (fields.get(2).equals("pH_value") && !valori.getString("field3").equals("") && !valori.getString("field3").equals("null")) {
+                                            ph = valori.getString("field3");
+                                        }
+                                    } catch (Exception e) {
+                                    }
+
+                                    try {
+                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
+                                        if (v.getImagecond() != null && !valori.getString(v.getImagecond()).equals("") && !valori.getString(v.getImagecond()).equals("null"))
+                                            conducibilita = valori.getString(v.getImagecond());
+                                        else if (fields.get(3).equals("electric_conductivity") && !valori.getString("field4").equals("") && !valori.getString("field4").equals("null")) {
+                                            conducibilita = valori.getString("field4");
+                                        }
+                                    } catch (Exception e) {
+                                    }
+
+                                    try {
+                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
+                                        if (v.getImageirra() != null && !valori.getString(v.getImageirra()).equals("") && !valori.getString(v.getImageirra()).equals("null"))
+                                            irradianza = valori.getString(v.getImageirra());
+                                        else if (fields.get(4).equals("Irradiance") && !valori.getString("field5").equals("") && !valori.getString("field5").equals("null")) {
+                                            irradianza = valori.getString("field5");
+                                        }
+                                    } catch (Exception e) {
+                                    }
+
+                                    try {
+                                        //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
+                                        if (v.getImagepeso() != null && !valori.getString(v.getImagepeso()).equals("") && !valori.getString(v.getImagepeso()).equals("null"))
+                                            evapotraspirazione = valori.getString(v.getImagepeso());
+                                        else if (ok) {
+                                            evapotraspirazione=String.valueOf(Math.round((irrigazione - drainaggio) * 100.0) / 100.0);
+                                            irradianza = valori.getString("field5");
+                                        }
+                                    } catch (Exception e) {
+                                    }
+
+                                    cretime = valori.getString("created_at");
                                 }
 
-                                Double evapotraspirazione=null;
-                                try {
-                                    if (v.getImagepeso() != null) {
-                                        String field = value.getString(v.getImagepeso());
-                                        textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(field)) * 100.0) / 100.0));
-                                    } else if (ok) {
-                                        evapotraspirazione=Math.round((irrigazione - drainaggio) * 100.0) / 100.0;
-                                        textPeso.setText(String.valueOf(evapotraspirazione).concat(" g/m²"));
+                                //mostro a schermo gli ultimi valori
+                                if (temperature != null){
+                                    if (v.getImagetemp() != null) {
+                                        textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(temperature)) * 100.0) / 100.0));
+                                    } else if (fields.get(0).equals("Temperature")) {
+                                        textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(temperature)) * 100.0) / 100.0).concat(" °C"));
                                     }
-                                    else textPeso.setText("- -");
-                                } catch (Exception e){ textPeso.setText("- -"); }
+                                }
+                                else textTemp.setText("- -");
+                                if (umidity != null){
+                                    if (v.getImageumid() != null) {
+                                        textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0));
+                                    } else if (fields.get(1).equals("Humidity")) {
+                                        textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0));
+                                    }
+                                }
+                                else textUmidity.setText("- -");
+                                if (ph != null){
+                                    if (v.getImageph() != null) {
+                                        textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(ph)) * 100.0) / 100.0));
+                                    } else if (fields.get(2).equals("pH_value")) {
+                                        textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(ph)) * 100.0) / 100.0));
+                                    }
+                                }
+                                else textPh.setText("- -");
+                                if (conducibilita != null){
+                                    if (v.getImagecond() != null) {
+                                        textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(conducibilita)) * 100.0) / 100.0));
+                                    } else if (fields.get(3).equals("electric_conductivity")) {
+                                        textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(conducibilita)) * 100.0) / 100.0).concat(" dS/m"));
+                                    }
+                                }
+                                else textConducibilita.setText("- -");
+                                if (irradianza != null){
+                                    if (v.getImageirra() != null) {
+                                        textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0));
+                                    } else if (fields.get(4).equals("Irradiance")) {
+                                        textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0).concat(" w/m²"));
+                                    }
+                                }
+                                else textIrradianza.setText("- -");
+                                if (evapotraspirazione != null){
+                                    if (v.getImagepeso() != null) {
+                                        textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(evapotraspirazione)) * 100.0) / 100.0));
+                                    } else if (ok) {
+                                        textPeso.setText(evapotraspirazione);
+                                    }
+                                }
+                                else textPeso.setText("- -");
 
-                                String cretime = value.getString("created_at");
                                 distanza(cretime);
 
                                 stato.setText("ONLINE");
