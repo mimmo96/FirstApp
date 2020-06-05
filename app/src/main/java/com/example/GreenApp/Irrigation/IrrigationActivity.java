@@ -43,6 +43,7 @@ public class IrrigationActivity extends AppCompatActivity {
     private static EditText irradayText;
     private static TextView textDurata;
     private static TextView Durata;
+    private static TextView Attendi;
     private static Channel channel;
     private static Switch Switch;
     private static Button irra;
@@ -87,6 +88,7 @@ public class IrrigationActivity extends AppCompatActivity {
         textDurata=findViewById(R.id.textViewduration);
         Durata=findViewById(R.id.textDurationValues);
         image=findViewById(R.id.imageView4);
+        Attendi=findViewById(R.id.textViewAttendi);
 
         cont=getApplicationContext();
 
@@ -175,11 +177,13 @@ public class IrrigationActivity extends AppCompatActivity {
                         @Override
                         public void onTick(long millisUntilFinished) {
                             attendi = true;
+                            Attendi.setText("ATTENDI...");
                         }
                         @Override
                         public void onFinish() {
                             attendi=false;
                             notifica=true;
+                            Attendi.setText("");
                             sendvalue(value, tipo);
                         }
                     }.start();
@@ -244,11 +248,13 @@ public class IrrigationActivity extends AppCompatActivity {
                         @Override
                         public void onTick(long millisUntilFinished) {
                             attendi = true;
+                            Attendi.setText("ATTENDI...");
                         }
                         @Override
                         public void onFinish() {
                             attendi=false;
                             notifica=true;
+                            Attendi.setText("");
                             irrigationOn(flusso,Leaching,numirra,tipo);
                         }
                     }.start();
@@ -312,11 +318,13 @@ public class IrrigationActivity extends AppCompatActivity {
                         @Override
                         public void onTick(long millisUntilFinished) {
                             attendi = true;
+                            Attendi.setText("ATTENDI...");
                         }
                         @Override
                         public void onFinish() {
                             attendi=false;
                             notifica=true;
+                            Attendi.setText("");
                            irrigationOff();
                         }
                     }.start();
@@ -376,11 +384,13 @@ public class IrrigationActivity extends AppCompatActivity {
                             @Override
                             public void onTick(long millisUntilFinished) {
                                 attendi = true;
+                                Attendi.setText("ATTENDI...");
                             }
                             @Override
                             public void onFinish() {
                                 attendi=false;
                                 notifica=true;
+                                Attendi.setText("");
                                 saveirrigationvalues(v);
                             }
                         }.start();
@@ -391,8 +401,8 @@ public class IrrigationActivity extends AppCompatActivity {
            queue.add(jsonRequest);
         }
 
-
     public void refreshvalues(View v){
+        if(attendi) return;
         //recupero i dati dal server
         donwload();
     }
@@ -460,7 +470,6 @@ public class IrrigationActivity extends AppCompatActivity {
                                         } else {
                                             field6=0;
                                         }
-
                                     }
                                 } catch (Exception e) {
                                 }
