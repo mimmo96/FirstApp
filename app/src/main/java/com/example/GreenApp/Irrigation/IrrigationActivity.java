@@ -56,11 +56,11 @@ public class IrrigationActivity extends AppCompatActivity {
     private RequestQueue queue;
     private int field7=0;
     private boolean attendi=false;
+    private boolean notifica=false;
+    private ArrayList<String> save = new ArrayList<>();
+    private ArrayList<String> saveTime = new ArrayList<>();
 
-    //parametri per il timer
-    private static final long START_TIME_IN_MILLIS = 5000;
     private CountDownTimer mCountDownTimer;
-    private long mTimeLeftInMillis = START_TIME_IN_MILLIS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +124,9 @@ public class IrrigationActivity extends AppCompatActivity {
 
     //invio i dati al server (in caso di attivazione manuale)
     private void sendvalue(final String value, final String tipo) {
-        //if(attendi) return;
+        //se avevo attivato il timer aspetto
+        if(attendi) return;
+
         String url = "https://api.thingspeak.com/update.json";
         List<savedValues> lista=db.SavedDao().getAll();
         Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
@@ -151,39 +153,46 @@ public class IrrigationActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 Toast.makeText(getBaseContext(),"IRRIGAZIONE "+tipo+" ATTTIVATA!",Toast.LENGTH_SHORT).show();
+                Log.d("onResponse:","SONO QUI");
+                notifica=false;
+                attendi=false;
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-           //     if (attendi)
+                if (notifica) {
                     Toast.makeText(getBaseContext(), "ERRORE ATTIVAZIONE", Toast.LENGTH_LONG).show();
-            /*    else {
+                    notifica=false;
+                    attendi=false;
+                }
+                else {
                     Toast.makeText(getBaseContext(), "ATTENDI..", Toast.LENGTH_LONG).show();
+                    //parametri per il timer
+                    long START_TIME_IN_MILLIS = 15000;
+                    long mTimeLeftInMillis = START_TIME_IN_MILLIS;
                     mCountDownTimer = null;
                     mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
                         @Override
                         public void onTick(long millisUntilFinished) {
-                            mTimeLeftInMillis = millisUntilFinished;
+                            attendi = true;
                         }
-
                         @Override
                         public void onFinish() {
+                            attendi=false;
+                            notifica=true;
                             sendvalue(value, tipo);
                         }
                     }.start();
-                    attendi = true;
                 }
-
-             */
             }
-
-
         });
         queue.add(jsonRequest);
     }
 
     //invio i dati al server (in caso di attivazione automatica)
     private void irrigationOn(final String flusso,final String Leaching,final String numirra,  final String tipo) {
+        if(attendi) return;
+
         String url = "https://api.thingspeak.com/update.json";
         List<savedValues> lista=db.SavedDao().getAll();
         Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
@@ -210,39 +219,48 @@ public class IrrigationActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(),"IRRIGAZIONE "+tipo+" ATTTIVATA!",Toast.LENGTH_SHORT).show();
                 check1=true;
                 check2=false;
+                notifica=false;
+                attendi=false;
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getBaseContext(),"ERRORE ATTIVAZIONE IRRIGAZIONE " +tipo+" RIPROVA TRA 15 SECONDI O CONTROLLA LA TUA CONNESSIONE!",Toast.LENGTH_LONG).show();
-             /*
-                //in caso di errore devo lasciare inalterata
-                Switch.setChecked(false);
-                check1=false;
-                check2=true;
-                Toast.makeText(getBaseContext(),"ATTENDI..",Toast.LENGTH_LONG).show();
-                mCountDownTimer=null;
-                mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        mTimeLeftInMillis = millisUntilFinished;
-                    }
-                    @Override
-                    public void onFinish() {
-                        irrigationOn( flusso, Leaching, numirra, tipo);
-                    }
-                }.start();
-                attendi=true;
-
-              */
+                if (notifica) {
+                    Toast.makeText(getBaseContext(),"ERRORE ATTIVAZIONE IRRIGAZIONE " +tipo+"!",Toast.LENGTH_LONG).show();
+                    //in caso di errore devo lasciare inalterata
+                    Switch.setChecked(false);
+                    check1=false;
+                    check2=true;
+                    notifica=false;
+                    attendi=false;
+                }
+                else {
+                    Toast.makeText(getBaseContext(), "ATTENDI..", Toast.LENGTH_LONG).show();
+                    //parametri per il timer
+                    long START_TIME_IN_MILLIS = 15000;
+                    long mTimeLeftInMillis = START_TIME_IN_MILLIS;
+                    mCountDownTimer = null;
+                    mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            attendi = true;
+                        }
+                        @Override
+                        public void onFinish() {
+                            attendi=false;
+                            notifica=true;
+                            irrigationOn(flusso,Leaching,numirra,tipo);
+                        }
+                    }.start();
+                }
             }
-
         });
         queue.add(jsonRequest);
     }
 
     //invio i dati al server (in caso di attivazione automatica)
     private void irrigationOff() {
+        if(attendi) return;
 
         String url = "https://api.thingspeak.com/update.json";
         List<savedValues> lista=db.SavedDao().getAll();
@@ -270,14 +288,39 @@ public class IrrigationActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(),"IRRIGAZIONE AUTOMATICA DISATTIVATA!",Toast.LENGTH_SHORT).show();
                 check1=false;
                 check2=true;
+                notifica=false;
+                attendi=false;
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getBaseContext(),"ERRORE DISATTIVAZIONE IRRIGAZIONE AUTOMATICA RIPROVA TRA 15 SECONDI O CONTROLLA LA TUA CONNESSIONE!",Toast.LENGTH_LONG).show();
-                Switch.setChecked(true);
-                check1=true;
-                check2=false;
+                if (notifica) {
+                    Toast.makeText(getBaseContext(),"ERRORE DISATTIVAZIONE IRRIGAZIONE!",Toast.LENGTH_LONG).show();
+                    Switch.setChecked(true);
+                    check1=true;
+                    check2=false;
+                    notifica=false;
+                    attendi=false;
+                }
+                else {
+                    Toast.makeText(getBaseContext(), "ATTENDI..", Toast.LENGTH_LONG).show();
+                    //parametri per il timer
+                    long START_TIME_IN_MILLIS = 15000;
+                    long mTimeLeftInMillis = START_TIME_IN_MILLIS;
+                    mCountDownTimer = null;
+                    mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            attendi = true;
+                        }
+                        @Override
+                        public void onFinish() {
+                            attendi=false;
+                            notifica=true;
+                           irrigationOff();
+                        }
+                    }.start();
+                }
             }
         });
 
@@ -285,36 +328,10 @@ public class IrrigationActivity extends AppCompatActivity {
     }
 
     //metodi che mi servono per settare le impostazioni
-    public void saveirrigationvalues(View v){
-        Channel x=db.ChannelDao().findByName(channel.getLett_id(),channel.getLett_read_key());
+    public void saveirrigationvalues(final View v){
+        if(attendi) return;
 
-        if(x!=null){
-            db.ChannelDao().delete(x);
-            try {
-                x.setIrrigationDuration(Double.parseDouble(durationText.getText().toString()));
-            }catch (Exception e){
-            }
-            try {
-                flusso=Double.parseDouble(flussoText.getText().toString());
-                x.setFlussoAcqua(flusso);
-            }catch (Exception e){
-                flusso=null;
-            }
-            try {
-                leaching=Double.parseDouble(leachingText.getText().toString());
-                x.setLeachingfactor(leaching);
-            }catch (Exception e){
-                leaching=null;
-            }
-            try {
-                numirra=Integer.parseInt(irradayText.getText().toString());
-                x.setNumirra(numirra);
-            }catch (Exception e){
-                numirra=-1;
-            }
-            db.ChannelDao().insert(x);
-
-            String url = "https://api.thingspeak.com/update.json";
+        String url = "https://api.thingspeak.com/update.json";
             List<savedValues> lista=db.SavedDao().getAll();
             Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
 
@@ -344,16 +361,36 @@ public class IrrigationActivity extends AppCompatActivity {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getBaseContext(),"ERRORE SALVATAGGIO VALORI RIPROVA TRA 15 SECONDI O CONTROLLA LA TUA CONNESSIONE!",Toast.LENGTH_LONG).show();
-                    error.printStackTrace();
+                    if (notifica) {
+                        Toast.makeText(getBaseContext(),"ERRORE SALVATAGGIO VALORI!",Toast.LENGTH_LONG).show();
+                        notifica=false;
+                        attendi=false;
+                    }
+                    else {
+                        Toast.makeText(getBaseContext(), "ATTENDI..", Toast.LENGTH_LONG).show();
+                        //parametri per il timer
+                        long START_TIME_IN_MILLIS = 15000;
+                        long mTimeLeftInMillis = START_TIME_IN_MILLIS;
+                        mCountDownTimer = null;
+                        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                attendi = true;
+                            }
+                            @Override
+                            public void onFinish() {
+                                attendi=false;
+                                notifica=true;
+                                saveirrigationvalues(v);
+                            }
+                        }.start();
+                    }
                 }
             });
 
            queue.add(jsonRequest);
         }
-        else Toast.makeText(getApplicationContext(),"IMPOSSIBILE TROVARE IL CHANNEL SPECIFICATO",Toast.LENGTH_SHORT).show();
 
-    }
 
     public void refreshvalues(View v){
         //recupero i dati dal server
@@ -382,8 +419,12 @@ public class IrrigationActivity extends AppCompatActivity {
                         try {
                             //recupero l'array feeds
                             JSONArray jsonArray = response.getJSONArray("feeds");
-                            ArrayList<String> save = new ArrayList<>();
-                            ArrayList<String> saveTime = new ArrayList<>();
+                            save.clear();
+                            saveTime.clear();
+                            saveTime=null;
+                            save=null;
+                            save = new ArrayList<>();
+                            saveTime = new ArrayList<>();
 
                             //creo variabile che conterrà al suo interno l'ultimo valore dell'irrigazione automatica
                             int field6=0;
@@ -393,27 +434,27 @@ public class IrrigationActivity extends AppCompatActivity {
                                 JSONObject valori = jsonArray.getJSONObject(i);
 
                                 try {
-                                    if (!valori.getString("field2").equals("null")) {
+                                    if (!valori.getString("field2").equals("null") && !valori.getString("field2").equals("")) {
                                         flussoText.setText(valori.getString("field2"));
                                     }
                                 } catch (Exception e) {
                                 }
 
                                 try {
-                                    if (!valori.getString("field3").equals("null")) {
+                                    if (!valori.getString("field3").equals("null") && !valori.getString("field3").equals("")) {
                                         leachingText.setText(valori.getString("field3"));
                                     }
                                 } catch (Exception e) {
                                 }
                                 try {
-                                    if (!valori.getString("field4").equals("null")) {
+                                    if (!valori.getString("field4").equals("null") && !valori.getString("field4").equals("")) {
                                         irradayText.setText(valori.getString("field4"));
                                     }
                                 } catch (Exception e) {
                                 }
 
                                 try {
-                                    if (!valori.getString("field6").equals("null")) {
+                                    if (!valori.getString("field6").equals("null") && !valori.getString("field6").equals("")) {
                                         if (Double.parseDouble(valori.getString("field6")) == 1) {
                                             field6=1;
                                         } else {
@@ -483,6 +524,9 @@ public class IrrigationActivity extends AppCompatActivity {
                                 date_value.set(Calendar.HOUR_OF_DAY, ore);
                                 date_value.set(Calendar.MINUTE, minuti);
                                 date_value.set(Calendar.SECOND, secondi);
+
+                                //converto la data del cloud alla mia zona gmt
+                                date_value.setTimeZone(TimeZone.getTimeZone("GMT"));
 
                                 //durata in secondi
                                 long durata = (date_now.getTimeInMillis() / 1000 - date_value.getTimeInMillis() / 1000);
