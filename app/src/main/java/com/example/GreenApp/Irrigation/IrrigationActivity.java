@@ -155,7 +155,6 @@ public class IrrigationActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 Toast.makeText(getBaseContext(),"IRRIGAZIONE "+tipo+" ATTTIVATA!",Toast.LENGTH_SHORT).show();
-                Log.d("onResponse:","SONO QUI");
                 notifica=false;
                 attendi=false;
             }
@@ -492,11 +491,14 @@ public class IrrigationActivity extends AppCompatActivity {
                                 check2 = true;
                             }
 
+                            //controllo se
                             String primadata="", seconda="";
                             int i = 0;
                             boolean trovato = false;
 
+                            //scandisco tutti i parametri del field7
                             while (i < save.size()) {
+                                //se field 7 era un 1 significa che l'irrigazione era/è attiva memorizzo l'istante temporale in cui era attiva
                                 if (save.get(i).equals("1")) {
                                     if (!trovato) primadata = saveTime.get(i);
                                     //stampo la distanza dall'ultima irrigazione
@@ -512,6 +514,7 @@ public class IrrigationActivity extends AppCompatActivity {
                                 i++;
                             }
 
+                            //se l'ultimo valore è di irrigazione attiva metto come ultimo aggiornamento 0 e come durata la distanza fino ad adesso
                             if (trovato) {
                                 textDurata.setText("0 minuti");
 

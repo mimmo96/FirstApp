@@ -273,7 +273,7 @@ public class MyTimerTask extends TimerTask {
                                     if (v.getImagepeso() != null) {
                                         textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(evapotraspirazione)) * 100.0) / 100.0));
                                     } else if (ok) {
-                                        textPeso.setText(evapotraspirazione);
+                                        textPeso.setText(evapotraspirazione.concat(" kg/dm²"));
                                     }
                                 }
                                 else textPeso.setText("- -");
@@ -304,7 +304,7 @@ public class MyTimerTask extends TimerTask {
     private void donwload() {
         List<savedValues> lista=database.SavedDao().getAll();
         Channel list=database.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
-        String url="https://api.thingspeak.com/channels/"+list.getScritt_id()+"/feeds.json?api_key="+list.getScritt_read_key()+"&results=1";
+        String url="https://api.thingspeak.com/channels/"+list.getScritt_id()+"/fields/field7.json?api_key="+list.getScritt_read_key()+"&results=1";
 
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -312,21 +312,27 @@ public class MyTimerTask extends TimerTask {
                     public void onResponse(JSONObject response) {
                         try {
                             JSONArray jsonArray = response.getJSONArray("feeds");
-                            JSONObject valori = jsonArray.getJSONObject(0);
+                            int field7=0;
+
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject valori = jsonArray.getJSONObject(i);
                                 if (!valori.getString("field7").equals("null")) {
-                                    if(Double.parseDouble(valori.getString("field7"))==1){
-                                        if(image!=null)image.setImageResource(R.drawable.irrigazioneattiva);
+                                    if (Double.parseDouble(valori.getString("field7")) == 1) {
+                                        field7=1;
+                                    } else {
+                                        field7=0;
                                     }
-                                    else{
-                                        if(image!=null)image.setImageResource(R.drawable.irrigazione);
-                                    }
+                                } else {
+                                    field7=0;
                                 }
-                                else {
-                                    if(image!=null)image.setImageResource(R.drawable.irrigazione);
-                                }
-                            } catch (Exception e) {
-                            if(image!=null)image.setImageResource(R.drawable.irrigazione);
                             }
+
+                            if (field7 == 1) image.setImageResource(R.drawable.irrigazioneattiva);
+                            else  image.setImageResource(R.drawable.irrigazione);
+
+                        } catch (Exception e) {
+                            if(image!=null)image.setImageResource(R.drawable.irrigazione);
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override
