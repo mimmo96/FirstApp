@@ -3,6 +3,7 @@ package com.example.GreenApp;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -166,9 +167,10 @@ public class MyTimerTask extends TimerTask {
 
                                     try {
                                         //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
-                                        if (v.getImagetemp() != null && !valori.getString(v.getImagetemp()).equals("") && !valori.getString(v.getImagetemp()).equals("null"))
+                                        if (v.getImagetemp() != null && !valori.getString(v.getImagetemp()).equals("") && !valori.getString(v.getImagetemp()).equals("null")) {
                                             temperature = valori.getString(v.getImagetemp());
-                                        else if (fields.get(0).equals("Temperature") && !valori.getString("field1").equals("") && !valori.getString("field1").equals("null")) {
+                                        }
+                                        else if (fields.get(0).equals("Temperature") && v.getImagetemp()==null && !valori.getString("field1").equals("") && !valori.getString("field1").equals("null")) {
                                             temperature = valori.getString("field1");
                                         }
                                     } catch (Exception e) {
@@ -178,7 +180,7 @@ public class MyTimerTask extends TimerTask {
                                         //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
                                         if (v.getImageumid() != null && !valori.getString(v.getImageumid()).equals("") && !valori.getString(v.getImageumid()).equals("null"))
                                             umidity = valori.getString(v.getImageumid());
-                                        else if (fields.get(1).equals("Humidity") && !valori.getString("field2").equals("") && !valori.getString("field2").equals("null")) {
+                                        else if (fields.get(1).equals("Humidity") && v.getImageumid()==null && !valori.getString("field2").equals("") && !valori.getString("field2").equals("null")) {
                                             umidity = valori.getString("field2");
                                         }
                                     } catch (Exception e) {
@@ -188,7 +190,7 @@ public class MyTimerTask extends TimerTask {
                                         //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
                                         if (v.getImageph() != null && !valori.getString(v.getImageph()).equals("") && !valori.getString(v.getImageph()).equals("null"))
                                             ph = valori.getString(v.getImageph());
-                                        else if (fields.get(2).equals("pH_value") && !valori.getString("field3").equals("") && !valori.getString("field3").equals("null")) {
+                                        else if (fields.get(2).equals("pH_value") && v.getImageph()==null && !valori.getString("field3").equals("") && !valori.getString("field3").equals("null")) {
                                             ph = valori.getString("field3");
                                         }
                                     } catch (Exception e) {
@@ -198,7 +200,7 @@ public class MyTimerTask extends TimerTask {
                                         //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
                                         if (v.getImagecond() != null && !valori.getString(v.getImagecond()).equals("") && !valori.getString(v.getImagecond()).equals("null"))
                                             conducibilita = valori.getString(v.getImagecond());
-                                        else if (fields.get(3).equals("electric_conductivity") && !valori.getString("field4").equals("") && !valori.getString("field4").equals("null")) {
+                                        else if (fields.get(3).equals("electric_conductivity") && v.getImagecond()==null && !valori.getString("field4").equals("") && !valori.getString("field4").equals("null")) {
                                             conducibilita = valori.getString("field4");
                                         }
                                     } catch (Exception e) {
@@ -208,7 +210,7 @@ public class MyTimerTask extends TimerTask {
                                         //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
                                         if (v.getImageirra() != null && !valori.getString(v.getImageirra()).equals("") && !valori.getString(v.getImageirra()).equals("null"))
                                             irradianza = valori.getString(v.getImageirra());
-                                        else if (fields.get(4).equals("Irradiance") && !valori.getString("field5").equals("") && !valori.getString("field5").equals("null")) {
+                                        else if (fields.get(4).equals("Irradiance") && v.getImageirra()==null && !valori.getString("field5").equals("") && !valori.getString("field5").equals("null")) {
                                             irradianza = valori.getString("field5");
                                         }
                                     } catch (Exception e) {
@@ -218,9 +220,8 @@ public class MyTimerTask extends TimerTask {
                                         //se ho impostato un valore, inserisci quello,altrimenti se già c'è uno standard prendilo in automatico altrimenti non scrivo nulla
                                         if (v.getImagepeso() != null && !valori.getString(v.getImagepeso()).equals("") && !valori.getString(v.getImagepeso()).equals("null"))
                                             evapotraspirazione = valori.getString(v.getImagepeso());
-                                        else if (ok) {
+                                        else if (ok && v.getImagepeso()==null) {
                                             evapotraspirazione=String.valueOf(Math.round((irrigazione - drainaggio) * 100.0) / 100.0);
-                                            irradianza = valori.getString("field5");
                                         }
                                     } catch (Exception e) {
                                     }
