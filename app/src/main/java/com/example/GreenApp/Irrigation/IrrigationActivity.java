@@ -491,7 +491,6 @@ public class IrrigationActivity extends AppCompatActivity {
                                 check2 = true;
                             }
 
-                            //controllo se
                             String primadata="", seconda="";
                             int i = 0;
                             boolean trovato = false;
