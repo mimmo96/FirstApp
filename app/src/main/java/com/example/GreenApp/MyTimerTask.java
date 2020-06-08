@@ -230,6 +230,7 @@ public class MyTimerTask extends TimerTask {
                                 }
 
                                 //mostro a schermo gli ultimi valori
+                                try{
                                 if (temperature != null){
                                     if (v.getImagetemp() != null) {
                                         textTemp.setText(String.valueOf(Math.round(Double.parseDouble(String.format(temperature)) * 100.0) / 100.0));
@@ -238,22 +239,32 @@ public class MyTimerTask extends TimerTask {
                                     }
                                 }
                                 else textTemp.setText("- -");
-                                if (umidity != null){
-                                    if (v.getImageumid() != null) {
-                                        textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0));
-                                    } else if (fields.get(1).equals("Humidity")) {
-                                        textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0));
-                                    }
+                                }catch (Exception e){
+                                    textTemp.setText("- -");
                                 }
-                                else textUmidity.setText("- -");
-                                if (ph != null){
-                                    if (v.getImageph() != null) {
-                                        textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(ph)) * 100.0) / 100.0));
-                                    } else if (fields.get(2).equals("pH_value")) {
-                                        textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(ph)) * 100.0) / 100.0));
-                                    }
+                                try {
+                                    if (umidity != null) {
+                                        if (v.getImageumid() != null) {
+                                            textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0));
+                                        } else if (fields.get(1).equals("Humidity")) {
+                                            textUmidity.setText(String.valueOf(Math.round(Double.parseDouble(String.format(umidity)) * 100.0) / 100.0));
+                                        }
+                                    } else textUmidity.setText("- -");
+                                }catch (Exception e){
+                                    textUmidity.setText("- -");
+                                 }
+                                try {
+                                    if (ph != null) {
+                                        if (v.getImageph() != null) {
+                                            textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(ph)) * 100.0) / 100.0));
+                                        } else if (fields.get(2).equals("pH_value")) {
+                                            textPh.setText(String.valueOf(Math.round(Double.parseDouble(String.format(ph)) * 100.0) / 100.0));
+                                        }
+                                    } else textPh.setText("- -");
+                                }catch (Exception e){
+                                    textPh.setText("- -");
                                 }
-                                else textPh.setText("- -");
+                                try{
                                 if (conducibilita != null){
                                     if (v.getImagecond() != null) {
                                         textConducibilita.setText(String.valueOf(Math.round(Double.parseDouble(String.format(conducibilita)) * 100.0) / 100.0));
@@ -262,6 +273,10 @@ public class MyTimerTask extends TimerTask {
                                     }
                                 }
                                 else textConducibilita.setText("- -");
+                                }catch (Exception e){
+                                    textConducibilita.setText("- -");
+                                }
+                                try{
                                 if (irradianza != null){
                                     if (v.getImageirra() != null) {
                                         textIrradianza.setText(String.valueOf(Math.round(Double.parseDouble(String.format(irradianza)) * 100.0) / 100.0));
@@ -270,6 +285,10 @@ public class MyTimerTask extends TimerTask {
                                     }
                                 }
                                 else textIrradianza.setText("- -");
+                                }catch (Exception e){
+                                    textIrradianza.setText("- -");
+                                }
+                                try{
                                 if (evapotraspirazione != null){
                                     if (v.getImagepeso() != null) {
                                         textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(evapotraspirazione)) * 100.0) / 100.0));
@@ -278,6 +297,9 @@ public class MyTimerTask extends TimerTask {
                                     }
                                 }
                                 else textPeso.setText("- -");
+                                }catch (Exception e){
+                                    textPeso.setText("- -");
+                                }
 
                                 distanza(cretime);
 
