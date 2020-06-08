@@ -49,9 +49,6 @@ public class IrrigationActivity extends AppCompatActivity {
     private static Button irra;
     private static Context cont;
     private static ImageView image;
-    private Double leaching=null;
-    private Double flusso=null;
-    private int numirra=-1;
     private boolean check1=false;
     private boolean check2=false;
     private RequestQueue queue;
@@ -350,10 +347,9 @@ public class IrrigationActivity extends AppCompatActivity {
             Map<String, String> params = new HashMap();
             params.put("accept", "application/json");
             params.put("api_key", list.getWrite_key());
-            params.put("field2",String.valueOf(flusso));
-            params.put("field3",String.valueOf(leaching));
-            if(numirra==-1) params.put("field4",null);
-            else  params.put("field4",String.valueOf(numirra));
+            params.put("field2",flussoText.getText().toString());
+            params.put("field3",leachingText.getText().toString());
+            params.put("field4", irradayText.getText().toString());
             if(Switch.isChecked()) params.put("field6",String.valueOf(1));
             else params.put("field6",String.valueOf(0));
             params.put("field7",String.valueOf(field7));
