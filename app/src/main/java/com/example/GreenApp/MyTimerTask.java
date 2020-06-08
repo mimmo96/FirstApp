@@ -274,7 +274,7 @@ public class MyTimerTask extends TimerTask {
                                     if (v.getImagepeso() != null) {
                                         textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(evapotraspirazione)) * 100.0) / 100.0));
                                     } else if (ok) {
-                                        textPeso.setText(evapotraspirazione.concat(" kg/dm²"));
+                                        textPeso.setText(evapotraspirazione.concat("g/dm²"));
                                     }
                                 }
                                 else textPeso.setText("- -");
