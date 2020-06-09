@@ -151,7 +151,7 @@ public class IrrigationActivity extends AppCompatActivity {
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Toast.makeText(getBaseContext(),"IRRIGAZIONE "+tipo+" ATTTIVATA!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(),"IRRIGAZIONE "+tipo+" ATTIVATA!",Toast.LENGTH_SHORT).show();
                 notifica=false;
                 attendi=false;
             }
