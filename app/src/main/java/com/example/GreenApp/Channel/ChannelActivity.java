@@ -57,10 +57,14 @@ public class ChannelActivity  extends AppCompatActivity {
     }
 
     @Override
+    /**
+     * metodo eseguito alla creazione
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.channel_main);
 
+        //creo le associazioni con gli elementi grafici
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -97,6 +101,15 @@ public class ChannelActivity  extends AppCompatActivity {
         recycleView.setHasFixedSize(true);
     }
 
+    /**
+     *  metodo eseguito quando vado ad inserire un nuovo channel, effettua un controllo sull'esistenza del channel su thinkspeak
+     *
+     * @param id: id associato al channel
+     * @param key: api lettura chiave lettura
+     * @param id_scritt: id chiave di scrittura
+     * @param read_scritt: api lettura chiave scrittura
+     * @param write_scritt: api scrittura chiave scrittura
+     */
     public static void Execute(String id, String key, String id_scritt, String read_scritt,String write_scritt){
         //controllo se i dati inseriti corrispondono ad un channel esistente
         if (db.ChannelDao().findByName(id, key) != null)
@@ -119,6 +132,9 @@ public class ChannelActivity  extends AppCompatActivity {
         }
     }
 
+    /**
+     * metodo impostare i valori
+     */
     private void getValue() {
         channel=db.ChannelDao().getAll();
 
@@ -131,10 +147,13 @@ public class ChannelActivity  extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-
-    //azione da svolgere dopo che ho ciccato sul pulsante "delete"
+    /**
+     * azione da svolgere dopo che ho ciccato sul pulsante "delete"
+     * @param v: puntatore al pulsante delete
+     * @param context: context associato alla classe
+     * @param position: poszione del channel nel recyclerview
+     */
     public static void sendObjcet(View v, Context context, final int position) {
-        //  Toast.makeText(BasicContext,"hai cliccato su " + position,Toast.LENGTH_SHORT).show();
 
         //avviso di cancellazione
         AlertDialog.Builder builder=new AlertDialog.Builder(BasicContext);
@@ -176,6 +195,7 @@ public class ChannelActivity  extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
             }
         });
+        //azione da fare quando premo il pulsante negativo
         builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -186,7 +206,13 @@ public class ChannelActivity  extends AppCompatActivity {
         allert.show();
     }
 
-    //eseguito quando premo sul pulsante per i preferiti
+    /**
+     * eseguito quando premo sul pulsante per i preferiti
+     *
+     * @param v: puntatore al pulsante preferiti
+     * @param context: context associato alla classe
+     * @param position: poszione del channel nel recyclerview
+     */
     public static void sendPrefer(View v, Context context, final int position) {
         System.out.println("aumenta: " + position);
         //setto il nuovo channel come quello di default
@@ -205,14 +231,12 @@ public class ChannelActivity  extends AppCompatActivity {
             //setto la nuova posizione
             pos = position;
         }
-
         if(position==pos) {
             if (defaultStar == null) {
                 //salvo il bottone corrente e il background
                 defaultStar = v;
                 //cambio la disposizione
                 v.setBackgroundResource(R.drawable.ic_star);
-
             } else {
                 //salvo il bottone corrente e il background
                 defaultStar.setBackground(v.getBackground());
@@ -220,25 +244,40 @@ public class ChannelActivity  extends AppCompatActivity {
                 //cambio la disposizione
                 v.setBackgroundResource(R.drawable.ic_star);
             }
-
         }
         //invio i nuovi dati di default
         MainActivity.setDefaultSetting(DEFAULT_ID, DEFAULT_READ_KEY,pos);
-
     }
 
+    /**
+     *
+     * @return la posizione associata
+     */
     public static int getposition(){
         return pos;
     }
 
-
+    /**
+     * restituisce l'intent associato
+     * @param context: context associato alla classe
+     * @return l'intent legato all'activity
+     */
     public static Intent getActivityintent(Context context){
         Intent intent=new Intent(context,ChannelActivity.class);
         return intent;
     }
 
-
-        public static boolean testData(String valueID, String valueREADKEY, String id_scritt,String read_scritt,String write_scritt) {
+    /**
+     * funzione che mi controlla l'esistenza del channel su thinkspeak
+     *
+     * @param valueID: id della chiave di lettura
+     * @param valueREADKEY: api lettura chiave lettura
+     * @param id_scritt: id chiave di scrittura
+     * @param read_scritt: api lettura chiave scrittura
+     * @param write_scritt: api scrittura chiave scrittura
+     * @return
+     */
+    public static boolean testData(String valueID, String valueREADKEY, String id_scritt,String read_scritt,String write_scritt) {
 
         BlockingQueue<Boolean> esito = new LinkedBlockingQueue<Boolean>();
         ExecutorService pes = Executors.newFixedThreadPool(1);
@@ -253,6 +292,9 @@ public class ChannelActivity  extends AppCompatActivity {
         return esit;
     }
 
+    /**
+     * funzione che crea il thread che gestirà le richieste
+     */
     static class Task implements Runnable {
         private static String lett_id;
         private static String lett_read_key;
@@ -262,6 +304,15 @@ public class ChannelActivity  extends AppCompatActivity {
         private static String write_key;
         private final BlockingQueue<Boolean> sharedQueue ;
 
+        /**
+         * metodo costruttore
+         * @param esito:
+         * @param id: id chiave di lettura
+         * @param read_key: api lettura chiave lettura
+         * @param id_scritt: id chiave di scrittura
+         * @param read_scritt: api lettura chiave scrittura
+         * @param write_scritt: api scrittura chiave scrittura
+         */
         public Task(BlockingQueue<Boolean> esito, String id, String read_key, String id_scritt, String read_scritt, String write_scritt) {
             lett_id = id;
             scritt_id=id_scritt;
@@ -271,6 +322,9 @@ public class ChannelActivity  extends AppCompatActivity {
             this.sharedQueue = esito;
         }
 
+        /**
+         * funzione eseguita all'avvio del thread
+         */
         @Override
         public void run() {
             try {
@@ -289,12 +343,12 @@ public class ChannelActivity  extends AppCompatActivity {
                     add.setUid(id + 1);
 
                     //settare i fields qui appena inserisco il mio channel
-                    BufferedReader br = new BufferedReader(new InputStreamReader(
-                            (conn.getInputStream())));
+                    BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
 
                     String JSON_DATA=br.readLine();
                     JSONObject obj = new JSONObject(JSON_DATA);
 
+                        //aggiungo tutti i field rilevati al channel e li inserisco nel database
                         try {
                            add.setFiled1(String.valueOf(obj.getJSONObject("channel").get("field1")));
                         } catch (Exception e){
@@ -308,7 +362,7 @@ public class ChannelActivity  extends AppCompatActivity {
                         }
 
                         try {
-                          add.setFiled3(String.valueOf(obj.getJSONObject("channel").get("field3")));
+                            add.setFiled3(String.valueOf(obj.getJSONObject("channel").get("field3")));
                         } catch (Exception e){
                             add.setFiled3(null);
                         }
@@ -319,7 +373,7 @@ public class ChannelActivity  extends AppCompatActivity {
                             add.setFiled4(null);
                         }
                         try {
-                           add.setFiled5(String.valueOf(obj.getJSONObject("channel").get("field5")));
+                            add.setFiled5(String.valueOf(obj.getJSONObject("channel").get("field5")));
                         } catch (Exception e){
                             add.setFiled5(null);
                         }
@@ -329,7 +383,7 @@ public class ChannelActivity  extends AppCompatActivity {
                             add.setFiled6(null);
                         }
                         try {
-                          add.setFiled7(String.valueOf(obj.getJSONObject("channel").get("field7")));
+                            add.setFiled7(String.valueOf(obj.getJSONObject("channel").get("field7")));
                         } catch (Exception e){
                             add.setFiled7(null);
                         }

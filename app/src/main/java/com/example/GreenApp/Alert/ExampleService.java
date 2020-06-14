@@ -45,13 +45,16 @@ public class ExampleService extends Service {
     private static Timer timer;
     private static Context context;
 
-
+    /**
+     * metodo eseguito alla creazione
+     */
     @Override
     public void onCreate() {
         super.onCreate();
         context=getApplicationContext();
 
         super.onCreate();
+        //controllo la versione attuale del dispositivo, se è maggiore dell'8.0 avvio il servizio in background altrimenti avvio il notificationCOmpact (supportato dalle versioni inferiori)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             startMyOwnForeground();
         else {
@@ -79,6 +82,9 @@ public class ExampleService extends Service {
                 .build();
     }
 
+    /**
+     * funzione che avvia il thread in background
+     */
     @NonNull
     @TargetApi(26)
     private void startMyOwnForeground(){
@@ -102,7 +108,9 @@ public class ExampleService extends Service {
         startForeground(2111, notification);
     }
 
-    //funzione che devo fare all'avvio
+    /**
+     *  funzione che devo fare all'avvio
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("ExampleService","OnStartCommand");
@@ -123,7 +131,6 @@ public class ExampleService extends Service {
                 channelNotification.add(actualchannel);
             }
         }
-
         if(k==0)
             //se non ho nessun channel con le notifiche attive interrompo il servizo
             stopForeground(true);
@@ -138,7 +145,10 @@ public class ExampleService extends Service {
         return START_NOT_STICKY;
     }
 
-    //quando devo distruggere il servizio
+
+    /**
+     * quando devo distruggere il service
+     */
     public static void stoptimer(){
         //recupero i thread avviati precdentemente e li cancello
         if(myTimerTask!=null) myTimerTask.cancel();
@@ -147,7 +157,9 @@ public class ExampleService extends Service {
         timer=null;
     }
 
-    //nel caso in cui il service viene distrutto per cause di "forze maggiori"
+    /**
+     *  nel caso in cui il service viene distrutto per cause di "forze maggiori"
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -157,6 +169,11 @@ public class ExampleService extends Service {
         Log.d("ExampleServices","distruggo");
     }
 
+    /**
+     *
+     * @param intent: intent relativo
+     * @return IBinder
+     */
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

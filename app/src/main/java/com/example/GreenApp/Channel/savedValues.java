@@ -29,36 +29,70 @@ public class savedValues {
         @ColumnInfo(name = "position_key")
         private int position;
 
+     /**
+     * metodo costruttore
+     * @param id: id associato
+     * @param read_key: chiave di lettura
+     * @param position: posizione
+     */
         public savedValues(String id,String read_key,int position) {
             this.id = id;
             this.read_key=read_key;
             this.position=position;
         }
 
-        public int getUid() {
+    /**
+     *
+     * @return restuisce uid associato
+     */
+    public int getUid() {
             return uid;
         }
 
+    /**
+     *
+     * @param uid: imposta uid
+     */
         public void setUid(int uid) {
             this.uid = uid;
         }
 
+    /**
+     *
+     * @return restuisce id associato
+     */
         public String getId() {
             return id;
         }
 
+    /**
+     *
+     * @param id: id del channel
+     */
         public void setId(String id) {
             this.id = id;
         }
 
+    /**
+     *
+     * @return restituisce la chiave di lettura
+     */
         public String getRead_key() {
         return read_key;
-    }
+        }
 
+    /**
+     *
+     * @return restitusce la posizione
+     */
         public int getPosition() {
             return position;
         }
 
+    /**
+     *
+     * @param pos: imposta la posizione
+     */
         public void setPosition(int pos) {
             this.position = pos;
         }

@@ -19,22 +19,47 @@ import java.util.List;
 
 @Dao
 public interface ChannelDao {
+    /**
+     *
+     * @return lista di tutti i channel presenti nel database
+     */
     @Query("SELECT * FROM channel")
     List<Channel> getAll();
 
+    /**
+     * trova il channel presente nel database che rispettata tutti i parametri
+     * @param first: id del channel
+     * @param last: chiave di lettura
+     * @return il channel associato
+     */
     @Query("SELECT * FROM channel WHERE id_key LIKE :first AND "
             + "read_key LIKE :last LIMIT 1")
     Channel findByName(String first, String last);
 
+    /**
+     * inserisce un insieme di channel
+     * @param channels: lista di channel da inserire
+     */
     @Insert
     void insertAll(Channel... channels);
 
+    /**
+     * funzione che inserisce il channel nel database
+     * @param channel: channel da inserire
+     */
     @Insert
     void insert(Channel channel);
 
+    /**
+     * cancella tutti gli elementi inseriti nel database
+     */
     @Query("DELETE FROM Channel")
     void deleteAll();
 
+    /**
+     * cancella il singolo channel
+     * @param channel: channel da cancellare
+     */
     @Delete
     void delete(Channel channel);
 }

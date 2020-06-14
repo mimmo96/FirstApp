@@ -11,6 +11,10 @@ import androidx.core.content.ContextCompat;
 public class StartActivityOnBootReceiver extends BroadcastReceiver {
 
     @Override
+    /**
+     * funzione eseguita quando riavvio il dispositivo o lo accendo e si completa la fase di boot iniziale
+     * mi garantisce che in caso di notifiche attive esse ripartiranno in automatico
+     */
     public void onReceive(Context context, Intent intent) {
 
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {

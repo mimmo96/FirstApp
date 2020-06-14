@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,12 +22,9 @@ import com.example.GreenApp.Channel.Channel;
 import com.example.firstapp.R;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
-import com.jjoe64.graphview.series.PointsGraphSeries;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,14 +48,16 @@ import java.util.TimeZone;
 public class MainActivity extends AppCompatActivity {
 
     LineGraphSeries<DataPoint> series;
-    private static String channelID="816869";
-    private static String READ_KEY="KLEZNXOV7EPHHEUT";
+    private static String channelID=null;
+    private static String READ_KEY=null;
     private static String url="https://api.thingspeak.com/channels/"+channelID+ "/feeds.json?api_key=" + READ_KEY;
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
     private static ArrayList<String> nameFields;
     private static ArrayList<Integer> position;
     private static List<Channel> channelPos;
+
+    //dichiaro le strutture
     private List<Double> fields1=new ArrayList<>();
     private List<Double> fields2=new ArrayList<>();
     private List<Double> fields3=new ArrayList<>();
@@ -83,7 +81,12 @@ public class MainActivity extends AppCompatActivity {
 
     private List<ModelData> Insertdata=new ArrayList<>();
 
-    //gra contiene la lista dei nomi dei field, channel il canale ad esso associato con tutte le info e pos indica la posizione del filed nel canale
+    /**
+     * configuro i parametri
+     * @param nameList: contiene la lista dei field
+     * @param channel: contiene la lista dei channnel ssociati ad ogni elemento del field selezionato
+     * @param pos: posizione nel grafico
+     */
     public static void setGrapView(ArrayList<String> nameList, List<Channel> channel, ArrayList<Integer> pos){
         nameFields=nameList;
         position=pos;
@@ -92,20 +95,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    /**
+     * metodo eseguito alla creazione della classe
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.graphic_activity_main);
+
+        //creo le associazioni
         recyclerView = findViewById(R.id.recyclerview);
         dataStart=findViewById(R.id.textViewInizio);
         dataEnd=findViewById(R.id.textViewfine);
 
+        //scandisco i channel e recupero i dati associati (finoa 8000 valori)
         for(int i=0;i<channelPos.size();i++){
             url="https://api.thingspeak.com/channels/"+channelPos.get(i).getLett_id()+"/feeds.json?api_key="+channelPos.get(i).getLett_read_key()+"&results=8000"+"&offset="+getCurrentTimezoneOffset();
             getJsonResponse(url,i);
         }
     }
 
-    //azione che deve avvenire quando premo sul pulsante vai
+    /**
+     * azione che deve avvenire quando premo sul pulsante vai
+     * @param v: puntatore di riferimento al pulsante "VAI"
+     */
     public void visualizzaGrafici(View v){
 
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -144,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
             if(annoEnd<2000) throw new ParseException("data non corretta",2);
         }
 
+        //in caso di errore nell'inserimento mando errore
         catch (java.text.ParseException e)
         {
             stop=1;
@@ -152,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
         }
         Log.i("Graphc/MainActivity","ho inserito:\n data inizio: " + giornoStart+"-"+meseStart+"-"+annoStart+"\n"+"data fine: "+ giornoEnd+"-"+meseEnd+"-"+annoEnd);
 
+        //scarico i nuovi dati nel caso in cui la data è stata impostata correttamente
         if(stop==0) {
             Insertdata.clear();
             for (int i = 0; i < channelPos.size(); i++) {
@@ -162,6 +176,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * metodo per scaricare tutti i dati associati al channel
+     * @param url: indirizzo utilizzato per scaricare i dati
+     * @param index: posizione del channel
+     */
     private void getJsonResponse(String url, final int index) {
 
         final JsonObjectRequest jsonObjectRequest;
@@ -176,10 +195,10 @@ public class MainActivity extends AppCompatActivity {
                             String posfil="fields".concat(""+position.get(index));
                             //scorro tutto l'array e stampo a schermo il valore di field1
                             for (int i = 0; i < jsonArray.length(); i++) {
-                                //recupero il primo oggetto dell'array
+                                //recupero l'oggetto dell'array di indice i
                                 final JSONObject value = jsonArray.getJSONObject(i);
 
-                                //salvo i valori contenuti nei field1 di tipo double
+                                //salvo i valori contenuti nei field di tipo double
                                 try {
                                     if (posfil.equals("fields1") && !value.getString("field1").equals("") && !value.getString("field1").equals("null")) {
                                         fields1.add(Double.parseDouble(value.getString("field1")));
@@ -231,6 +250,7 @@ public class MainActivity extends AppCompatActivity {
                                   }catch (Exception e){ }
                             }
 
+                            //controllo se il field selelzionato era relativo al fieldx (in tal caso lo rappresento graficamente)
                             if(posfil.equals("fields1"))makegraph(nameFields.get(index),fields1,date_fields1);
                             if(posfil.equals("fields2"))makegraph(nameFields.get(index),fields2,date_fields2);
                             if(posfil.equals("fields3"))makegraph(nameFields.get(index),fields3,date_fields3);
@@ -240,13 +260,14 @@ public class MainActivity extends AppCompatActivity {
                             if(posfil.equals("fields7"))makegraph(nameFields.get(index),fields7,date_fields7);
                             if(posfil.equals("fields8"))makegraph(nameFields.get(index),fields8,date_fields8);
 
+                            //imposto il recyclerview e l'adapter
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                             recyclerView.setLayoutManager(linearLayoutManager);
-
                             adapter=new RecyclerViewAdapter(Insertdata, context);
                             recyclerView.setAdapter(adapter);
                             recyclerView.setHasFixedSize(true); //le cardView sono tutte delle stesse dimensioni
                             adapter.notifyDataSetChanged();
+
                             //libero tutta la memoria
                             fields1.clear();
                             date_fields1.clear();
@@ -282,11 +303,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * funzione che mi permette di creare la struttura ModelData che verrà poi passata al recyclerview per rappresentare i grafici
+     * @param name: nome del field selezonato
+     * @param list: insieme di valori scaricati ti tipo double
+     * @param created: lista contennete le date di creazione di ogni field
+     */
     private void makegraph(String name, List<Double> list,List<String> created) {
         DataPoint[] data = new DataPoint[created.size()];
 
         Calendar date_value = Calendar.getInstance();
         Double somma=0.0;
+
+        //scorro tutto l'array date e per ogni elemento memorizzo i valori associati
         for (int i = 0; i < created.size(); i++) {
             String data_creazione = created.get(i);
 
@@ -308,6 +337,7 @@ public class MainActivity extends AppCompatActivity {
             data[i] = new DataPoint(dat, list.get(i));
             somma=somma+list.get(i);
         }
+        //creo la nuova serie, calcolo la media dei valori ed aggiungo la classe ModelData contenente tutte le info scaricate
         series = new LineGraphSeries<>(data);
         series.setColor(Color.RED);
         Double media=Math.round((somma/created.size()) * 100.0) / 100.0;
@@ -315,11 +345,20 @@ public class MainActivity extends AppCompatActivity {
         date_value.clear();
     }
 
+    /**
+     *
+     * @param context: il Contex della classe
+     * @return Intent associato alla classe
+     */
     public static Intent getActivityintent(Context context){
             Intent intent=new Intent(context, MainActivity.class);
             return intent;
         }
 
+    /**
+     * funzione che mi calcola l'offset in base all time-zone in cui mi trovo
+     * @return il valore GTM+ relativo alla zona in numero intero (es 2= GTM+2)
+     */
     public static String getCurrentTimezoneOffset() {
 
         TimeZone tz = TimeZone.getDefault();
@@ -330,6 +369,10 @@ public class MainActivity extends AppCompatActivity {
         return String.valueOf((offsetInMillis/(1000*3600))-1);
     }
 
+    /**
+     * funzione eseguita quando premo sul pulsante data inzio
+     * @param v: puntatore al riferimento della TextView data-inizio
+     */
     public void inizio(View v){
        final  TextView testo=findViewById(R.id.textViewInizio);
         Calendar current=Calendar.getInstance();
@@ -337,6 +380,7 @@ public class MainActivity extends AppCompatActivity {
         int month= current.get(Calendar.MONTH);
         int year=current.get(Calendar.YEAR);
 
+        //avvio un dialog attraverso cui l'utente potrà selezionare la data desiderata
         DatePickerDialog datePickerDialog=new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int mouthofyear, int dayofMonth) {
@@ -347,6 +391,10 @@ public class MainActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    /**
+     * funzione eseguita quando premo sul pulsante data fine
+     * @param v: puntatore al riferimento della TextView data-fine
+     */
     public void fine(View v){
         final TextView testo=findViewById(R.id.textViewfine);
         Calendar current=Calendar.getInstance();

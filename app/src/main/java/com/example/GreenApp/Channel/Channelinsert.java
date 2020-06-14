@@ -19,6 +19,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class Channelinsert  extends AppCompatActivity {
 
+    //lista di elemeenti associati
     private static Button annulla;
     private static Button salva;
     private static EditText IDlett;
@@ -27,6 +28,10 @@ public class Channelinsert  extends AppCompatActivity {
     private static EditText read_scritt;
     private static EditText write_scritt;
 
+    /**
+     * metodo eseguito alla creazione
+     * @param savedInstanceState: elementi salvati
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,13 +47,19 @@ public class Channelinsert  extends AppCompatActivity {
         write_scritt=findViewById(R.id.channelWrite_Scritt);
     }
 
-    //azione eseguita quando premo il pulsante annulla
+    /**
+     * azione eseguita quando premo il pulsante annulla
+     * @param v:puntatore al pulsante annulla
+     */
     public void annulla(View v) {
         //termino l'attività
         finish();
     }
 
-    //azione eseguita quando premo il pulsante salva
+    /**
+     * azione eseguita quando premo il pulsante salva
+     * @param v: puntatore al pulsante salva
+     */
     public void salva(View v) {
         Log.d("ChannelInsert","\n\n IDlett:" + IDlett.getText().toString()+ "\tIDscritt:"+ IDscritt.getText().toString() + "\n read_lett:" + read_lett.getText().toString()
                 + "\tread_scritt:" +read_scritt.getText().toString()+ "\n\t\t\t write_scritt:" +write_scritt.getText().toString());
@@ -71,7 +82,7 @@ public class Channelinsert  extends AppCompatActivity {
                          ChannelActivity.Execute(id_lett,readkey_lett,IDscritt.getText().toString(),read_scritt.getText().toString(),write_scritt.getText().toString());
                         finish();
                      }
-                //se ho inserito un channel in scrittura errato
+                     //se ho inserito un channel in scrittura errato
                     else Toast.makeText(getApplicationContext(),"Chiave di scrittura errata!",Toast.LENGTH_SHORT).show();
                 }
                  else {
@@ -81,11 +92,22 @@ public class Channelinsert  extends AppCompatActivity {
         }
     }
 
+    /**
+     *
+     * @param context:context associato alla classe
+     * @return restituisce l'intent
+     */
     public static Intent getActivityintent(Context context){
         Intent intent=new Intent(context,Channelinsert.class);
         return intent;
     }
 
+    /**
+     * verifica se la chiave di scrittura esiste
+     * @param valueID:id della chiave di scrittura
+     * @param valueREADKEY:api lettura della chiave di scrittura
+     * @return true se il dato è stato inserito
+     */
     public static boolean testData(String valueID, String valueREADKEY) {
 
         BlockingQueue<Boolean> esito = new LinkedBlockingQueue<Boolean>();
@@ -101,17 +123,24 @@ public class Channelinsert  extends AppCompatActivity {
         return esit;
     }
 
+    /**
+     * Thread che si occuperà di gestire le richieste di connessione per verificarne l'esistenza del channel di scrittura
+     */
     static class Task implements Runnable {
         private String id = null;
         private String key_read = null;
         private final BlockingQueue<Boolean> sharedQueue;
 
+        //metodo costruttore
         public Task(BlockingQueue<Boolean> esito, String valueID, String valueREADKEY) {
             this.id = valueID;
             this.key_read = valueREADKEY;
             this.sharedQueue = esito;
         }
 
+        /**
+         * metodo eseguito all'avvio
+         */
         @Override
         public void run() {
             try {

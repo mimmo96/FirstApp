@@ -18,12 +18,18 @@ import android.os.Build;
 public class App extends Application {
     public static final String CHANNEL_1_ID = "channel1";
 
+    /**
+     * metodo eseguito alla creazione
+     */
     @Override
     public void onCreate() {
         super.onCreate();
         createNotificationChannels();
     }
 
+    /**
+     * funzione per creare le notifiche
+     */
     private void createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel1 = new NotificationChannel(

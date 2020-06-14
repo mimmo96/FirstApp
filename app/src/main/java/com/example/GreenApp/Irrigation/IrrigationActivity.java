@@ -37,6 +37,8 @@ import java.util.TimeZone;
 
 public class IrrigationActivity extends AppCompatActivity {
     private static AppDatabase db;
+
+    //creo l'associazione con gli elementi grafici
     private static EditText durationText;
     private static EditText flussoText;
     private static EditText leachingText;
@@ -44,11 +46,13 @@ public class IrrigationActivity extends AppCompatActivity {
     private static TextView textDurata;
     private static TextView Durata;
     private static TextView Attendi;
-    private static Channel channel;
+    private static ImageView image;
     private static Switch Switch;
     private static Button irra;
+
+    //variabili che mi serviranno
     private static Context cont;
-    private static ImageView image;
+    private static Channel channel;
     private boolean check1=false;
     private boolean check2=false;
     private RequestQueue queue;
@@ -59,12 +63,12 @@ public class IrrigationActivity extends AppCompatActivity {
     private ArrayList<String> saveTime = new ArrayList<>();
 
     private CountDownTimer mCountDownTimer;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.irrigation_activity);
 
+        //creo il database
         if(savedInstanceState==null) {
             db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "prodiction")
                     //consente l'aggiunta di richieste nel thred principale
@@ -74,8 +78,10 @@ public class IrrigationActivity extends AppCompatActivity {
                     .build();
         }
 
+        //dichiaro la nuova coda di richieste
         queue=Volley.newRequestQueue(this);
 
+        //associo i componenti grafici alle nuove dichiarazioni
         durationText=findViewById(R.id.editTextDuration);
         flussoText=findViewById(R.id.editTextFlusso);
         leachingText=findViewById(R.id.editTextLeaching);
@@ -126,6 +132,7 @@ public class IrrigationActivity extends AppCompatActivity {
         //se avevo attivato il timer aspetto
         if(attendi) return;
 
+        //recupero la chiave di scrittura precedentemente salvata se ce n'è alcuna
         String url = "https://api.thingspeak.com/update.json";
         List<savedValues> lista=db.SavedDao().getAll();
         Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
@@ -135,6 +142,7 @@ public class IrrigationActivity extends AppCompatActivity {
             return;
         }
 
+        //configuro i campi da comunicare
         Map<String, String> params = new HashMap();
         params.put("accept", "application/json");
         params.put("api_key", list.getWrite_key());
@@ -142,12 +150,14 @@ public class IrrigationActivity extends AppCompatActivity {
         params.put("field2",flussoText.getText().toString());
         params.put("field3",leachingText.getText().toString());
         params.put("field4", irradayText.getText().toString());
+        //se l'irrigazione automatica è attiva metto 1 altrimenti 0
         if(Switch.isChecked()) params.put("field6","1");
         else params.put("field6","0");
         params.put("field7",String.valueOf(field7));
 
         JSONObject parameters = new JSONObject(params);
 
+        //effettuo la richiesta e comunico l'esito
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -193,6 +203,7 @@ public class IrrigationActivity extends AppCompatActivity {
     private void irrigationOn(final String flusso,final String Leaching,final String numirra,  final String tipo) {
         if(attendi) return;
 
+        //recupero la chiave di scrittura precedentemente salvata se ce n'è alcuna
         String url = "https://api.thingspeak.com/update.json";
         List<savedValues> lista=db.SavedDao().getAll();
         Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
@@ -202,6 +213,7 @@ public class IrrigationActivity extends AppCompatActivity {
             return;
         }
 
+        //configuro i campi da comunicare
         Map<String, String> params = new HashMap();
         params.put("accept", "application/json");
         params.put("api_key", list.getWrite_key());
@@ -211,8 +223,8 @@ public class IrrigationActivity extends AppCompatActivity {
         params.put("field6",String.valueOf(1));
         params.put("field7",String.valueOf(field7));
 
+        //faccio la richiesta e comunico l'esito
         JSONObject parameters = new JSONObject(params);
-
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -224,6 +236,7 @@ public class IrrigationActivity extends AppCompatActivity {
             }
         }, new Response.ErrorListener() {
             @Override
+            //in caso di errore
             public void onErrorResponse(VolleyError error) {
                 if (notifica) {
                     Toast.makeText(getBaseContext(),"ERRORE ATTIVAZIONE IRRIGAZIONE " +tipo+"!",Toast.LENGTH_LONG).show();
@@ -248,6 +261,7 @@ public class IrrigationActivity extends AppCompatActivity {
                         }
                         @Override
                         public void onFinish() {
+                            //appena finisce il timer riprovo la richiesta
                             attendi=false;
                             notifica=true;
                             Attendi.setText("");
@@ -264,6 +278,7 @@ public class IrrigationActivity extends AppCompatActivity {
     private void irrigationOff() {
         if(attendi) return;
 
+        //recupero la chiave di scrittura precedentemente salvata se ce n'è alcuna
         String url = "https://api.thingspeak.com/update.json";
         List<savedValues> lista=db.SavedDao().getAll();
         Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
@@ -273,6 +288,7 @@ public class IrrigationActivity extends AppCompatActivity {
         }
         else Log.d("WRITE KEY",list.getWrite_key());
 
+        //configuro i campi da comunicare
         Map<String, String> params = new HashMap();
         params.put("accept", "application/json");
         params.put("api_key", list.getWrite_key());
@@ -283,7 +299,6 @@ public class IrrigationActivity extends AppCompatActivity {
         params.put("field7",String.valueOf(field7));
 
         JSONObject parameters = new JSONObject(params);
-
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -295,6 +310,7 @@ public class IrrigationActivity extends AppCompatActivity {
             }
         }, new Response.ErrorListener() {
             @Override
+            //in caso di errore
             public void onErrorResponse(VolleyError error) {
                 if (notifica) {
                     Toast.makeText(getBaseContext(),"ERRORE DISATTIVAZIONE IRRIGAZIONE!",Toast.LENGTH_LONG).show();
@@ -318,6 +334,7 @@ public class IrrigationActivity extends AppCompatActivity {
                         }
                         @Override
                         public void onFinish() {
+                            //appena finisce il timer riprovo la richiesta
                             attendi=false;
                             notifica=true;
                             Attendi.setText("");
@@ -335,6 +352,7 @@ public class IrrigationActivity extends AppCompatActivity {
     public void saveirrigationvalues(final View v){
         if(attendi) return;
 
+        //recupero la chiave di scrittura precedentemente salvata se ce n'è alcuna
         String url = "https://api.thingspeak.com/update.json";
             List<savedValues> lista=db.SavedDao().getAll();
             Channel list=db.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
@@ -344,6 +362,7 @@ public class IrrigationActivity extends AppCompatActivity {
                 return;
             }
 
+            //configuro i campi da comunicare
             Map<String, String> params = new HashMap();
             params.put("accept", "application/json");
             params.put("api_key", list.getWrite_key());
@@ -363,6 +382,7 @@ public class IrrigationActivity extends AppCompatActivity {
                 }
             }, new Response.ErrorListener() {
                 @Override
+                //in caso di errore
                 public void onErrorResponse(VolleyError error) {
                     if (notifica) {
                         Toast.makeText(getBaseContext(),"ERRORE SALVATAGGIO VALORI!",Toast.LENGTH_LONG).show();
@@ -383,6 +403,7 @@ public class IrrigationActivity extends AppCompatActivity {
                             }
                             @Override
                             public void onFinish() {
+                                //appena finisce il timer riprovo la richiesta
                                 attendi=false;
                                 notifica=true;
                                 Attendi.setText("");
@@ -396,17 +417,20 @@ public class IrrigationActivity extends AppCompatActivity {
            queue.add(jsonRequest);
         }
 
+    //funzioni per aggiornare i nuovi valori
     public void refreshvalues(View v){
         if(attendi) return;
         //recupero i dati dal server
         donwload();
     }
 
+    //funzioni per reperire l'intent
     public static Intent getActivityintent(Context context){
         Intent intent=new Intent(context, IrrigationActivity.class);
         return intent;
     }
 
+    //imposta il channel considerato
     public static void setChannle(Channel chan){
         channel=chan;
     }
@@ -576,6 +600,7 @@ public class IrrigationActivity extends AppCompatActivity {
        queue.add(jsonObjectRequest);
     }
 
+    // calcolo la distanza tra la data attuale e quella passata come parametro
     private void distanza(String data) {
         Calendar date_now= Calendar.getInstance ();
         date_now.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -612,6 +637,7 @@ public class IrrigationActivity extends AppCompatActivity {
         textDurata.setText( giorni1 + " giorni " + ore1 + " ore " + minuti1 + " minuti " + secondi1+ " secondi ");
     }
 
+    //calcolo la distanza tra le due date passate come parametro e la stampo a schermo come durata di irrigaizone
     private void distanza2(String data1,String data2) {
         Calendar date_value1 = Calendar.getInstance ();
         Calendar date_value2 = Calendar.getInstance ();

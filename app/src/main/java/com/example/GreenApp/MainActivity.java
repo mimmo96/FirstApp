@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import com.example.GreenApp.Alert.AlertActivity;
 import com.example.GreenApp.Alert.ExampleService;
 import com.example.GreenApp.Channel.Channel;
@@ -37,6 +35,7 @@ import com.example.firstapp.R;
  */
 public class MainActivity extends AppCompatActivity {
 
+    //dichiaro componenti grafici
     public static TextView textTemp;
     public static ImageView image;
     public static TextView textUmidity;
@@ -46,27 +45,36 @@ public class MainActivity extends AppCompatActivity {
     public static TextView textPeso;
     public static TextView textStato;
     public static TextView testo1;
+
+    //lista che conterrà il channel di default
     private static List<savedValues> channeldefault;
+
+    //id e chiave di lettura del channel utilizzato
     private static String channelID = null;
     private static String READ_KEY = null;
+
+    //url utilizzata per reperire le info del chaneel di default
     private static String url;
     private static AppDatabase database;
     private static TimerTask timerTask;
     private static Timer timer;
     private static Context cont;
-    private static Intent serviceIntent;
 
+    /**
+     * metodo principale eseguito all'avvio
+     * @param savedInstanceState:insieme di parametri precedentemente salvati
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         //ripristino valori salvati precedentemente se ci sono
         BackupValues(savedInstanceState);
 
         //database.ChannelDao().deleteAll();
         //database.SavedDao().deleteAll();
+        //associo i riferimenti alle varie componenti
         textTemp = findViewById(R.id.textTemp);
         textUmidity = findViewById(R.id.textUmidity);
         textPh = findViewById(R.id.textPh);
@@ -88,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
             textPeso.setText("- -");
             testo1.setText("INSERISCI UN NUOVO CHANNEL");
         } else {
+            //se c'era almeno un channel avvio un nuovo task che si occuperà di gestire le richieste con il server ed avvio il service in background in caso di notifiche
             startTimer(cont);
             ExampleService.stoptimer();
             Intent intentservices=new Intent(cont,ExampleService.class);
@@ -95,10 +104,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //funzione per ripristinare i dati precedentemente impostati
+    /**
+     * funzione per ripristinare i dati precedentemente impostati dal database
+     * @param savedInstanceState:insieme di parametri precedentemente salvati
+     */
     private void BackupValues(Bundle savedInstanceState) {
         //creo il database
-
         if (savedInstanceState == null) {
             database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "prodiction")
                     //consente l'aggiunta di richieste nel thred principale
@@ -115,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 url = "https://api.thingspeak.com/channels/" + channelID + "/feeds.json?api_key=" + READ_KEY + "&results=100";
                 ChannelActivity.setPosition(channeldefault.get(0).getPosition());
             }
-            //se non ho nessun elemento inserito setto a null i valori dei channel
+            //se non ho nessun elemento inserito setto a null i valori dei channel e metto la posizione ad -1
             else {
                 channelID = null;
                 READ_KEY = null;
@@ -125,8 +136,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //funzione eseguita quando vado a cliccare sul pulsate dei grafici
+    /**
+     * funzione eseguita quando vado a cliccare sul pulsate dei grafici
+     * @param v puntatore all'icona dei grafici
+     */
     public void doAdd(View v) {
+        //array che memorizza la posizione degli elementi selezionati e il nomed ell'elemento corrispondente
         final boolean[] checkedItems;
         final String[] listItems;
 
@@ -134,14 +149,15 @@ public class MainActivity extends AppCompatActivity {
         final ArrayList<Integer> mUserItems = new ArrayList<>();
         final ArrayList<String> list = new ArrayList<>();
         final List<Channel> allchannel=database.ChannelDao().getAll();
-        //memorizza il channel
+
+        //memorizza il channel associato al field selezionato
         final List<Channel> selectedChannel=new ArrayList<>();
 
         //lista che mi salva il nome di tutti gli elementi selezionati e la posizione di essi
         final ArrayList<String> name = new ArrayList<>();
         final ArrayList<Integer> posField = new ArrayList<>();
 
-        //scandisco tutti i channel per trovare il primo
+        //scandisco tutti i channel presnti nel database per trovare i loro field
         for(int i=0;i<allchannel.size();i++) {
             Channel inUse = allchannel.get(i);
             System.out.println("ho premuto:" + inUse.getFiled1());
@@ -187,12 +203,15 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        //converto gli array in liste
         listItems = list.toArray(new String[list.size()]);
         checkedItems = new boolean[list.size()];
 
+        //se non c'è nessun channel avviso l'utente
         if (list.size() == 0)
             Toast.makeText(cont, "INSERISCI UN CHANNEL!", Toast.LENGTH_SHORT).show();
         else {
+            //se c'è almeno un channel presente apro la finestra di dialogo in cui l'utente può selezionare fino a 6 fields
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
             mBuilder.setTitle("Seleziona i tipi di grafici(max 6)");
             final ArrayList<Integer> selectedPos=new ArrayList<>();
@@ -206,11 +225,13 @@ public class MainActivity extends AppCompatActivity {
                         selectedPos.add(posField.get(position));
                         selChan.add(selectedChannel.get(position));
                     } else {
+                        //se ho desezionato rimuovo l'elemento dalla lista
                         name.remove(list.get(position));
                         selectedPos.remove(posField.get(position));
                         selChan.remove(selectedChannel.get(position));
                     }
 
+                    //se eccedo 6 elementi selezionati elimino l'ultimo
                     if(name.size()>6){
                         name.remove(list.get(position));
                         selectedPos.remove(posField.get(position));
@@ -229,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
             mBuilder.setPositiveButton("VISUALIZZA", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int which) {
-
+                    //se non ho selezionato nessun grafico comunico un messaggio di errore
                     if (name.size() == 0)
                         Toast.makeText(cont, "NESSUN GRAFICO SELEZIONATO!", Toast.LENGTH_SHORT).show();
                     else {
@@ -240,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            //azione da svolgere quando premo sul pulsante cancella tutto
+            //azione da svolgere quando premo sul pulsante annulla
             mBuilder.setNeutralButton("ANNULLA", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int which) {
@@ -258,13 +279,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //azione che devo eseguire quando premo il pulsante impostazioni
+    /**
+     * azione che devo eseguire quando premo il pulsante impostazioni
+     * @param v puntatore all'icona delle impostazioni
+     */
     public void settingChannel(View v) {
+        //avvio la nuova activity channelactivity
         Intent intent = ChannelActivity.getActivityintent(MainActivity.this);
         startActivity(intent);
     }
 
-    //azione che devo eseguire quando premo il pulsante attenzione
+    /**
+     * azione che devo eseguire quando premo il pulsante attenzione
+     * @param v puntatore all'icona attenzione
+     */
     public void notifiche(View v) {
         Intent intent = AlertActivity.getActivityintent(MainActivity.this);
 
@@ -276,6 +304,7 @@ public class MainActivity extends AppCompatActivity {
                 trovato=channeList.get(i);
             }
         }
+        //se esiste almeno un channel lo avvio altrimenti mando un messaggio di errore
         if(trovato==null){
          Toast.makeText(cont,"INSERISCI UN CHANNEL",Toast.LENGTH_SHORT).show();
         }
@@ -285,11 +314,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //azione eseguita quando premo pulsante refresh
+    /**
+     * azione eseguita quando premo pulsante refresh
+     * @param v puntatore all'icona refresh
+     */
     public  void refresh(View v){
+        //riavvio i il timer in modo da ri-scaricare gli ultimi valori dal server
         restartTimer(cont);
     }
 
+    /**
+     * mi imposta i nuovi vlori di default nel caso in cui l'utente abbia aggiornato il channel predefinito
+     * @param id:nuovo id
+     * @param key_read:chiave di lettura
+     * @param pos:posizione associata
+     */
     public static void setDefaultSetting(String id, String key_read,int pos) {
 
         //se non ho nessun canale (pos=-1) cancello tutto
@@ -300,7 +339,6 @@ public class MainActivity extends AppCompatActivity {
             ChannelActivity.setPosition(-1);
 
             if (channeldefault.size() != 0) channeldefault.clear();
-            //channeldefault.add(new savedValues(id, key, pos));
             database.SavedDao().deleteAll();
 
             textTemp.setText("- -");
@@ -328,6 +366,10 @@ public class MainActivity extends AppCompatActivity {
             }
     }
 
+    /**
+     * funzione che mi permette di riavviare il timer e scaricare i nuovi valori dal server
+     * @param cont:context associato
+     */
     public static void restartTimer(Context cont) {
 
         if (timer != null) timer.cancel();
@@ -337,13 +379,20 @@ public class MainActivity extends AppCompatActivity {
         timer.scheduleAtFixedRate(timerTask, 0, 60000);
     }
 
+    /**
+     * avvio il timer che mi crea un nuovo task passando come parametro tutti i valori impostati di default
+     * @param cont:context associato
+     */
     public static void startTimer(Context cont) {
         timerTask = new MyTimerTask(channelID, READ_KEY, url, textTemp, textUmidity, textPh, textConducibilita, textIrradianza, textPeso, textStato, testo1, cont, database,image);
         timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 0, 60000);
     }
 
-    //funzioni per settare i vari valori dei singoli fields non appena li premo
+    /**
+     * funzione per settare il valore del singolo field non appena lo premo (icona temperatura)
+     * @param v:puntatore al riferimento dell'icona della temperatura
+     */
     public void tempSettings(View v) {
         List<Channel> channeList=database.ChannelDao().getAll();
         Channel trovato=null;
@@ -367,6 +416,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * funzione per settare il valore del singolo field non appena lo premo (icona ph)
+     * @param v:puntatore al riferimento dell'icona del ph
+     */
     public void phSettings(View v){
         List<Channel> channeList=database.ChannelDao().getAll();
         Channel trovato=null;
@@ -387,6 +440,11 @@ public class MainActivity extends AppCompatActivity {
             fieldssettings(1, pos);
         }
     }
+
+    /**
+     * funzione per settare il valore del singolo field non appena lo premo (icona irradianza)
+     * @param v:puntatore al riferimento dell'icona del irradianza
+     */
     public void irraSettings(View v){
         List<Channel> channeList=database.ChannelDao().getAll();
         Channel trovato=null;
@@ -408,6 +466,11 @@ public class MainActivity extends AppCompatActivity {
             fieldssettings(2, pos);
         }
     }
+
+    /**
+     * funzione per settare il valore del singolo field non appena lo premo (icona conducibilità elettrica)
+     * @param v:puntatore al riferimento dell'icona della conducibilità
+     */
     public void condSettings(View v){
         List<Channel> channeList=database.ChannelDao().getAll();
         Channel trovato=null;
@@ -429,6 +492,11 @@ public class MainActivity extends AppCompatActivity {
             fieldssettings(3, pos);
         }
     }
+
+    /**
+     * funzione per settare il valore del singolo field non appena lo premo (icona evapotraspirazione)
+     * @param v:puntatore al riferimento dell'icona del peso
+     */
     public void pesoSettings(View v){
         List<Channel> channeList=database.ChannelDao().getAll();
         Channel trovato=null;
@@ -450,6 +518,11 @@ public class MainActivity extends AppCompatActivity {
             fieldssettings(4, pos);
         }
     }
+
+    /**
+     * funzione per settare il valore del singolo field non appena lo premo (icona umidità)
+     * @param v:puntatore al riferimento dell'icona dell umidità
+     */
     public void umidSettings(View v){
         List<Channel> channeList=database.ChannelDao().getAll();
         Channel trovato=null;
@@ -472,6 +545,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * mi permette di settare il field associato alla singola icona che è stata premuta
+     * @param field:numero del field associato
+     * @param posizione:posizione associata
+     */
     public void fieldssettings(final int field,int posizione){
         final String[] listItems;
         final int[] pos = new int[1];
@@ -576,7 +654,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //azione svolta quando premo sul pulsante irrigazione
+    /**
+     * azione svolta quando premo sul pulsante irrigazione
+     * @param v:puntatore al riferimento dell'icona dell'irrigazione
+     */
     public void irrigation(View v){
         List<Channel> channeList=database.ChannelDao().getAll();
         Channel trovato=null;
@@ -602,4 +683,3 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
-

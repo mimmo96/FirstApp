@@ -54,6 +54,12 @@ public class MyTimerTask extends TimerTask {
     private static AppDatabase db;
     private int minuti=0;
 
+    /**
+     * metodo costruttore
+     * @param chan: lista contenente tutti i channel
+     * @param context: context di riferimento
+     * @param database:database utilizzato
+     */
     public MyTimerTask(List<Channel> chan, Context context, AppDatabase database) {
         channel=chan;
         db=database;
@@ -61,19 +67,25 @@ public class MyTimerTask extends TimerTask {
         notificationManager=NotificationManagerCompat.from(cont);
     }
 
+    /**
+     * funzione eseguita all'avvio del Task
+     */
     @Override
     public void run() {
         //recupero la lista e controllo lo stato dei channel con il database
         for(int i=0;i<channel.size();i++) {
             Channel actualchannel = db.ChannelDao().findByName(channel.get(i).getLett_id(), channel.get(i).getLett_read_key());
-            int dist = 0;
-            //recupero il tempo dall'ultimo inserimento
             String u = "https://api.thingspeak.com/channels/" + actualchannel.getLett_id() + "/feeds/last_data_age.json?api_key=" + actualchannel.getLett_read_key();
-            //memorizza nel database gli ultimi minuti
             getlasttime(u,actualchannel);
         }
     }
 
+    /**
+     * metodo per reperire la data dell'ultimo elemento inserito
+     *
+     * @param url:indirizzo per reperire i valori
+     * @param channel: channel di dafault
+     */
     private void getlasttime(String url, final Channel channel){
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -81,7 +93,6 @@ public class MyTimerTask extends TimerTask {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-
                             String cretime =  response.get("last_data_age").toString();
                            minuti= Integer.parseInt(cretime);
                             minuti =(minuti /60)+1;
@@ -91,10 +102,6 @@ public class MyTimerTask extends TimerTask {
 
                             //se l'utente non ha settato il range di tempo per la media conto come distanza il tempo dall'ultimo valore
                             int  dist = channel.getLastimevalues() + minuti;
-                            Log.d("MyTimerTask", "Channel id : " + channel.getLett_id());
-                            Log.d("MyTimerTask", "minuti : " + channel.getMinutes());
-                            Log.d("MyTimerTask", "lasttime è: " + channel.getLastimevalues());
-                            Log.d("MyTimerTask", "Distanza è:" + dist);
                             String urlString;
                             //se la distanza è 0 recupero solo l'ultimo valore
                             urlString = "https://api.thingspeak.com/channels/" + channel.getLett_id() + "/feeds.json?api_key=" + channel.getLett_read_key()
@@ -117,7 +124,11 @@ public class MyTimerTask extends TimerTask {
         Volley.newRequestQueue(cont).add(jsonObjectRequest);
     }
 
-    //metodo per reperire le risposte json
+    /**
+     * metodo per reperire le risposte json
+     * @param urlString:indirizzo per reperire i valori (precedentemente settato in getlasttime)
+     * @param channel:channel di riferimento
+     */
     private void getJsonResponse(String urlString,final Channel channel) {
       final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlString, null,
                 new Response.Listener<JSONObject>() {
@@ -139,6 +150,7 @@ public class MyTimerTask extends TimerTask {
                             } catch (Exception e) {
                             }
 
+                            //inizializzo le variabili
                             Double t = 0.0;
                             Double somt=0.0;
                             Double u = 0.0;
@@ -301,11 +313,16 @@ public class MyTimerTask extends TimerTask {
         Volley.newRequestQueue(cont).add(jsonObjectRequest);
     }
 
-
+    /**
+     * metodo per stampare a schermo le notifiche
+     * @param text:stringa contenente il messaggio da visualizzare
+     * @param i:indice associato alla notifica del channel
+     */
     public void printnotify(String text,int i){
 
         NotificationManager notificationManager = (NotificationManager) cont.getSystemService(Context.NOTIFICATION_SERVICE);
 
+        //se la versione di android è superiore dell'8.0 allora imposto i vari parametri (garantisce la compatibilità)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             String CHANNEL_ID = "channel"+ i;
             CharSequence name = "channel"+ i;
@@ -336,6 +353,10 @@ public class MyTimerTask extends TimerTask {
 
     }
 
+    /**
+     *
+     * @return il valore contenente l'offset di riferimento associato (in stringa)
+     */
     public static String getCurrentTimezoneOffset() {
 
         TimeZone tz = TimeZone.getDefault();
@@ -345,7 +366,12 @@ public class MyTimerTask extends TimerTask {
         return String.valueOf((offsetInMillis/(1000*3600))-1);
     }
 
-    //restituisce la distanza in secondi dall'ultimo aggiornamento
+
+    /**
+     * restituisce la distanza in secondi dall'ultimo aggiornamento
+     * @param data: contiene il valore in stringa di una data (reperita dal server)
+     * @return intero contenete la durata in secondi dall'ultimo aggiornamento
+     */
     private int distanza(String data) {
         Calendar date_now= Calendar.getInstance ();
         date_now.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -374,6 +400,16 @@ public class MyTimerTask extends TimerTask {
         return (int) durata;
     }
 
+    /**
+     * funzione che mi confronta i vari valori scaricati con quelli memorizzati nel database e provvede all'invio delle notifiche
+     * @param t: valore da controllare
+     * @param getimage: field associato (in caso non si utilizza quello di default)
+     * @param getmin:il valore minimo preimpostato
+     * @param getmacx: valore massimo preimpostato
+     * @param channel:channel in uso
+     * @param i:codice identificativo della notifica
+     * @param defaultvalue: nome del field da visualizzare nelle notifiche
+     */
     private void notification(Double t, String getimage,Double getmin,Double getmacx,Channel channel,int i,String defaultvalue) {
         try {
             //controllo che ho inserito un valore nella temperatura minima
@@ -418,6 +454,10 @@ public class MyTimerTask extends TimerTask {
         }
     }
 
+    /**
+     * cancella un channel dalla lista (in caso di disattivazione delle notifiche)
+     * @param x:channel da rimuovere
+     */
     public static void remove(Channel x){
         if(channel!=null){
             for(int i=0;i<channel.size();i++){
@@ -427,7 +467,11 @@ public class MyTimerTask extends TimerTask {
         }
     }
 
-    //notifiche dedicata all'evapotraspirazione
+    /**
+     * notifiche dedicata all'evapotraspirazione
+     * @param urlString:indirizzo per reperire i parametri
+     * @param channel:channel in uso
+     */
     private void downloadEvapotraspirazione(String urlString,final Channel channel) {
             final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlString, null,
                     new Response.Listener<JSONObject>() {

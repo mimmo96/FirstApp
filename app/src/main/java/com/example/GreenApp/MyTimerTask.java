@@ -38,22 +38,41 @@ import java.util.TimerTask;
  */
 public class MyTimerTask extends TimerTask {
 
+    //dichiaro i riferiemnti agli elementi grafici
     TextView textTemp;
     TextView textUmidity;
     TextView textPh;
     TextView textConducibilita;
     TextView textIrradianza;
-    TextView textPeso;
+    TextView textevap;
     TextView text1;
     TextView stato;
     ImageView image;
     String url;
     Context context;
+
+    //variabili per memorizzare il channel di default
     private static String channelID=null;
     private static String READ_KEY=null;
     private static AppDatabase database;
 
-
+    /**
+     * funzione costruttore
+     * @param id:id del channel
+     * @param key:chiave di lettura associata (può anche non esserci)
+     * @param url:indirizzo utilizzato
+     * @param textTemp1:riferiemnto all'icona testuale della temperatura
+     * @param textUmidity1:riferiemnto all'icona testuale dell'umidità
+     * @param textPh1:riferiemnto all'icona testuale del ph
+     * @param textConducibilita1:riferiemnto all'icona testuale della conducibilità elettrica
+     * @param textIrradianza1:riferiemnto all'icona testuale dell'irradianza
+     * @param textPO1:riferiemnto all'icona testuale dell evapotraspirazione
+     * @param stato:riferiemnto all'icona testuale dello stato
+     * @param testo1:riferiemnto all'icona testuale dell ultimo aggiornamento
+     * @param cont:context associato
+     * @param database:database utilizzato
+     * @param imm:riferiemnto all'icona dell'innaffiatoio
+     */
     public MyTimerTask(String id, String key,String url, TextView textTemp1,TextView textUmidity1, TextView textPh1, TextView textConducibilita1,
                        TextView textIrradianza1,TextView textPO1,TextView stato,TextView testo1, Context cont,AppDatabase database,ImageView imm) {
         textTemp=textTemp1;
@@ -61,7 +80,7 @@ public class MyTimerTask extends TimerTask {
         textPh=textPh1;
         textConducibilita=textConducibilita1;
         textIrradianza=textIrradianza1;
-        textPeso=textPO1;
+        textevap=textPO1;
         this.stato=stato;
         text1=testo1;
         channelID=id;
@@ -72,6 +91,9 @@ public class MyTimerTask extends TimerTask {
         image=imm;
     }
 
+    /**
+     * funzione che viene svolta all'avvio del task
+     */
     @Override
     public void run() {
         //reperisco i valori channel lettura
@@ -81,7 +103,10 @@ public class MyTimerTask extends TimerTask {
        donwload();
     }
 
-    //metodo per reperire le risposte json
+    /**
+     * metodo per reperire le risposte json
+     * @param url:indirizzo utilizzato per reprire i parametri
+     */
      private void getJsonResponse (final String url){
         //se non ho nessun url inserita setto i valori a 0
 
@@ -135,6 +160,7 @@ public class MyTimerTask extends TimerTask {
                                 else v.setFiled8(null);
                                 database.ChannelDao().insert(v);
 
+                                //variabili che memorizzano tutti gli ultimi valori nonNULL
                                 Boolean ok = false;
                                 Double irrigazione = 0.0;
                                 Double drainaggio = 0.0;
@@ -146,7 +172,7 @@ public class MyTimerTask extends TimerTask {
                                 String cretime=null;
                                 String evapotraspirazione=null;
 
-                                //scandisco tutti i 100 valori per trovare i valodi di irrigazione e il drenaggio
+                                //scandisco tutti i 100 valori per trovare gli ultimi valori
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject valori = jsonArray.getJSONObject(i);
                                     try {
@@ -291,18 +317,20 @@ public class MyTimerTask extends TimerTask {
                                 try{
                                 if (evapotraspirazione != null){
                                     if (v.getImagepeso() != null) {
-                                        textPeso.setText(String.valueOf(Math.round(Double.parseDouble(String.format(evapotraspirazione)) * 100.0) / 100.0));
+                                        textevap.setText(String.valueOf(Math.round(Double.parseDouble(String.format(evapotraspirazione)) * 100.0) / 100.0));
                                     } else if (ok) {
-                                        textPeso.setText(evapotraspirazione.concat(" g/dm²"));
+                                        textevap.setText(evapotraspirazione.concat(" g/dm²"));
                                     }
                                 }
-                                else textPeso.setText("- -");
+                                else textevap.setText("- -");
                                 }catch (Exception e){
-                                    textPeso.setText("- -");
+                                    textevap.setText("- -");
                                 }
 
+                                //stampo a schermo la distanza dall'ultimo valore inserito
                                 distanza(cretime);
 
+                                //setto lo stato ONLINE se la richiesta è andata a buon fine
                                 stato.setText("ONLINE");
                                 stato.setTextColor(Color.GREEN);
                             } catch (JSONException e) {
@@ -319,11 +347,13 @@ public class MyTimerTask extends TimerTask {
                     stato.setTextColor(Color.RED);
                 }
             });
+            //aggiungo la nuova richiesta alla coda
             Volley.newRequestQueue(context).add(jsonObjectRequest);
-
     }
 
-    //scarico i dati dal server riguardante la configurazione dell'irrigazione
+    /**
+     * funzione che scarica i dati dal server riguardanti la configurazione dell'irrigazione
+     */
     private void donwload() {
         List<savedValues> lista=database.SavedDao().getAll();
         Channel list=database.ChannelDao().findByName(lista.get(0).getId(),lista.get(0).getRead_key());
@@ -337,6 +367,7 @@ public class MyTimerTask extends TimerTask {
                             JSONArray jsonArray = response.getJSONArray("feeds");
                             int field7=0;
 
+                            //scandisco tutti i valori e ne determino l'ultimo associato al field7
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject valori = jsonArray.getJSONObject(i);
                                 if (!valori.getString("field7").equals("null")) {
@@ -349,7 +380,7 @@ public class MyTimerTask extends TimerTask {
                                     field7=0;
                                 }
                             }
-
+                            //se l'irrigazione è attiva cambio il simbolo, ltrimenti niente
                             if (field7 == 1) image.setImageResource(R.drawable.irrigazioneattiva);
                             else  image.setImageResource(R.drawable.irrigazione);
 
@@ -366,6 +397,10 @@ public class MyTimerTask extends TimerTask {
         Volley.newRequestQueue(context).add(jsonObjectRequest);
     }
 
+    /**
+     * funzione che calcola la distanza dal momento in cui faccio richiesta all'ultima data reperita dal server
+     * @param data:stringa contenente la data
+     */
     private void distanza(String data) {
         Calendar date_now= Calendar.getInstance ();
         date_now.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -402,6 +437,10 @@ public class MyTimerTask extends TimerTask {
         text1.setText("Ultimo aggiornamento: " + giorni1 + " giorni " + ore1 + " ore " + minuti1 + " minuti " + secondi1+ " secondi ");
     }
 
+    /**
+     * aggiorna il nuovo riferimento al database
+     * @param db:nuovo database di riferimento
+     */
     public static void updateDatabase(AppDatabase db){
         database=db;
     }

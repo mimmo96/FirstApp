@@ -11,7 +11,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 import com.android.volley.Request;
@@ -27,8 +26,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.TimeZone;
 
 /*
  * Progetto: svilluppo App Android per Tirocinio interno
@@ -40,8 +37,8 @@ import java.util.TimeZone;
  *
  */
 
-
 public class AlertActivity extends AppCompatActivity {
+
     private static Context cont;
     private EditText tempMin;
     private EditText tempMax;
@@ -69,6 +66,9 @@ public class AlertActivity extends AppCompatActivity {
     private static int minuti=0;
     private static Intent serviceIntent;
 
+    /**
+     * metodo eseguito alla creazione
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +77,7 @@ public class AlertActivity extends AppCompatActivity {
         //inizializzo l'intent per il service da lanciare in background
         serviceIntent = new Intent(this, ExampleService.class);
 
+        //inizializzo i valori
         cont=getApplication();
         tempMin=findViewById(R.id.Tempmin);
         tempMax=findViewById(R.id.tempmax);
@@ -100,7 +101,7 @@ public class AlertActivity extends AppCompatActivity {
         minutes=findViewById(R.id.editTextMinuti);
         aSwitch=findViewById(R.id.switch2);
 
-
+        //creo l'associazione con il database
         database = Room.databaseBuilder(this, AppDatabase.class, "prodiction")
                 //consente l'aggiunta di richieste nel thred principale
                 .allowMainThreadQueries()
@@ -127,7 +128,6 @@ public class AlertActivity extends AppCompatActivity {
         //se le notifiche erano attive avvio il servizio notifiche
         if (channel.getNotification()){
             aSwitch.setChecked(true);
-            //devo attivare il service se le notifiche erano attive
         }
         else{
             aSwitch.setChecked(false);
@@ -167,6 +167,9 @@ public class AlertActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * scarica l'ultimo dato inserito per capire la distanza in minuti
+     */
     private void downloadMedia() {
         Channel actualchannel = database.ChannelDao().findByName(channel.getLett_id(), channel.getLett_read_key());
         int dist = 0;
@@ -176,10 +179,20 @@ public class AlertActivity extends AppCompatActivity {
         getlasttime(u, actualchannel);
     }
 
+    /**
+     * scarica tutti gli ultimi valori
+     * @param url:indirizzo utilizzato
+     * @param channel:channel utilizzato
+     */
     private void getlasttime(String url, final Channel channel){
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     int minuti=0;
+
+                    /**
+                     * metodo eseguito alla risposta del database
+                     * @param response: messaggio di rispetto
+                     */
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
@@ -202,6 +215,7 @@ public class AlertActivity extends AppCompatActivity {
                         }
                     }
                 }, new Response.ErrorListener() {
+            //in caso di errore
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("Thread background", "errore donwload");
@@ -210,6 +224,10 @@ public class AlertActivity extends AppCompatActivity {
         Volley.newRequestQueue(cont).add(jsonObjectRequest);
     }
 
+    /**
+     * metodo che reperisce tutti i valori
+     * @param url:indirizzo utilizzato
+     */
     private void getJsonResponse (final String url){
             final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                     new Response.Listener<JSONObject>() {
@@ -419,7 +437,10 @@ public class AlertActivity extends AppCompatActivity {
             Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
     }
 
-    //notifiche dedicata all'evapotraspirazione
+    /**
+     * scarica i dati riguardante gli ultimi valori dell'evapotraspirazione
+     * @param urlString:
+     */
     private void downloadEvapotraspirazione(String urlString) {
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlString, null,
                 new Response.Listener<JSONObject>() {
@@ -476,12 +497,20 @@ public class AlertActivity extends AppCompatActivity {
         Volley.newRequestQueue(cont).add(jsonObjectRequest);
     }
 
+    /**
+     * restituisce l'intent
+     * @param context: context
+     * @return intent associato dell'activity
+     */
     public static Intent getActivityintent(Context context){
         Intent intent=new Intent(context, AlertActivity.class);
         return intent;
     }
 
-    //se premo il pulsante save
+    /**
+     * se premo il pulsante save
+     * @param v puntatore al pulsante save
+     */
     public void saveButton(View v) {
         Channel x = database.ChannelDao().findByName(channel.getLett_id(), channel.getLett_read_key());
 
@@ -552,7 +581,10 @@ public class AlertActivity extends AppCompatActivity {
         downloadMedia();
     }
 
-    //se premo il pulsante reset
+    /**
+     * se premo il pulsante reset
+     * @param v puntatore al pulsante reset
+     */
     public void resetButton (View v) {
             Channel x=database.ChannelDao().findByName(channel.getLett_id(),channel.getLett_read_key());
             database.ChannelDao().delete(x);
@@ -592,22 +624,33 @@ public class AlertActivity extends AppCompatActivity {
             downloadMedia();
     }
 
-    //inizializzo in channel all'apertura iniziale
+    /**
+     * inizializzo il channel all'apertura iniziale
+     * @param chan: channel da impostare
+     */
     public static void setChannel(Channel chan){
         channel=chan;
     }
 
+    /**
+     *
+     * @return restituisce il context associato al channel
+     */
     public static Context getContext(){
         return cont;
     }
 
-    //per avviare ExampleServices
+    /**
+     * per avviare ExampleServices
+     */
     public void startService() {
         ContextCompat.startForegroundService(this, serviceIntent);
         Log.d("MAINACTIVITY","STARTSERVICE");
     }
 
-    //per fermare ExampleServices
+    /**
+     * per fermare ExampleServices
+     */
     public static void stopService() {
         ExampleService.stoptimer();
         Log.d("MAINACTIVITY","STOPSERVICE");

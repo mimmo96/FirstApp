@@ -19,15 +19,30 @@ import java.util.List;
 
 @Dao
 public interface SavedDao {
+    /**
+     *
+     * @return lista di tutti i channel presenti nel database
+     */
     @Query("SELECT * FROM savedValues")
     List<savedValues> getAll();
 
+    /**
+     * funzione che inserisce il channel nel database
+     * @param savedValues: channel da inserire
+     */
     @Insert
     void insert(savedValues savedValues);
 
+    /**
+     * cancella tutti gli elementi inseriti nel database
+     */
     @Query("DELETE FROM savedValues")
     void deleteAll();
 
+    /**
+     * cancella il singolo channel
+     * @param savedValues: channel da cancellare
+     */
     @Delete
     void delete(savedValues savedValues);
 }

@@ -31,18 +31,30 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private Context context;
     private AppDatabase db;
 
+    /**
+     * metodo costruttore
+     * @param channel: channel da inserire
+     * @param context: contesto
+     * @param db: database utilizzato
+     */
     public RecyclerViewAdapter(List<Channel> channel, Context context,AppDatabase db) {
         this.context=context;
         this.channel=channel;
         this.db=db;
     }
 
+    /**
+     * faccio l'inflate (gonfiaggio) lo riportiamo sul ViewHolder -> grazie al quale andrà a richiamare i vari componenti
+     */
     @Override
     public MyVieworder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_row,parent,false);
         return new MyVieworder(v);
     }
 
+    /**
+     * imposta gli oggetti presi dalla lista popolata da classi "model"
+     */
     @Override
     public void onBindViewHolder(final MyVieworder holder, final int position) {
         final Channel chan=channel.get(position);
@@ -58,6 +70,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 ChannelActivity.sendObjcet(v,context,position);
             }
         });
+        //funzione eseguita guando premo sul pulsante "stella"
         holder.star.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,11 +81,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     }
 
+    /**
+     *
+     * @return numero di elementi presenti
+     */
     @Override
     public int getItemCount() {
         return channel.size();
     }
 
+    /**
+     *  definiamo il ViewHolder (si occuperà della gestione dei singoli view)
+     */
     public static class MyVieworder extends RecyclerView.ViewHolder{
 
         private TextView testo;
@@ -81,6 +101,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         private RelativeLayout touch_layout;
         private ImageButton star;
 
+        /**
+         * metodo costruttore
+         * @param itemView puntatore al View
+         */
         public MyVieworder(View itemView) {
             super(itemView);
             testo=itemView.findViewById(R.id.titleText);
@@ -90,5 +114,4 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             notifiche=itemView.findViewById(R.id.textNotification);
         }
     }
-
 }

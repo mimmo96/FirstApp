@@ -36,22 +36,34 @@ import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>
 {
+
     private List<ModelData> data;
     private Context context;
 
+    /**
+     * metodo costruttore
+     * @param data: insieme di oggetti ModelData contenenti tutti i dati da rappresentare
+     * @param context: context associato
+     */
     public RecyclerViewAdapter(List<ModelData> data, Context context) {
         this.data = data;
         this.context = context;
     }
 
-    // facciamo l'inflate (gonfiaggio) lo riportiamo sul ViewHolder -> grazie al quale andrà a richiamare i vari componenti
+
+    /**
+     * faccio l'inflate (gonfiaggio) lo riportiamo sul ViewHolder -> grazie al quale andrà a richiamare i vari componenti
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.graphic_layout_row, parent, false);
         return new ViewHolder(v);
     }
 
-    //impostare gli oggetti presi dalla lista popolata da classi "model"
+
+    /**
+     * imposta gli oggetti presi dalla lista popolata da classi "model"
+     */
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         ModelData user = data.get(position);
@@ -89,6 +101,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             }
         });
 
+        //setto tutti i parametri
         graph.getViewport().setScalable(true);
         graph.getViewport().setScrollable(true);
         Date xas=new Date((long) graph.getViewport().getMinX(true));
@@ -103,6 +116,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         graph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
         graph.getViewport().setOnXAxisBoundsChangedListener(new Viewport.OnXAxisBoundsChangedListener() {
             @Override
+            //eseguita quando nel grafico vengono cambiate le coordinate (ad esempio quando effettuo uno zoom)
             public void onXAxisBoundsChanged(double minX, double maxX, Reason reason) {
                 graph.getGridLabelRenderer().invalidate(false,false);
                 Date xas=new Date((long) minX);
@@ -135,15 +149,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         });
     }
 
-    //restituire la dimensione della lista
+    /**
+     *
+     * @retur la dimensione della lista
+     */
     @Override
     public int getItemCount() {
         return data.size();
     }
 
-    //definiamo il ViewHolder
+    //definiamo il ViewHolder (si occuperà della gestione dei singoli view)
     public class ViewHolder extends RecyclerView.ViewHolder
     {
+
         private TextView text;
         private LineGraphSeries<DataPoint> series;
         private GraphView graph;
@@ -155,8 +173,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         private TextView end;
         private PointsGraphSeries<DataPoint> last=null;
 
+        /**
+         * metodo costruttore
+         * @param itemView puntatore al View
+         */
         public ViewHolder(View itemView) {
             super(itemView);
+
+            //creo le associazioni con il layout
             text = itemView.findViewById(R.id.titleText);
             graph = itemView.findViewById(R.id.graph);
             touch_layout = itemView.findViewById(R.id.touch_layout);
@@ -168,13 +192,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
-//thread che mi serve per settare i punti blu nel grafico quando ci clicco sopra
+    /**
+     * thread che mi serve per settare i punti blu nel grafico quando ci clicco sopra
+     */
     public class MyThread extends Thread {
 
         LineGraphSeries<DataPoint> serie=null;
         GraphView graph=null;
         DataPointInterface dataPoint;
 
+        /**
+         * metodo eseguito all'avvio del thread
+         */
         public void run(){
             graph.removeAllSeries();
             DataPoint[] data = new DataPoint[]{new DataPoint(dataPoint.getX(), dataPoint.getY())};
@@ -185,6 +214,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             graph.addSeries(series1);
         }
 
+        /**
+         * funzione per impostare i valori del thread
+         * @param serie1: serie di punti LineGraphSeries
+         * @param graph1: grafico
+         * @param dataPoint1: insieme di punti DataPoint
+         */
         public void settingsvalues( LineGraphSeries<DataPoint> serie1, GraphView graph1, DataPointInterface dataPoint1){
             serie=serie1;
             graph=graph1;
