@@ -150,9 +150,14 @@ public class IrrigationActivity extends AppCompatActivity {
         params.put("field2",flussoText.getText().toString());
         params.put("field3",leachingText.getText().toString());
         params.put("field4", irradayText.getText().toString());
-        //se l'irrigazione automatica è attiva metto 1 altrimenti 0
-        if(Switch.isChecked()) params.put("field6","1");
-        else params.put("field6","0");
+        //se l'irrigazione automatica è attiva la disattivo
+        if(Switch.isChecked()){
+            boolean prima=check1;
+            check1=false;
+            Switch.setChecked(false);
+            check1=prima;
+        }
+        params.put("field6","0");
         params.put("field7",String.valueOf(field7));
 
         JSONObject parameters = new JSONObject(params);
