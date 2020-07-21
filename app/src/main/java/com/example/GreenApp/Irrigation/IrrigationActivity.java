@@ -152,10 +152,9 @@ public class IrrigationActivity extends AppCompatActivity {
         params.put("field4", irradayText.getText().toString());
         //se l'irrigazione automatica è attiva la disattivo
         if(Switch.isChecked()){
-            boolean prima=check1;
             check1=false;
             Switch.setChecked(false);
-            check1=prima;
+            check2=true;
         }
         params.put("field6","0");
         params.put("field7",String.valueOf(field7));
